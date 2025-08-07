@@ -1,9 +1,9 @@
-import { Linkedin, Github, Mail, Search, ChevronDown } from 'lucide-react'
+import { Linkedin, Github, Mail } from 'lucide-react'
 
 
 export function NavBar() {
   return (
-    <nav className="flex justify-between items-center px-6 py-4 bg-white shadow-sm">
+    <nav className="w-full flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-sm">
       {/* Logo */}
       <div className="text-2xl font-bold text-gray-800">hh.</div>
 
@@ -22,7 +22,7 @@ export function NavBar() {
 
 export function HeroSection() {
   return (
-    <section className="w-full px-8 py-12 bg-white">
+    <section className="w-full max-w-10/12 mx-auto px-8 py-12 bg-white">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">
@@ -67,7 +67,7 @@ export function HeroSection() {
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#EFEEEB] py-6 px-8 flex items-center justify-between">
+    <footer className="w-full bg-[#EFEEEB] py-6 px-4 sm:px-8 flex items-center justify-between">
       {/* Left: Get in touch and icons */}
       <div className="flex items-center gap-4">
         <span className="font-medium text-gray-800">Get in touch</span>
@@ -90,64 +90,5 @@ export function Footer() {
       {/* Right: Home page link */}
       <a href="#" className="font-medium text-gray-800 underline underline-offset-2 hover:text-black">Home page</a>
     </footer>
-  )
-}
-
-export function ArticleSection() {
-  return (
-    <section className="w-full bg-white">
-      {/* Header */}
-      <div>
-        <h2 className="text-lg font-bold text-gray-900 text-left px-4 sm:px-8">Latest articles</h2>
-      </div>
-      {/* Main content area with tabs/search bar */}
-      <div className="py-6 sm:py-8 px-4 sm:px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Mobile layout - stacked */}
-          <div className="space-y-4 sm:space-y-6 lg:hidden">
-            {/* Search bar */}
-            <div className="relative">
-              <div className="relative bg-[#f5f4f0] rounded-xl">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-[#f5f4f0] border-none rounded-xl pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
-                />
-                <Search className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-              </div>
-            </div>
-            {/* Category filter */}
-            <div className="space-y-2">
-              <label className="text-gray-600 text-xs sm:text-sm font-medium">Category</label>
-              <div className="relative bg-[#f5f4f0] rounded-xl">
-                <div className="flex items-center justify-between w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl cursor-pointer">
-                  <span className="text-sm sm:text-base text-gray-600">Highlight</span>
-                  <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Desktop layout - horizontal */}
-          <div className="hidden lg:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
-            {/* Category tabs */}
-            <div className="flex items-center gap-6">
-              <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Highlight</button>
-              <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Cat</button>
-              <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Inspiration</button>
-              <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">General</button>
-            </div>
-            {/* Search bar */}
-            <div className="relative w-80">
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full px-4 py-2 bg-white border-none rounded-xl pl-4 pr-10 text-sm text-gray-600 placeholder-gray-400 focus:outline-none"
-              />
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
   )
 }
