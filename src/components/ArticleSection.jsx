@@ -45,7 +45,7 @@ export function ArticleSection() {
                                 <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white border-none flex-row-reverse">
                                     {categories.map((category) => (
                                         <SelectItem key={category} value={category}>
                                             {category}

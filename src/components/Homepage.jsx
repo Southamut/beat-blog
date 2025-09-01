@@ -1,4 +1,12 @@
 import { Linkedin, Github, Mail } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 
 export function NavBar() {
@@ -7,7 +15,28 @@ export function NavBar() {
       {/* Logo */}
       <div className="text-2xl font-bold text-gray-800">hh.</div>
 
-      {/* Navigation buttons */}
+      {/* Mobile navigation buttons */}
+      <div className="flex flex-col sm:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
+            <img src="./src/assets/navbar.svg" alt="navigation menu" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
+            <DropdownMenuItem className="px-4">
+              <button className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors">
+                Log in
+              </button>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="px-4">
+              <button className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors">
+                Sign up
+              </button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Desktop navigation buttons */}
       <div className="gap-3 relative hidden sm:flex">
         <button className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors">
           Log in
