@@ -18,17 +18,17 @@ export function ArticleSection() {
     return (
         <section className="md:max-w-10/12 mx-auto w-full bg-white">
             {/* Header */}
-            <div className='px-4 sm:px-8'>
+            <div className='px-8'>
                 <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
             </div>
             {/* Main content area with tabs/search bar */}
-            <div className="py-4 md:py-8 px-0 md:px-8">
+            <div className="py-4 sm:py-8 px-0 md:px-8">
                 <div>
                     {/* Mobile layout - stacked */}
                     <div className="md:hidden px-8 py-4 bg-[#f5f4f0]">
                         {/* Search bar */}
                         <div className="relative">
-                            <div className="relative">
+                            <div className="relative bg-white rounded-xl">
                                 <input
                                     type="text"
                                     placeholder="Search"
@@ -45,7 +45,7 @@ export function ArticleSection() {
                                 <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-white border-none flex-row-reverse">
+                                <SelectContent>
                                     {categories.map((category) => (
                                         <SelectItem key={category} value={category}>
                                             {category}
