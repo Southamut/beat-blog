@@ -22,7 +22,7 @@ export function NavBar() {
 
 export function HeroSection() {
   return (
-    <section className="w-full max-w-10/12 mx-auto px-8 py-12 bg-white">
+    <section className="w-full md:max-w-10/12 mx-auto px-8 py-12 bg-white">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">

@@ -1,48 +1,72 @@
 import { Search, ChevronDown } from 'lucide-react'
 import { blogPosts } from "../data/blogPosts"
+import { useState } from 'react';
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select"
 
 export function ArticleSection() {
+    // blog posts
+    const [post, setPost] = useState(blogPosts)
+    // categories
+    const categories = ["Highlight", "Cat", "Inspiration", "General"]
+
     return (
-        <section className="max-w-10/12 mx-auto w-full bg-white">
+        <section className="md:max-w-10/12 mx-auto w-full bg-white">
             {/* Header */}
-            <div>
+            <div className='px-4 sm:px-8'>
                 <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
             </div>
             {/* Main content area with tabs/search bar */}
-            <div className="py-6 sm:py-8 px-4 sm:px-8">
+            <div className="border border-red-500 py-4 md:py-8 px-0 md:px-8">
                 <div>
                     {/* Mobile layout - stacked */}
-                    <div className="space-y-4 sm:space-y-6 lg:hidden">
+                    <div className="border border-blue-500 md:hidden px-8 py-4 bg-[#f5f4f0]">
                         {/* Search bar */}
                         <div className="relative">
-                            <div className="relative bg-[#f5f4f0] rounded-xl">
+                            <div className="relative">
                                 <input
                                     type="text"
                                     placeholder="Search"
-                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-[#f5f4f0] border-none rounded-xl pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white border-none rounded-lg pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
                                 />
                                 <Search className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                             </div>
                         </div>
+
                         {/* Category filter */}
-                        <div className="space-y-2">
-                            <label className="text-gray-600 text-xs sm:text-sm font-medium">Category</label>
-                            <div className="relative bg-[#f5f4f0] rounded-xl">
-                                <div className="flex items-center justify-between w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl cursor-pointer">
-                                    <span className="text-sm sm:text-base text-gray-600">Highlight</span>
-                                    <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                                </div>
-                            </div>
+                        <div className="md:hidden w-full mt-4">
+                            <label className="text-muted-foreground text-sm mb-2 block">Category</label>
+                            <Select value="Highlight">
+                                <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {categories.map((category) => (
+                                        <SelectItem key={category} value={category}>
+                                            {category}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
+
                     {/* Desktop layout - horizontal */}
-                    <div className="hidden lg:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
+                    <div className="hidden md:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
                         {/* Category tabs */}
-                        <div className="flex items-center gap-6">
-                            <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Highlight</button>
-                            <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Cat</button>
-                            <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">Inspiration</button>
-                            <button className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">General</button>
+                        <div className="hidden md:flex space-x-2">
+                            {categories.map((category) => (
+                                <ArticleButton
+                                    key={category}
+                                    text={category}
+                                    className=" hover:bg-[#DAD6D1]"
+                                />
+                            ))}
                         </div>
                         {/* Search bar */}
                         <div className="relative w-80">
@@ -55,10 +79,18 @@ export function ArticleSection() {
                         </div>
                     </div>
 
+
                     {/* Blog cards grid */}
-                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {Array.from({ length: 6 }).map((_, i) => (
-                            <BlogCard key={i} image={blogPosts[i].image} category={blogPosts[i].category} title={blogPosts[i].title} description={blogPosts[i].description} author={blogPosts[i].author} date={blogPosts[i].date} />
+                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
+                        {post.map((post) => (
+                            <BlogCard
+                                key={post.id}
+                                image={post.image}
+                                category={post.category}
+                                title={post.title}
+                                description={post.description}
+                                author={post.author}
+                                date={post.date} />
                         ))}
                     </div>
                 </div>
@@ -66,6 +98,8 @@ export function ArticleSection() {
         </section>
     )
 }
+
+// components
 function BlogCard(props) {
     return (
         <div className="flex flex-col gap-4">
@@ -95,3 +129,10 @@ function BlogCard(props) {
     );
 }
 
+function ArticleButton(props) {
+    return (
+        <button className={`px-4 py-3 transition-colors rounded-sm text-sm text-muted-foreground font-medium ${props.className}`}>
+            {props.text}
+        </button>
+    )
+}
