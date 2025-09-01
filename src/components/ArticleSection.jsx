@@ -22,10 +22,10 @@ export function ArticleSection() {
                 <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
             </div>
             {/* Main content area with tabs/search bar */}
-            <div className="border border-red-500 py-4 md:py-8 px-0 md:px-8">
+            <div className="py-4 md:py-8 px-0 md:px-8">
                 <div>
                     {/* Mobile layout - stacked */}
-                    <div className="border border-blue-500 md:hidden px-8 py-4 bg-[#f5f4f0]">
+                    <div className="md:hidden px-8 py-4 bg-[#f5f4f0]">
                         {/* Search bar */}
                         <div className="relative">
                             <div className="relative">
@@ -45,7 +45,7 @@ export function ArticleSection() {
                                 <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white border-none flex-row-reverse">
                                     {categories.map((category) => (
                                         <SelectItem key={category} value={category}>
                                             {category}

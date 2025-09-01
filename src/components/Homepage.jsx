@@ -8,7 +8,7 @@ export function NavBar() {
       <div className="text-2xl font-bold text-gray-800">hh.</div>
 
       {/* Navigation buttons */}
-      <div className="flex gap-3 relative">
+      <div className="gap-3 relative hidden sm:flex">
         <button className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors">
           Log in
         </button>
