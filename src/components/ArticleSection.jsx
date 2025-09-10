@@ -14,6 +14,8 @@ export function ArticleSection() {
     const [post, setPost] = useState(blogPosts)
     // categories
     const categories = ["Highlight", "Cat", "Inspiration", "General"]
+    //select category
+    const [selectedCategory, setSelectedCategory] = useState("Highlight")
 
     return (
         <section className="md:max-w-10/12 mx-auto w-full bg-white">
@@ -41,7 +43,10 @@ export function ArticleSection() {
                         {/* Category filter */}
                         <div className="md:hidden w-full mt-4">
                             <label className="text-muted-foreground text-sm mb-2 block">Category</label>
-                            <Select value="Highlight">
+                            <Select
+                                value={selectedCategory}
+                                onValueChange={(value) => setSelectedCategory(value)}
+                            >
                                 <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
@@ -64,7 +69,8 @@ export function ArticleSection() {
                                 <ArticleButton
                                     key={category}
                                     text={category}
-                                    className=" hover:bg-[#DAD6D1]"
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`hover:bg-[#DAD6D1] ${selectedCategory === category ? 'bg-[#DAD6D1]' : ''}`}
                                 />
                             ))}
                         </div>
@@ -131,7 +137,10 @@ function BlogCard(props) {
 
 function ArticleButton(props) {
     return (
-        <button className={`px-4 py-3 transition-colors rounded-sm text-sm text-muted-foreground font-medium ${props.className}`}>
+        <button
+            onClick={props.onClick}
+            className={`px-4 py-3 transition-colors rounded-lg text-sm text-muted-foreground font-medium ${props.className}`}
+        >
             {props.text}
         </button>
     )
