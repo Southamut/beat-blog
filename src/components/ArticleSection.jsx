@@ -1,6 +1,6 @@
 import { Search, ChevronDown } from 'lucide-react'
-import { blogPosts } from "../data/blogPosts"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
     Select,
     SelectTrigger,
@@ -10,12 +10,80 @@ import {
 } from "@/components/ui/select"
 
 export function ArticleSection() {
-    // blog posts
-    const [post, setPost] = useState(blogPosts)
+    // blog posts state
+    const [posts, setPosts] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
     // categories
     const categories = ["Highlight", "Cat", "Inspiration", "General"]
     //select category
     const [selectedCategory, setSelectedCategory] = useState("Highlight")
+
+    // Fetch posts from API
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setLoading(true)
+                const response = await axios.get('https://blog-post-project-api.vercel.app/posts')
+                setPosts(response.data.posts)
+                setError(null)
+            } catch (err) {
+                setError('Failed to fetch posts')
+                console.error('Error fetching posts:', err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchPosts()
+    }, [])
+
+    // Format date function
+    const formatDate = (dateString) => {
+        const date = new Date(dateString)
+        return date.toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })
+    }
+
+    // Filter posts by category
+    const filteredPosts = posts.filter(post => {
+        if (selectedCategory === "Highlight") return true
+        return post.category === selectedCategory
+    })
+
+    if (loading) {
+        return (
+            <section className="md:max-w-10/12 mx-auto w-full bg-white">
+                <div className='px-8'>
+                    <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
+                </div>
+                <div className="py-4 sm:py-8 px-8">
+                    <div className="flex justify-center items-center h-64">
+                        <div className="text-gray-600">Loading posts...</div>
+                    </div>
+                </div>
+            </section>
+        )
+    }
+
+    if (error) {
+        return (
+            <section className="md:max-w-10/12 mx-auto w-full bg-white">
+                <div className='px-8'>
+                    <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
+                </div>
+                <div className="py-4 sm:py-8 px-8">
+                    <div className="flex justify-center items-center h-64">
+                        <div className="text-red-600">Error: {error}</div>
+                    </div>
+                </div>
+            </section>
+        )
+    }
 
     return (
         <section className="md:max-w-10/12 mx-auto w-full bg-white">
@@ -88,7 +156,7 @@ export function ArticleSection() {
 
                     {/* Blog cards grid */}
                     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
-                        {post.map((post) => (
+                        {filteredPosts.map((post) => (
                             <BlogCard
                                 key={post.id}
                                 image={post.image}
@@ -96,7 +164,7 @@ export function ArticleSection() {
                                 title={post.title}
                                 description={post.description}
                                 author={post.author}
-                                date={post.date} />
+                                date={formatDate(post.date)} />
                         ))}
                     </div>
                 </div>
@@ -110,7 +178,7 @@ function BlogCard(props) {
     return (
         <div className="flex flex-col gap-4">
             <a href="#" className="relative h-[212px] sm:h-[360px]">
-                <img className="w-full h-full object-cover rounded-md" src={props.image} alt="Understanding Cat Behavior: Why Your Feline Friend Acts the Way They Do" />
+                <img className="w-full h-full object-cover rounded-md" src={props.image} alt={props.title} />
             </a>
             <div className="flex flex-col">
                 <div className="flex">
