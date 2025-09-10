@@ -9,35 +9,81 @@ import {
     SelectItem,
 } from "@/components/ui/select"
 
+
 export function ArticleSection() {
     // blog posts state
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [loadingMore, setLoadingMore] = useState(false)
 
     // categories
     const categories = ["Highlight", "Cat", "Inspiration", "General"]
     //select category
     const [selectedCategory, setSelectedCategory] = useState("Highlight")
 
-    // Fetch posts from API
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                setLoading(true)
-                const response = await axios.get('https://blog-post-project-api.vercel.app/posts')
-                setPosts(response.data.posts)
-                setError(null)
-            } catch (err) {
-                setError('Failed to fetch posts')
-                console.error('Error fetching posts:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
+    //post per page
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
 
-        fetchPosts()
-    }, [])
+    const handleLoadMore = () => {
+        setPage((prevPage) => prevPage + 1);
+    };
+
+    // Fetch posts from API
+    const fetchPosts = async (pageNum = 1, resetPosts = false) => {
+        try {
+            if (pageNum === 1) {
+                setLoading(true)
+            } else {
+                setLoadingMore(true)
+            }
+
+            // Use category parameter only when not Highlight
+            const categoryParam = selectedCategory === "Highlight" ? "" : selectedCategory;
+
+            const response = await axios.get('https://blog-post-project-api.vercel.app/posts', {
+                params: {
+                    page: pageNum,
+                    limit: 6,
+                    category: categoryParam
+                }
+            })
+
+            if (resetPosts) {
+                setPosts(response.data.posts)
+            } else {
+                setPosts((prevPosts) => [...prevPosts, ...response.data.posts])
+            }
+
+            // Check if we've reached the last page
+            if (response.data.currentPage >= response.data.totalPages) {
+                setHasMore(false)
+            } else {
+                setHasMore(true)
+            }
+
+            setError(null)
+        } catch (err) {
+            setError('Failed to fetch posts')
+            console.error('Error fetching posts:', err)
+        } finally {
+            setLoading(false)
+            setLoadingMore(false)
+        }
+    }
+
+    // Initial load and when page changes
+    useEffect(() => {
+        fetchPosts(page, page === 1)
+    }, [page])
+
+    // Reset when category changes
+    useEffect(() => {
+        setPage(1)
+        setHasMore(true)
+        fetchPosts(1, true)
+    }, [selectedCategory])
 
     // Format date function
     const formatDate = (dateString) => {
@@ -49,12 +95,6 @@ export function ArticleSection() {
         })
     }
 
-    // Filter posts by category
-    const filteredPosts = posts.filter(post => {
-        if (selectedCategory === "Highlight") return true
-        return post.category === selectedCategory
-    })
-
     if (loading) {
         return (
             <section className="md:max-w-10/12 mx-auto w-full bg-white">
@@ -63,7 +103,7 @@ export function ArticleSection() {
                 </div>
                 <div className="py-4 sm:py-8 px-8">
                     <div className="flex justify-center items-center h-64">
-                        <div className="text-gray-600">Loading posts...</div>
+                        <LoadingSpinner message="Loading posts..." />
                     </div>
                 </div>
             </section>
@@ -85,6 +125,7 @@ export function ArticleSection() {
         )
     }
 
+    // Main return
     return (
         <section className="md:max-w-10/12 mx-auto w-full bg-white">
             {/* Header */}
@@ -153,10 +194,9 @@ export function ArticleSection() {
                         </div>
                     </div>
 
-
                     {/* Blog cards grid */}
                     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
-                        {filteredPosts.map((post) => (
+                        {posts.map((post) => (
                             <BlogCard
                                 key={post.id}
                                 image={post.image}
@@ -167,6 +207,26 @@ export function ArticleSection() {
                                 date={formatDate(post.date)} />
                         ))}
                     </div>
+
+                    {/* Load More Button */}
+                    {hasMore && (
+                        <div className="text-center mt-8">
+                            <button
+                                onClick={handleLoadMore}
+                                disabled={loadingMore}
+                                className={`hover:text-muted-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto ${!loadingMore ? 'underline' : ''}`}
+                            >
+                                {loadingMore ? (
+                                    <>
+                                        <LoadingSpinner message="" size="small" />
+                                        Loading more...
+                                    </>
+                                ) : (
+                                    'View more'
+                                )}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>
@@ -211,5 +271,21 @@ function ArticleButton(props) {
         >
             {props.text}
         </button>
+    )
+}
+
+// Loading Spinner Component
+function LoadingSpinner({ message = "Loading...", size = "large" }) {
+    const sizeClasses = {
+        small: "h-8 w-8",
+        medium: "h-12 w-12",
+        large: "h-16 w-16"
+    }
+
+    return (
+        <div className="flex flex-col justify-center items-center gap-3">
+            <div className={`${sizeClasses[size]} border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin`}></div>
+            <div className="text-gray-600">{message}</div>
+        </div>
     )
 }
