@@ -94,7 +94,7 @@ export function HeroSection() {
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#EFEEEB] py-6 px-4 md:px-16 flex items-center justify-between">
+    <footer className="w-full bg-[#EFEEEB] h-36 py-6 px-4 md:px-16 flex items-center justify-between">
       {/* Left: Get in touch and icons */}
       <div className="flex items-center gap-4">
         <span className="font-medium text-gray-800">Get in touch</span>
