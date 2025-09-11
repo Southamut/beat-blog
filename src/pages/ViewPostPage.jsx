@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import axios from 'axios'
+import ReactMarkdown from 'react-markdown'
 import { NavBar, Footer } from "../components/Homepage"
 import { ArrowLeft } from 'lucide-react'
 
@@ -93,80 +94,71 @@ export function ViewPostPage() {
         <>
             <NavBar />
             <div className="min-h-screen bg-white">
-                {/* Back Button */}
-                <div className="max-w-4xl mx-auto px-8 py-6">
-                    <Link
-                        to="/"
-                        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Articles
-                    </Link>
-                </div>
-
-                {/* Post Content */}
-                <article className="max-w-4xl mx-auto px-8 pb-12">
+                {/* Main Container with consistent padding like homepage */}
+                <div className="w-full md:max-w-4xl mx-auto px-8 py-12">
                     {/* Post Header */}
-                    <header className="mb-8">
+                    <article>
+                        {/* Category Tag */}
                         <div className="mb-4">
                             <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600">
                                 {post.category}
                             </span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 leading-tight">
+
+                        {/* Post Title */}
+                        <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight mb-6">
                             {post.title}
                         </h1>
-                        <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                            {post.description}
-                        </p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
+
+                        {/* Author Info */}
+                        <div className="flex items-center gap-4 mb-8">
                             <img
-                                className="w-10 h-10 rounded-full"
+                                className="w-12 h-12 rounded-full object-cover"
                                 src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
                                 alt={post.author}
                             />
-                            <div>
-                                <div className="font-medium text-gray-800">{post.author}</div>
-                                <div>{formatDate(post.date)}</div>
-                            </div>
-                            <div className="ml-auto">
-                                <span className="text-gray-500">❤️ {post.likes} likes</span>
+                            <div className="flex flex-col">
+                                <div className="font-semibold text-gray-800">{post.author}</div>
+                                <div className="text-sm text-gray-500">{formatDate(post.date)}</div>
                             </div>
                         </div>
-                    </header>
 
-                    {/* Featured Image */}
-                    <div className="mb-8">
-                        <img
-                            src={post.image}
-                            alt={post.title}
-                            className="w-full h-96 object-cover rounded-lg shadow-lg"
-                        />
-                    </div>
-
-                    {/* Post Content */}
-                    <div className="prose prose-lg max-w-none">
-                        <div className="whitespace-pre-line text-gray-700 leading-relaxed">
-                            {post.content.split('\n').map((paragraph, index) => {
-                                if (paragraph.startsWith('## ')) {
-                                    return (
-                                        <h2 key={index} className="text-2xl font-bold text-gray-800 mt-8 mb-4">
-                                            {paragraph.replace('## ', '')}
-                                        </h2>
-                                    )
-                                } else if (paragraph.trim() === '') {
-                                    return <br key={index} />
-                                } else {
-                                    return (
-                                        <p key={index} className="mb-4">
-                                            {paragraph}
-                                        </p>
-                                    )
-                                }
-                            })}
+                        {/* Featured Image */}
+                        <div className="mb-8">
+                            <img
+                                src={post.image}
+                                alt={post.title}
+                                className="w-full h-80 lg:h-96 object-cover rounded-lg"
+                            />
                         </div>
-                    </div>
-                </article>
+
+                        {/* Post Content with Markdown */}
+                        <div className="markdown text-gray-700 leading-relaxed">
+                            <ReactMarkdown>{post.content}</ReactMarkdown>
+                        </div>
+
+                        {/* Post Stats */}
+                        <div className="mt-12 pt-8 border-t border-gray-200">
+                            <div className="flex items-center gap-4">
+                                <span className="text-gray-600">❤️ {post.likes}</span>
+                                <button className="text-blue-600 hover:text-blue-800 font-medium">
+                                    Copy link
+                                </button>
+                                <div className="flex gap-2 ml-auto">
+                                    <a href="#" className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                                        f
+                                    </a>
+                                    <a href="#" className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                                        in
+                                    </a>
+                                    <a href="#" className="w-8 h-8 bg-blue-400 text-white rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
+                                        t
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
             </div>
             <Footer />
         </>

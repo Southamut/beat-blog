@@ -180,16 +180,16 @@ export function ArticleSection() {
 
     // Main return
     return (
-        <section className="md:max-w-10/12 mx-auto w-full bg-white">
+        <section className="border border-blue-500 md:max-w-10/12 mx-auto w-full bg-white">
             {/* Header */}
             <div className='px-8'>
                 <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
             </div>
             {/* Main content area with tabs/search bar */}
-            <div className="py-4 sm:py-8 px-0 md:px-8">
+            <div className="border border-blue-500 py-4 sm:py-8 px-0 md:px-8">
                 <div>
                     {/* Mobile layout - stacked */}
-                    <div className="md:hidden px-8 py-4 bg-[#f5f4f0]">
+                    <div className="border border-blue-500 md:hidden px-8 py-4 bg-[#f5f4f0]">
                         {/* Search bar */}
                         <div className="relative">
                             <div className="relative bg-white rounded-xl">
@@ -235,7 +235,7 @@ export function ArticleSection() {
                         </div>
 
                         {/* Category filter */}
-                        <div className="md:hidden w-full mt-4">
+                        <div className="border border-blue-500 md:hidden w-full mt-4">
                             <label className="text-muted-foreground text-sm mb-2 block">Category</label>
                             <Select
                                 value={selectedCategory}
@@ -256,7 +256,7 @@ export function ArticleSection() {
                     </div>
 
                     {/* Desktop layout - horizontal */}
-                    <div className="hidden md:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
+                    <div className="border border-blue-500 hidden md:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
                         {/* Category tabs */}
                         <div className="hidden md:flex space-x-2">
                             {categories.map((category) => (
@@ -312,7 +312,7 @@ export function ArticleSection() {
                     </div>
 
                     {/* Blog cards grid */}
-                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
+                    <div className="border border-blue-500 mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
                         {posts.map((post) => (
                             <BlogCard
                                 key={post.id}

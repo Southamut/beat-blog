@@ -1,4 +1,4 @@
-import { Linkedin, Github, Mail } from 'lucide-react'
+import { Linkedin, Github, Mail, Menu } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,15 +9,15 @@ import {
 
 export function NavBar() {
   return (
-    <nav className="w-full flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-sm">
+    <nav className="border border-blue-500 w-full flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-sm">
       {/* Logo */}
-      <div className="text-2xl font-bold text-gray-800">hh.</div>
+      <div className="border border-blue-500 text-2xl font-bold text-gray-800">hh.</div>
 
       {/* Mobile navigation buttons */}
-      <div className="flex flex-col sm:hidden">
+      <div className="border border-blue-500 flex flex-col sm:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
-            <img src="./src/assets/navbar.svg" alt="navigation menu" />
+            <Menu className="w-6 h-6 text-gray-800" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
             <DropdownMenuItem className="px-4">
@@ -35,7 +35,7 @@ export function NavBar() {
       </div>
 
       {/* Desktop navigation buttons */}
-      <div className="gap-3 relative hidden sm:flex">
+      <div className="border border-blue-500 gap-3 relative hidden sm:flex">
         <button className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors">
           Log in
         </button>
@@ -49,8 +49,8 @@ export function NavBar() {
 
 export function HeroSection() {
   return (
-    <section className="w-full md:max-w-10/12 mx-auto px-8 py-12 bg-white">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <section className="border border-blue-500 w-full md:max-w-10/12 mx-auto px-8 py-12 bg-white">
+      <div className="border border-blue-500 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight mb-4">
