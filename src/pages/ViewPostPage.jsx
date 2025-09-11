@@ -128,19 +128,24 @@ export function ViewPostPage() {
         <>
             <NavBar />
 
-            <div className="min-h-screen px-4 md:px-16 pt-12 bg-white">
-                {/* Main Container with consistent padding like homepage */}
-                <div className="w-full mb-8">
+            {/* only image */}
+            <div className="md:px-16 md:pt-12 bg-white">
+                <div className="w-full mb-6 md:mb-8">
                     {/* Featured Image - Full Width */}
                     <div className="w-full">
                         <img
                             src={post.image}
                             alt={post.title}
-                            className="w-full h-80 lg:h-96 object-cover rounded-2xl"
+                            className="w-full aspect-[18/9] md:aspect-[21/9] object-cover md:rounded-2xl"
                         />
                     </div>
                 </div>
+            </div>
 
+            {/* main content */}
+            <div className="px-4 md:px-16 bg-white">
+
+                {/* Main Container with consistent padding like homepage */}
                 <div className="w-full flex flex-col md:flex-row gap-8">
 
                     {/* Left content */}
