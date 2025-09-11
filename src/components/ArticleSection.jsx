@@ -180,139 +180,143 @@ export function ArticleSection() {
 
     // Main return
     return (
-        <section className="border border-blue-500 md:max-w-10/12 mx-auto w-full bg-white">
-            {/* Header */}
-            <div className='px-8'>
-                <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
-            </div>
-            {/* Main content area with tabs/search bar */}
-            <div className="border border-blue-500 py-4 sm:py-8 px-0 md:px-8">
-                <div>
-                    {/* Mobile layout - stacked */}
-                    <div className="border border-blue-500 md:hidden px-8 py-4 bg-[#f5f4f0]">
-                        {/* Search bar */}
-                        <div className="relative">
-                            <div className="relative bg-white rounded-xl">
-                                <input
-                                    type="text"
-                                    placeholder="Search"
-                                    value={searchKeyword}
-                                    onChange={handleSearchInputChange}
-                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white border-none rounded-lg pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
-                                />
-                                <Search className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                            </div>
+        <section className="mx-auto w-full py-8 bg-white">
+            {/* separate category tab and search bar */}
+            <div className="md:px-16">
+                {/* Header */}
+                <div className="pb-4 md:pb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 text-left px-4 md:px-0">Latest articles</h2>
+                </div>
 
-                            {/* Search Suggestions Dropdown */}
-                            {showSuggestions && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
-                                    {searchLoading ? (
-                                        <div className="p-4 text-center">
-                                            <LoadingSpinner message="Searching..." size="small" />
-                                        </div>
-                                    ) : searchSuggestions.length > 0 ? (
-                                        searchSuggestions.map((post) => (
-                                            <div
-                                                key={post.id}
-                                                onClick={() => handleSuggestionClick(post)}
-                                                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                                            >
-                                                <h3 className="font-medium text-gray-800 text-sm line-clamp-1">
-                                                    {post.title}
-                                                </h3>
-                                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                                    {post.description}
-                                                </p>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="p-4 text-center text-gray-500 text-sm">
-                                            No posts found
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Category filter */}
-                        <div className="border border-blue-500 md:hidden w-full mt-4">
-                            <label className="text-muted-foreground text-sm mb-2 block">Category</label>
-                            <Select
-                                value={selectedCategory}
-                                onValueChange={(value) => setSelectedCategory(value)}
-                            >
-                                <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
-                                    <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-white border-none flex-row-reverse">
-                                    {categories.map((category) => (
-                                        <SelectItem key={category} value={category}>
-                                            {category}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* Desktop layout - horizontal */}
-                    <div className="border border-blue-500 hidden md:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
-                        {/* Category tabs */}
-                        <div className="hidden md:flex space-x-2">
-                            {categories.map((category) => (
-                                <ArticleButton
-                                    key={category}
-                                    text={category}
-                                    onClick={() => setSelectedCategory(category)}
-                                    className={`hover:bg-[#DAD6D1] ${selectedCategory === category ? 'bg-[#DAD6D1]' : ''}`}
-                                />
-                            ))}
-                        </div>
-                        {/* Search bar */}
-                        <div className="relative w-80">
+                {/* Mobile layout - stacked */}
+                <div className="md:hidden px-4 py-4 bg-[#f5f4f0]">
+                    {/* Search bar */}
+                    <div className="relative">
+                        <div className="relative bg-white rounded-xl">
                             <input
                                 type="text"
                                 placeholder="Search"
                                 value={searchKeyword}
                                 onChange={handleSearchInputChange}
-                                className="w-full px-4 py-2 bg-white border-none rounded-xl pl-4 pr-10 text-sm text-gray-600 placeholder-gray-400 focus:outline-none"
+                                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white border-none rounded-lg pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
                             />
-                            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-
-                            {/* Search Suggestions Dropdown */}
-                            {showSuggestions && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
-                                    {searchLoading ? (
-                                        <div className="p-4 text-center">
-                                            <LoadingSpinner message="Searching..." size="small" />
-                                        </div>
-                                    ) : searchSuggestions.length > 0 ? (
-                                        searchSuggestions.map((post) => (
-                                            <div
-                                                key={post.id}
-                                                onClick={() => handleSuggestionClick(post)}
-                                                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                                            >
-                                                <h3 className="font-medium text-gray-800 text-sm line-clamp-1">
-                                                    {post.title}
-                                                </h3>
-                                                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                                    {post.description}
-                                                </p>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="p-4 text-center text-gray-500 text-sm">
-                                            No posts found
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                            <Search className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                         </div>
+
+                        {/* Search Suggestions Dropdown */}
+                        {showSuggestions && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                                {searchLoading ? (
+                                    <div className="p-4 text-center">
+                                        <LoadingSpinner message="Searching..." size="small" />
+                                    </div>
+                                ) : searchSuggestions.length > 0 ? (
+                                    searchSuggestions.map((post) => (
+                                        <div
+                                            key={post.id}
+                                            onClick={() => handleSuggestionClick(post)}
+                                            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                        >
+                                            <h3 className="font-medium text-gray-800 text-sm line-clamp-1">
+                                                {post.title}
+                                            </h3>
+                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                                {post.description}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                        No posts found
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
+                    {/* Category filter */}
+                    <div className="md:hidden w-full mt-4">
+                        <label className="text-muted-foreground text-sm mb-2 block">Category</label>
+                        <Select
+                            value={selectedCategory}
+                            onValueChange={(value) => setSelectedCategory(value)}
+                        >
+                            <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
+                                <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border-none flex-row-reverse">
+                                {categories.map((category) => (
+                                    <SelectItem key={category} value={category}>
+                                        {category}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
+                {/* Desktop layout - horizontal */}
+                <div className="hidden h-20 md:flex items-center justify-between bg-[#f5f4f0] rounded-2xl px-4">
+                    {/* Category tabs */}
+                    <div className="hidden md:flex space-x-2 h-12">
+                        {categories.map((category) => (
+                            <ArticleButton
+                                key={category}
+                                text={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`hover:bg-[#DAD6D1] ${selectedCategory === category ? 'bg-[#DAD6D1]' : ''}`}
+                            />
+                        ))}
+                    </div>
+                    {/* Search bar */}
+                    <div className="relative w-80 ">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            value={searchKeyword}
+                            onChange={handleSearchInputChange}
+                            className="w-full px-4 py-2 h-12 bg-white border-none rounded-xl pl-4 pr-10 text-sm text-gray-600 placeholder-gray-400 focus:outline-none"
+                        />
+                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+                        {/* Search Suggestions Dropdown */}
+                        {showSuggestions && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                                {searchLoading ? (
+                                    <div className="p-4 text-center">
+                                        <LoadingSpinner message="Searching..." size="small" />
+                                    </div>
+                                ) : searchSuggestions.length > 0 ? (
+                                    searchSuggestions.map((post) => (
+                                        <div
+                                            key={post.id}
+                                            onClick={() => handleSuggestionClick(post)}
+                                            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                        >
+                                            <h3 className="font-medium text-gray-800 text-sm line-clamp-1">
+                                                {post.title}
+                                            </h3>
+                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                                {post.description}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                        No posts found
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Main content area with tabs/search bar */}
+            <div className="pt-6 px-4 md:px-16">
+                <div>
                     {/* Blog cards grid */}
-                    <div className="border border-blue-500 mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
+                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         {posts.map((post) => (
                             <BlogCard
                                 key={post.id}
@@ -355,8 +359,8 @@ export function ArticleSection() {
 function BlogCard(props) {
     return (
         <div className="flex flex-col gap-4">
-            <Link to={`/post/${props.id}`} className="relative h-[212px] sm:h-[360px]">
-                <img className="w-full h-full object-cover rounded-md" src={props.image} alt={props.title} />
+            <Link to={`/post/${props.id}`} className="relative">
+                <img className="w-full aspect-[16/10] object-cover rounded-2xl" src={props.image} alt={props.title} />
             </Link>
             <div className="flex flex-col">
                 <div className="flex">
@@ -385,7 +389,7 @@ function ArticleButton(props) {
     return (
         <button
             onClick={props.onClick}
-            className={`px-4 py-3 transition-colors rounded-lg text-sm text-muted-foreground font-medium ${props.className}`}
+            className={`px-4 py-3 transition-colors rounded-xl text-sm text-muted-foreground font-medium ${props.className}`}
         >
             {props.text}
         </button>
