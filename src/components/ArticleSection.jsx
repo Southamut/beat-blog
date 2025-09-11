@@ -1,5 +1,6 @@
 import { Search, ChevronDown } from 'lucide-react'
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
     Select,
@@ -9,13 +10,18 @@ import {
     SelectItem,
 } from "@/components/ui/select"
 
-
 export function ArticleSection() {
     // blog posts state
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [loadingMore, setLoadingMore] = useState(false)
+
+    // Search states
+    const [searchKeyword, setSearchKeyword] = useState('')
+    const [searchSuggestions, setSearchSuggestions] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const [searchLoading, setSearchLoading] = useState(false)
 
     // categories
     const categories = ["Highlight", "Cat", "Inspiration", "General"]
@@ -29,6 +35,53 @@ export function ArticleSection() {
     const handleLoadMore = () => {
         setPage((prevPage) => prevPage + 1);
     };
+
+    // Search function
+    const handleSearch = async (keyword) => {
+        if (!keyword.trim()) {
+            setSearchSuggestions([])
+            setShowSuggestions(false)
+            return
+        }
+
+        try {
+            setSearchLoading(true)
+            const response = await axios.get('https://blog-post-project-api.vercel.app/posts', {
+                params: {
+                    keyword: keyword,
+                    limit: 6
+                }
+            })
+            setSearchSuggestions(response.data.posts)
+            setShowSuggestions(true)
+        } catch (err) {
+            console.error('Search error:', err)
+            setSearchSuggestions([])
+        } finally {
+            setSearchLoading(false)
+        }
+    }
+
+    // Handle search input change
+    const handleSearchInputChange = (e) => {
+        const value = e.target.value
+        setSearchKeyword(value)
+
+        if (value.trim()) {
+            handleSearch(value)
+        } else {
+            setSearchSuggestions([])
+            setShowSuggestions(false)
+        }
+    }
+
+    // Handle search suggestion click
+    const handleSuggestionClick = (post) => {
+        setSearchKeyword(post.title)
+        setShowSuggestions(false)
+        // Navigate to post page
+        window.location.href = `/post/${post.id}`
+    }
 
     // Fetch posts from API
     const fetchPosts = async (pageNum = 1, resetPosts = false) => {
@@ -127,78 +180,147 @@ export function ArticleSection() {
 
     // Main return
     return (
-        <section className="md:max-w-10/12 mx-auto w-full bg-white">
-            {/* Header */}
-            <div className='px-8'>
-                <h2 className="text-lg font-bold text-gray-900 text-left">Latest articles</h2>
-            </div>
-            {/* Main content area with tabs/search bar */}
-            <div className="py-4 sm:py-8 px-0 md:px-8">
-                <div>
-                    {/* Mobile layout - stacked */}
-                    <div className="md:hidden px-8 py-4 bg-[#f5f4f0]">
-                        {/* Search bar */}
-                        <div className="relative">
-                            <div className="relative bg-white rounded-xl">
-                                <input
-                                    type="text"
-                                    placeholder="Search"
-                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white border-none rounded-lg pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
-                                />
-                                <Search className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                            </div>
-                        </div>
+        <section className="mx-auto w-full py-8 bg-white">
+            {/* separate category tab and search bar */}
+            <div className="md:px-16">
+                {/* Header */}
+                <div className="pb-4 md:pb-8">
+                    <h2 className="text-2xl font-bold text-gray-900 text-left px-4 md:px-0">Latest articles</h2>
+                </div>
 
-                        {/* Category filter */}
-                        <div className="md:hidden w-full mt-4">
-                            <label className="text-muted-foreground text-sm mb-2 block">Category</label>
-                            <Select
-                                value={selectedCategory}
-                                onValueChange={(value) => setSelectedCategory(value)}
-                            >
-                                <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
-                                    <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-white border-none flex-row-reverse">
-                                    {categories.map((category) => (
-                                        <SelectItem key={category} value={category}>
-                                            {category}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* Desktop layout - horizontal */}
-                    <div className="hidden md:flex items-center justify-between bg-[#f5f4f0] rounded-xl p-4">
-                        {/* Category tabs */}
-                        <div className="hidden md:flex space-x-2">
-                            {categories.map((category) => (
-                                <ArticleButton
-                                    key={category}
-                                    text={category}
-                                    onClick={() => setSelectedCategory(category)}
-                                    className={`hover:bg-[#DAD6D1] ${selectedCategory === category ? 'bg-[#DAD6D1]' : ''}`}
-                                />
-                            ))}
-                        </div>
-                        {/* Search bar */}
-                        <div className="relative w-80">
+                {/* Mobile layout - stacked */}
+                <div className="md:hidden px-4 py-4 bg-[#f5f4f0]">
+                    {/* Search bar */}
+                    <div className="relative">
+                        <div className="relative bg-white rounded-xl">
                             <input
                                 type="text"
                                 placeholder="Search"
-                                className="w-full px-4 py-2 bg-white border-none rounded-xl pl-4 pr-10 text-sm text-gray-600 placeholder-gray-400 focus:outline-none"
+                                value={searchKeyword}
+                                onChange={handleSearchInputChange}
+                                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white border-none rounded-lg pl-3 sm:pl-4 pr-10 sm:pr-12 text-sm sm:text-base text-gray-600 placeholder-gray-400 focus:outline-none"
                             />
-                            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Search className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                         </div>
+
+                        {/* Search Suggestions Dropdown */}
+                        {showSuggestions && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                                {searchLoading ? (
+                                    <div className="p-4 text-center">
+                                        <LoadingSpinner message="Searching..." size="small" />
+                                    </div>
+                                ) : searchSuggestions.length > 0 ? (
+                                    searchSuggestions.map((post) => (
+                                        <div
+                                            key={post.id}
+                                            onClick={() => handleSuggestionClick(post)}
+                                            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                        >
+                                            <h3 className="font-medium text-gray-800 text-sm line-clamp-1">
+                                                {post.title}
+                                            </h3>
+                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                                {post.description}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                        No posts found
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
+                    {/* Category filter */}
+                    <div className="md:hidden w-full mt-4">
+                        <label className="text-muted-foreground text-sm mb-2 block">Category</label>
+                        <Select
+                            value={selectedCategory}
+                            onValueChange={(value) => setSelectedCategory(value)}
+                        >
+                            <SelectTrigger className="w-full py-3 bg-white border-none rounded-lg text-muted-foreground">
+                                <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border-none flex-row-reverse">
+                                {categories.map((category) => (
+                                    <SelectItem key={category} value={category}>
+                                        {category}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
+                {/* Desktop layout - horizontal */}
+                <div className="hidden h-20 md:flex items-center justify-between bg-[#f5f4f0] rounded-2xl px-4">
+                    {/* Category tabs */}
+                    <div className="hidden md:flex space-x-2 h-12">
+                        {categories.map((category) => (
+                            <ArticleButton
+                                key={category}
+                                text={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`hover:bg-[#DAD6D1] ${selectedCategory === category ? 'bg-[#DAD6D1]' : ''}`}
+                            />
+                        ))}
+                    </div>
+                    {/* Search bar */}
+                    <div className="relative w-80 ">
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            value={searchKeyword}
+                            onChange={handleSearchInputChange}
+                            className="w-full px-4 py-2 h-12 bg-white border-none rounded-xl pl-4 pr-10 text-sm text-gray-600 placeholder-gray-400 focus:outline-none"
+                        />
+                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+
+                        {/* Search Suggestions Dropdown */}
+                        {showSuggestions && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                                {searchLoading ? (
+                                    <div className="p-4 text-center">
+                                        <LoadingSpinner message="Searching..." size="small" />
+                                    </div>
+                                ) : searchSuggestions.length > 0 ? (
+                                    searchSuggestions.map((post) => (
+                                        <div
+                                            key={post.id}
+                                            onClick={() => handleSuggestionClick(post)}
+                                            className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                        >
+                                            <h3 className="font-medium text-gray-800 text-sm line-clamp-1">
+                                                {post.title}
+                                            </h3>
+                                            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                                {post.description}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-4 text-center text-gray-500 text-sm">
+                                        No posts found
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Main content area with tabs/search bar */}
+            <div className="pt-6 px-4 md:px-16">
+                <div>
                     {/* Blog cards grid */}
-                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 px-8">
+                    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         {posts.map((post) => (
                             <BlogCard
                                 key={post.id}
+                                id={post.id}
                                 image={post.image}
                                 category={post.category}
                                 title={post.title}
@@ -237,19 +359,19 @@ export function ArticleSection() {
 function BlogCard(props) {
     return (
         <div className="flex flex-col gap-4">
-            <a href="#" className="relative h-[212px] sm:h-[360px]">
-                <img className="w-full h-full object-cover rounded-md" src={props.image} alt={props.title} />
-            </a>
+            <Link to={`/post/${props.id}`} className="relative">
+                <img className="w-full aspect-[16/10] object-cover rounded-2xl" src={props.image} alt={props.title} />
+            </Link>
             <div className="flex flex-col">
                 <div className="flex">
-                    <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">{props.category}
+                    <span className="bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">{props.category}
                     </span>
                 </div>
-                <a href="#" >
+                <Link to={`/post/${props.id}`}>
                     <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
                         {props.title}
                     </h2>
-                </a>
+                </Link>
                 <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
                     {props.description}</p>
                 <div className="flex items-center text-sm">
@@ -267,7 +389,7 @@ function ArticleButton(props) {
     return (
         <button
             onClick={props.onClick}
-            className={`px-4 py-3 transition-colors rounded-lg text-sm text-muted-foreground font-medium ${props.className}`}
+            className={`px-4 py-3 transition-colors rounded-xl text-sm text-muted-foreground font-medium ${props.className}`}
         >
             {props.text}
         </button>

@@ -1,17 +1,15 @@
-import { Linkedin, Github, Mail } from 'lucide-react'
+import { Linkedin, Github, Mail, Menu } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
 
 export function NavBar() {
   return (
-    <nav className="w-full flex justify-between items-center px-4 sm:px-8 py-4 bg-white shadow-sm">
+    <nav className="border-b border-[#DAD6D1] w-full flex justify-between items-center px-4 md:px-16 py-4 bg-white shadow-sm">
       {/* Logo */}
       <div className="text-2xl font-bold text-gray-800">hh.</div>
 
@@ -19,7 +17,7 @@ export function NavBar() {
       <div className="flex flex-col sm:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
-            <img src="./src/assets/navbar.svg" alt="navigation menu" />
+            <Menu className="w-6 h-6 text-gray-800" />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
             <DropdownMenuItem className="px-4">
@@ -51,7 +49,7 @@ export function NavBar() {
 
 export function HeroSection() {
   return (
-    <section className="w-full md:max-w-10/12 mx-auto px-8 py-12 bg-white">
+    <section className="w-full mx-auto px-4 md:px-16 py-12 bg-white">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">
@@ -96,7 +94,7 @@ export function HeroSection() {
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#EFEEEB] py-6 px-4 sm:px-8 flex items-center justify-between">
+    <footer className="w-full bg-[#EFEEEB] h-36 py-6 px-4 md:px-16 flex items-center justify-between">
       {/* Left: Get in touch and icons */}
       <div className="flex items-center gap-4">
         <span className="font-medium text-gray-800">Get in touch</span>
