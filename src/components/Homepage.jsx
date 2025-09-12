@@ -15,7 +15,9 @@ export function NavBar() {
   return (
     <nav className="border-b border-[#DAD6D1] w-full flex justify-between items-center px-4 md:px-16 py-4 bg-white shadow-sm">
       {/* Logo */}
-      <div className="text-2xl font-bold text-gray-800">hh.</div>
+      <button onClick={() => navigate("/")} className="text-2xl font-bold">
+        hh.
+      </button>
 
       {/* Mobile navigation buttons */}
       <div className="flex flex-col sm:hidden">

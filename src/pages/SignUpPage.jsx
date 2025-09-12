@@ -77,7 +77,7 @@ export function SignupPage() {
                         <div className="flex justify-center">
                             <button
                                 type="submit"
-                                className="px-8 py-2 bg-foreground text-white rounded-full bg-gray-800 hover:bg-muted-foreground transition-colors flex items-center gap-1"
+                                className="px-8 py-2 bg-foreground text-white rounded-full bg-[#26231E] hover:bg-muted-foreground transition-colors flex items-center gap-1"
                             >
                                 Sign up
                             </button>
