@@ -5,13 +5,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useNavigate } from 'react-router-dom'
 
 
 export function NavBar() {
+
+  const navigate = useNavigate()
+
   return (
     <nav className="border-b border-[#DAD6D1] w-full flex justify-between items-center px-4 md:px-16 py-4 bg-white shadow-sm">
       {/* Logo */}
-      <div className="text-2xl font-bold text-gray-800">hh.</div>
+      <button onClick={() => navigate("/")} className="text-2xl font-bold">
+        hh.
+      </button>
 
       {/* Mobile navigation buttons */}
       <div className="flex flex-col sm:hidden">
@@ -21,12 +27,18 @@ export function NavBar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
             <DropdownMenuItem className="px-4">
-              <button className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors">
+              <button
+                className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors"
+                onClick={() => navigate("/login")}
+              >
                 Log in
               </button>
             </DropdownMenuItem>
             <DropdownMenuItem className="px-4">
-              <button className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors">
+              <button
+                className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors"
+                onClick={() => navigate("/sign-up")}
+              >
                 Sign up
               </button>
             </DropdownMenuItem>
@@ -36,10 +48,16 @@ export function NavBar() {
 
       {/* Desktop navigation buttons */}
       <div className="gap-3 relative hidden sm:flex">
-        <button className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors">
+        <button
+          className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors"
+          onClick={() => navigate("/login")}
+        >
           Log in
         </button>
-        <button className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors relative">
+        <button
+          className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors relative"
+          onClick={() => navigate("/sign-up")}
+        >
           Sign up
         </button>
       </div>

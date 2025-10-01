@@ -1,4 +1,4 @@
-import { Search, ChevronDown } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
