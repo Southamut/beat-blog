@@ -13,6 +13,7 @@ app.get("/test", (req, res) => {
 // post
 app.use("/posts", postsRouter);
 
+
 app.listen(port, () => {
     console.log(`Server is running at ${port}`);
 });
