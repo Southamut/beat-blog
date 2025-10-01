@@ -1,5 +1,5 @@
 import express from "express";
-import postsRouter from "./routes/posts.js";
+import postsRouter from "./routes/posts.mjs";
 
 const app = express();
 const port = process.env.PORT || 4001;
