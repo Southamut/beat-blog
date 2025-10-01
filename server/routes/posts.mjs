@@ -1,5 +1,6 @@
 import express from "express";
 import supabase from "../utils/supabase.js";
+import { validatePostDataSingle } from "../middleware/validation.mjs";
 
 const router = express.Router();
 
@@ -80,17 +81,10 @@ router.get("/:postId", async (req, res) => {
     }
 });
 
-// POST /posts - User สามารถสร้างบทความใหม่ขึ้นมาได้ในระบบ
-router.post("/", async (req, res) => {
+// POST /posts - User สามารถสร้างบทความใหม่ขึ้นมาได้ในระบบ (with validation)
+router.post("/", validatePostDataSingle, async (req, res) => {
     try {
-        const { title, image, category_id } = req.body;
-
-        // Check if required data is provided
-        if (!title || !image || !category_id) {
-            return res.status(400).json({
-                message: "Server could not create post because there are missing data from client"
-            });
-        }
+        const { title, image, category_id, description, content, status_id } = req.body;
 
         // Insert new post into database
         const { data, error } = await supabase
@@ -99,7 +93,10 @@ router.post("/", async (req, res) => {
                 {
                     title: title,
                     image: image,
-                    category_id: category_id
+                    category_id: category_id,
+                    description: description,
+                    content: content,
+                    status_id: status_id
                 }
             ])
             .select();
@@ -123,18 +120,11 @@ router.post("/", async (req, res) => {
     }
 });
 
-// PUT /posts/:postId - นักเขียนสามารถแก้ไขบทความที่ได้เคยสร้างไว้ก่อนหน้านี้
-router.put("/:postId", async (req, res) => {
+// PUT /posts/:postId - นักเขียนสามารถแก้ไขบทความที่ได้เคยสร้างไว้ก่อนหน้านี้ (with validation)
+router.put("/:postId", validatePostDataSingle, async (req, res) => {
     try {
         const { postId } = req.params;
-        const { title, image, category_id } = req.body;
-
-        // Check if required data is provided
-        if (!title || !image || !category_id) {
-            return res.status(400).json({
-                message: "Server could not create post because there are missing data from client"
-            });
-        }
+        const { title, image, category_id, description, content, status_id } = req.body;
 
         // Check if post exists first
         const { data: existingPost, error: checkError } = await supabase
@@ -155,7 +145,10 @@ router.put("/:postId", async (req, res) => {
             .update({
                 title: title,
                 image: image,
-                category_id: category_id
+                category_id: category_id,
+                description: description,
+                content: content,
+                status_id: status_id
             })
             .eq('id', postId)
             .select();
