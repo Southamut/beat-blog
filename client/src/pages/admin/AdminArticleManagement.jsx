@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, Edit, Trash2, Plus, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { blogPosts } from "../../data/blogPosts"
 import { useNavigate } from "react-router-dom"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -37,18 +38,18 @@ export function AdminArticleManagement() {
         <SidebarProvider>
             <AdminPanel />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-[#DAD6D1] px-4 justify-between">
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
                         <h1 className="text-xl font-semibold">Article Management</h1>
                     </div>
-                    <button
-                        className="px-8 py-2 bg-[#26231E] text-white rounded-full hover:bg-gray-700 transition-colors flex items-center justify-center gap-2 flex-shrink-0"
+                    <Button
+                        className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"
                         onClick={() => navigate("/admin/article-management/create")}
                     >
                         <Plus size={18} />
                         Create article
-                    </button>
+                    </Button>
                 </header>
 
                 <div className="flex flex-1 flex-col gap-4 p-8">
