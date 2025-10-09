@@ -9,6 +9,8 @@ import { SignupPage } from './pages/SignUpPage'
 import { AdminArticleManagement } from './pages/admin/AdminArticleManagement'
 import AdminArticleCreate from './pages/admin/AdminArticleCreate'
 import { AdminCategoryManagement } from './pages/admin/AdminCategoryManagement'
+import AdminCategoryCreate from './pages/admin/AdminCategoryCreate'
+import AdminCategoryEdit from './pages/admin/AdminCategoryEdit'
 import { AdminProfile } from './pages/admin/AdminProfile'
 import { AdminNotification } from './pages/admin/AdminNotification'
 import { AdminResetPassword } from './pages/admin/AdminResetPassword'
@@ -28,6 +30,8 @@ function App() {
           <Route path="/admin/article-management/create" element={<AdminArticleCreate />} />
           <Route path="/admin/article-management/edit/:articleId" element={<AdminArticleEdit />} />
           <Route path="/admin/category-management" element={<AdminCategoryManagement />} />
+          <Route path="/admin/category-management/create" element={<AdminCategoryCreate />} />
+          <Route path="/admin/category-management/edit/:categoryId" element={<AdminCategoryEdit />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
           <Route path="/admin/notifications" element={<AdminNotification />} />
           <Route path="/admin/reset-password" element={<AdminResetPassword />} />

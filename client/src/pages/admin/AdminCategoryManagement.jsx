@@ -198,15 +198,11 @@ export function AdminCategoryManagement() {
                                                                 );
                                                             }}
                                                         >
-                                                            <PenSquare className="h-4 w-4 text-[#43403B]" />
+                                                            <PenSquare className="h-4 w-4 text-brown-600" />
                                                         </button>
-                                                        <button
-                                                            className="p-2 hover:bg-gray-200 rounded transition-colors"
-                                                        >
-                                                            <DeleteCategoryDialog
-                                                                onDelete={() => handleDelete(category.id)}
-                                                            />
-                                                        </button>
+                                                        <DeleteCategoryDialog
+                                                            onDelete={() => handleDelete(category.id)}
+                                                        />
                                                     </div>
                                                 </TableCell>
                                             </TableRow>
@@ -237,8 +233,8 @@ function DeleteCategoryDialog({ onDelete }) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <button>
-                    <Trash2 className="h-4 w-4 hover:text-muted-foreground text-[#43403B]" />
+                <button className="p-2 hover:bg-gray-200 rounded transition-colors">
+                    <Trash2 className="h-4 w-4 text-brown-600" />
                 </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-white rounded-md pt-16 pb-6 max-w-[22rem] sm:max-w-md flex flex-col items-center">
@@ -249,12 +245,12 @@ function DeleteCategoryDialog({ onDelete }) {
                     Do you want to delete this category?
                 </AlertDialogDescription>
                 <div className="flex flex-row gap-4">
-                    <AlertDialogCancel className="bg-background rounded-full text-foreground border border-foreground hover:border-muted-foreground hover:text-muted-foreground transition-colors w-28 h-12 flex items-center justify-center">
+                    <AlertDialogCancel className="bg-white rounded-full text-brown-600 border border-brown-400 hover:bg-brown-100 transition-colors w-28 h-12 flex items-center justify-center">
                         Cancel
                     </AlertDialogCancel>
                     <button
                         onClick={onDelete}
-                        className="rounded-full text-white bg-black hover:bg-muted-foreground transition-colors w-28 h-12 flex items-center justify-center"
+                        className="rounded-full text-white bg-brown-600 hover:bg-brown-500 transition-colors w-28 h-12 flex items-center justify-center"
                     >
                         Delete
                     </button>
