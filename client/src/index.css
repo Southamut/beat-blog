@@ -1,3 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Base Colors */
+    --brown-600: #26231e;
+    --brown-500: #43403b;
+    --brown-400: #75716b;
+    --brown-300: #dad6d1;
+    --brown-200: #efeeeb;
+    --brown-100: #f9f8f6;
+    --white: #ffffff;
+
+    /* Brand Colors */
+    --orange: #f2b68c;
+    --green: #12b279;
+    --green-light: #d7f2e9;
+    --red: #eb5164;
+  }
+}
