@@ -12,7 +12,7 @@ import { AdminCategoryManagement } from './pages/admin/AdminCategoryManagement'
 import { AdminProfile } from './pages/admin/AdminProfile'
 import { AdminNotification } from './pages/admin/AdminNotification'
 import { AdminResetPassword } from './pages/admin/AdminResetPassword'
-import { AdminArticleEdit } from './pages/admin/AdminArticleEdit'
+import AdminArticleEdit from './pages/admin/AdminArticleEdit'
 
 function App() {
   return (

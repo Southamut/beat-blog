@@ -1,8 +1,15 @@
 import express from "express";
 import supabase from "../utils/supabase.js";
 import { validatePostDataSingle } from "../middleware/validation.mjs";
+import multer from 'multer';
 
 const router = express.Router();
+
+// Configure multer for file uploads
+const upload = multer({
+    storage: multer.memoryStorage(), // Use memory storage for buffer access
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 // GET /posts - นักเขียนสามารถดูข้อมูลบทความทั้งหมดในระบบได้
 router.get("/", async (req, res) => {
@@ -216,6 +223,87 @@ router.delete("/:postId", async (req, res) => {
         return res.status(500).json({
             message: "Server could not delete post because database connection"
         });
+    }
+});
+
+// GET /posts/:id - Get single post
+router.get('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { data, error } = await supabase
+            .from('posts')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching post:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// PUT /posts/:id - Update post
+router.put('/:id', upload.single('imageFile'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, category_id, description, content, status_id, user_id } = req.body;
+
+        let imageUrl = null;
+        if (req.file) {
+            // Upload to Supabase Storage and get URL
+            const fileExt = req.file.originalname.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('post-images')
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype
+                });
+
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = supabase.storage
+                .from('post-images')
+                .getPublicUrl(fileName);
+
+            imageUrl = urlData.publicUrl;
+        }
+
+        const updateData = {
+            title,
+            category_id: parseInt(category_id),
+            description,
+            content,
+            status_id: parseInt(status_id),
+            user_id,
+            date: new Date().toISOString(),
+        };
+
+        // Only update image if new file is uploaded
+        if (imageUrl) {
+            updateData.image = imageUrl;
+        }
+
+        const { data, error } = await supabase
+            .from('posts')
+            .update(updateData)
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json(data);
+    } catch (error) {
+        console.error('Error updating post:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
