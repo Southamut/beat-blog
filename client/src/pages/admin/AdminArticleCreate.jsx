@@ -266,14 +266,14 @@ export default function AdminArticleCreate() {
             <AdminPanel />
             <SidebarInset>
 
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-[#DAD6D1] px-4 justify-between">
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
                         <h1 className="text-xl font-semibold">Create article</h1>
                     </div>
                     <div className="space-x-2">
                         <Button
-                            className="px-8 py-2 rounded-full"
+                            className="px-8 py-2 rounded-full bg-white text-brown-600 border-brown-400 hover:bg-brown-100"
                             variant="outline"
                             disabled={isSaving}
                             onClick={() => handleSave(1)}
@@ -281,7 +281,7 @@ export default function AdminArticleCreate() {
                             Save as draft
                         </Button>
                         <Button
-                            className="px-8 py-2 rounded-full"
+                            className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"
                             disabled={isSaving}
                             onClick={() => handleSave(2)}
                         >
