@@ -84,7 +84,7 @@ router.get("/:postId", async (req, res) => {
 // POST /posts - User สามารถสร้างบทความใหม่ขึ้นมาได้ในระบบ (with validation)
 router.post("/", validatePostDataSingle, async (req, res) => {
     try {
-        const { title, image, category_id, description, content, status_id } = req.body;
+        const { title, image, category_id, description, content, status_id, user_id } = req.body;
 
         // Insert new post into database
         const { data, error } = await supabase
@@ -92,11 +92,14 @@ router.post("/", validatePostDataSingle, async (req, res) => {
             .insert([
                 {
                     title: title,
-                    image: image,
-                    category_id: category_id,
+                    image: image || "", // Default to empty string if no image
+                    category_id: parseInt(category_id),
                     description: description,
                     content: content,
-                    status_id: status_id
+                    status_id: parseInt(status_id),
+                    user_id: user_id || null, // Add user_id if provided
+                    date: new Date().toISOString(), // Add current timestamp
+                    likes_count: 0 // Default likes count to 0
                 }
             ])
             .select();
@@ -109,7 +112,8 @@ router.post("/", validatePostDataSingle, async (req, res) => {
         }
 
         return res.status(201).json({
-            message: "Created post sucessfully"
+            message: "Created post successfully",
+            data: data
         });
 
     } catch (error) {
