@@ -65,4 +65,102 @@ router.get("/", async (req, res) => {
     }
 });
 
+// POST /categories - Create new category
+router.post("/", async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        if (!name || name.trim() === '') {
+            return res.status(400).json({
+                message: "Category name is required"
+            });
+        }
+
+        const { data, error } = await supabase
+            .from('categories')
+            .insert([{ name: name.trim() }])
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        return res.status(201).json(data);
+
+    } catch (error) {
+        console.error('Server error:', error);
+        return res.status(500).json({
+            message: "Server could not create category because database connection",
+            error: error.message
+        });
+    }
+});
+
+// PUT /categories/:id - Update category
+router.put("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+
+        if (!name || name.trim() === '') {
+            return res.status(400).json({
+                message: "Category name is required"
+            });
+        }
+
+        const { data, error } = await supabase
+            .from('categories')
+            .update({ name: name.trim() })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        return res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Server error:', error);
+        return res.status(500).json({
+            message: "Server could not update category because database connection",
+            error: error.message
+        });
+    }
+});
+
+// DELETE /categories/:id - Delete category
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { data, error } = await supabase
+            .from('categories')
+            .delete()
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        if (!data) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        return res.status(200).json({
+            message: 'Category deleted successfully',
+            data
+        });
+
+    } catch (error) {
+        console.error('Server error:', error);
+        return res.status(500).json({
+            message: "Server could not delete category because database connection",
+            error: error.message
+        });
+    }
+});
+
 export default router;
