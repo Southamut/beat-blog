@@ -378,16 +378,13 @@ export default function AdminArticleCreate() {
 
                             {/* Discard Button */}
                             <div className="flex justify-start mt-6">
-                                <button
-                                    onClick={handleDiscard}
-                                    disabled={isSaving}
-                                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Discard
-                                </button>
+                                <DeletePostDialog
+                                    onDelete={handleDiscardConfirm}
+                                    triggerStyle="text"
+                                    title="Discard Article"
+                                    message="Are you sure you want to discard this article? All unsaved changes will be lost."
+                                    confirmText="Discard"
+                                />
                             </div>
                         </form>
                     </main>
@@ -403,15 +400,6 @@ export default function AdminArticleCreate() {
                 onClose={handleAlertClose}
                 autoHide={true}
                 duration={3000}
-            />
-
-            {/* Discard Confirmation Alert */}
-            <DeletePostDialog
-                onDelete={handleDiscardConfirm}
-                triggerStyle="text"
-                title="Discard Article"
-                message="Are you sure you want to discard this article? All unsaved changes will be lost."
-                confirmText="Discard"
             />
         </SidebarProvider>
     );
