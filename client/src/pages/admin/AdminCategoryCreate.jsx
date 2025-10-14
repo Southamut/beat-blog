@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminPanel } from "@/components/AdminPanel";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AttentionAlert } from "@/components/AttentionAlert";
 import axios from "axios";
-import { toast } from "sonner";
-import { X, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminCategoryCreate() {
@@ -13,6 +13,12 @@ export default function AdminCategoryCreate() {
     const [categoryName, setCategoryName] = useState("");
     const [isSaving, setIsSaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
+    });
 
     const handleSave = async () => {
         if (!categoryName.trim()) {
@@ -31,51 +37,37 @@ export default function AdminCategoryCreate() {
                 }
             );
 
-            toast.custom((t) => (
-                <div className="bg-green-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">
-                            Created category successfully
-                        </h2>
-                        <p className="text-sm">
-                            Your category has been successfully created.
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            // Show success alert
+            setAlertState({
+                show: true,
+                type: "success",
+                title: "Create category",
+                message: "Category has been successfully created."
+            });
 
             setCategoryName("");
-            navigate("/admin/category-management");
+
+            // Navigate to category management after a short delay
+            setTimeout(() => {
+                navigate("/admin/category-management");
+            }, 2000);
         } catch (error) {
             console.error("Error creating category:", error);
-            toast.custom((t) => (
-                <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">
-                            Failed to create category
-                        </h2>
-                        <p className="text-sm">
-                            Something went wrong while creating the category. Please try again
-                            later.
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+
+            // Show error alert
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to create category",
+                message: "Something went wrong while creating the category. Please try again later."
+            });
         } finally {
             setIsSaving(false);
         }
+    };
+
+    const handleAlertClose = () => {
+        setAlertState(prev => ({ ...prev, show: false }));
     };
 
     return (
@@ -122,6 +114,17 @@ export default function AdminCategoryCreate() {
                     </div>
                 </main>
             </SidebarInset>
+
+            {/* Attention Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={handleAlertClose}
+                autoHide={true}
+                duration={3000}
+            />
         </SidebarProvider>
     );
 }

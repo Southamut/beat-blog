@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/table";
 import { AdminPanel } from "../../components/AdminPanel";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { AttentionAlert } from "@/components/AttentionAlert";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -31,6 +31,12 @@ export function AdminCategoryManagement() {
     const [categories, setCategories] = useState([]);
     const [filteredCategories, setFilteredCategories] = useState([]);
     const [searchKeyword, setSearchKeyword] = useState("");
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
+    });
 
     // Fetch categories data
     useEffect(() => {
@@ -43,22 +49,12 @@ export function AdminCategoryManagement() {
                 setCategories(responseCategories.data);
             } catch (error) {
                 console.error("Error fetching categories data:", error);
-                toast.custom((t) => (
-                    <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                        <div>
-                            <h2 className="font-bold text-lg mb-1">Failed to load categories</h2>
-                            <p className="text-sm">
-                                Something went wrong while trying to load categories. Please try again later.
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => toast.dismiss(t)}
-                            className="text-white hover:text-gray-200"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ));
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Failed to load categories",
+                    message: "Something went wrong while trying to load categories. Please try again later."
+                });
             } finally {
                 setIsLoading(false);
             }
@@ -80,47 +76,29 @@ export function AdminCategoryManagement() {
             await axios.delete(
                 `http://localhost:4001/categories/${categoryId}`
             );
-            toast.custom((t) => (
-                <div className="bg-green-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">
-                            Deleted Category successfully
-                        </h2>
-                        <p className="text-sm">The category has been removed.</p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            setAlertState({
+                show: true,
+                type: "success",
+                title: "Deleted Category successfully",
+                message: "The category has been removed."
+            });
             setCategories(
                 categories.filter((category) => category.id !== categoryId)
             );
         } catch {
-            toast.custom((t) => (
-                <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">
-                            Failed to delete category
-                        </h2>
-                        <p className="text-sm">
-                            Something went wrong. Please try again later.
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to delete category",
+                message: "Something went wrong. Please try again later."
+            });
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleAlertClose = () => {
+        setAlertState(prev => ({ ...prev, show: false }));
     };
 
     return (
@@ -225,6 +203,17 @@ export function AdminCategoryManagement() {
                     </div>
                 </main>
             </SidebarInset>
+
+            {/* Attention Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={handleAlertClose}
+                autoHide={true}
+                duration={3000}
+            />
         </SidebarProvider>
     );
 }
