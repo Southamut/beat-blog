@@ -12,6 +12,7 @@ import {
 import { AdminPanel } from "../../components/AdminPanel";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AttentionAlert } from "@/components/AttentionAlert";
+import { DeletePostDialog } from "@/components/DeletePostDialog";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -178,8 +179,12 @@ export function AdminCategoryManagement() {
                                                         >
                                                             <PenSquare className="h-4 w-4 text-brown-600" />
                                                         </button>
-                                                        <DeleteCategoryDialog
+                                                        <DeletePostDialog
                                                             onDelete={() => handleDelete(category.id)}
+                                                            triggerStyle="icon"
+                                                            title="Delete Category"
+                                                            message="Do you want to delete this category?"
+                                                            confirmText="Delete"
                                                         />
                                                     </div>
                                                 </TableCell>
@@ -215,39 +220,5 @@ export function AdminCategoryManagement() {
                 duration={3000}
             />
         </SidebarProvider>
-    );
-}
-
-function DeleteCategoryDialog({ onDelete }) {
-    return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <button className="p-2 hover:bg-gray-200 rounded transition-colors">
-                    <Trash2 className="h-4 w-4 text-brown-600" />
-                </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white rounded-md pt-16 pb-6 max-w-[22rem] sm:max-w-md flex flex-col items-center">
-                <AlertDialogTitle className="text-3xl font-semibold pb-2 text-center">
-                    Delete Category
-                </AlertDialogTitle>
-                <AlertDialogDescription className="flex flex-row mb-2 justify-center font-medium text-center text-muted-foreground">
-                    Do you want to delete this category?
-                </AlertDialogDescription>
-                <div className="flex flex-row gap-4">
-                    <AlertDialogCancel className="bg-white rounded-full text-brown-600 border border-brown-400 hover:bg-brown-100 transition-colors w-28 h-12 flex items-center justify-center">
-                        Cancel
-                    </AlertDialogCancel>
-                    <button
-                        onClick={onDelete}
-                        className="rounded-full text-white bg-brown-600 hover:bg-brown-500 transition-colors w-28 h-12 flex items-center justify-center"
-                    >
-                        Delete
-                    </button>
-                </div>
-                <AlertDialogCancel className="absolute right-4 top-2 sm:top-4 p-1 border-none">
-                    <X className="h-6 w-6" />
-                </AlertDialogCancel>
-            </AlertDialogContent>
-        </AlertDialog>
     );
 }

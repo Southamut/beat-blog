@@ -11,6 +11,7 @@ import {
 import { AdminPanel } from "@/components/AdminPanel";
 import { Textarea } from "@/components/ui/textarea";
 import { AttentionAlert } from "@/components/AttentionAlert";
+import { DeletePostDialog } from "@/components/DeletePostDialog";
 import { useAuth } from "@/contexts/authentication";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -119,6 +120,26 @@ export default function AdminArticleCreate() {
             return;
         }
 
+        // Check if title already exists
+        try {
+            const titleCheckResponse = await axios.get(
+                `http://localhost:4001/posts/check-title/${encodeURIComponent(post.title.trim())}`
+            );
+
+            if (titleCheckResponse.data.exists) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Title Already Exists",
+                    message: "An article with this title already exists. Please choose a different title."
+                });
+                return;
+            }
+        } catch (error) {
+            console.error("Error checking title:", error);
+            // Continue with save if title check fails (don't block user)
+        }
+
         setIsSaving(true);
 
         try {
@@ -166,6 +187,10 @@ export default function AdminArticleCreate() {
 
     const handleAlertClose = () => {
         setAlertState(prev => ({ ...prev, show: false }));
+    };
+
+    const handleDiscardConfirm = () => {
+        navigate("/admin/article-management");
     };
 
     const handleFileChange = (event) => {
@@ -350,6 +375,20 @@ export default function AdminArticleCreate() {
                                     className="mt-1 max-w-4xl py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
                                 />
                             </div>
+
+                            {/* Discard Button */}
+                            <div className="flex justify-start mt-6">
+                                <button
+                                    onClick={handleDiscard}
+                                    disabled={isSaving}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Discard
+                                </button>
+                            </div>
                         </form>
                     </main>
                 )}
@@ -364,6 +403,15 @@ export default function AdminArticleCreate() {
                 onClose={handleAlertClose}
                 autoHide={true}
                 duration={3000}
+            />
+
+            {/* Discard Confirmation Alert */}
+            <DeletePostDialog
+                onDelete={handleDiscardConfirm}
+                triggerStyle="text"
+                title="Discard Article"
+                message="Are you sure you want to discard this article? All unsaved changes will be lost."
+                confirmText="Discard"
             />
         </SidebarProvider>
     );

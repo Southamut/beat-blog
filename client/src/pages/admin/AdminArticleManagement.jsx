@@ -8,7 +8,7 @@ import { Search, Edit, Trash2, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AttentionAlert } from "@/components/AttentionAlert"
 import { useNavigate, useLocation } from "react-router-dom"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { DeletePostDialog } from "@/components/DeletePostDialog";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -262,7 +262,7 @@ export function AdminArticleManagement() {
                                                         >
                                                             <Edit className="h-4 w-4 text-brown-600" />
                                                         </button>
-                                                        <DeletePostDialog onDelete={() => handleDelete(article.id)} />
+                                                        <DeletePostDialog onDelete={() => handleDelete(article.id)} triggerStyle="icon" />
                                                     </div>
                                                 </TableCell>
                                             </TableRow>
@@ -303,38 +303,4 @@ export function AdminArticleManagement() {
             />
         </SidebarProvider>
     )
-}
-
-function DeletePostDialog({ onDelete }) {
-    return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild>
-                <button className="p-2 hover:bg-brown-200 rounded transition-colors">
-                    <Trash2 className="h-4 w-4 text-brown-600" />
-                </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="bg-white rounded-md pt-16 pb-6 max-w-[22rem] sm:max-w-md flex flex-col items-center">
-                <AlertDialogTitle className="text-3xl font-semibold pb-2 text-center">
-                    Delete Post
-                </AlertDialogTitle>
-                <AlertDialogDescription className="flex flex-row mb-2 justify-center font-medium text-center text-muted-foreground">
-                    Do you want to delete this post?
-                </AlertDialogDescription>
-                <div className="flex flex-row gap-4">
-                    <AlertDialogCancel className="bg-white rounded-full text-brown-600 border border-brown-400 hover:bg-brown-100 transition-colors w-28 h-12 flex items-center justify-center">
-                        Cancel
-                    </AlertDialogCancel>
-                    <button
-                        onClick={onDelete}
-                        className="rounded-full text-white bg-brown-600 hover:bg-brown-500 transition-colors w-28 h-12 flex items-center justify-center"
-                    >
-                        Delete
-                    </button>
-                </div>
-                <AlertDialogCancel className="absolute right-4 top-2 sm:top-4 p-1 border-none">
-                    <X className="h-6 w-6" />
-                </AlertDialogCancel>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
 }

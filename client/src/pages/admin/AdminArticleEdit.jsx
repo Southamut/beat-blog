@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/select";
 import { AdminPanel } from "@/components/AdminPanel";
 import { Textarea } from "@/components/ui/textarea";
+import { AttentionAlert } from "@/components/AttentionAlert";
+import { DeletePostDialog } from "@/components/DeletePostDialog";
 import { useAuth } from "@/contexts/authentication";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function AdminArticleEdit() {
@@ -35,6 +36,12 @@ export default function AdminArticleEdit() {
     const [isSaving, setIsSaving] = useState(false);
     const [categories, setCategories] = useState([]);
     const [imageFile, setImageFile] = useState({});
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -69,22 +76,12 @@ export default function AdminArticleEdit() {
 
             } catch (error) {
                 console.error("Error fetching data:", error);
-                toast.custom((t) => (
-                    <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                        <div>
-                            <h2 className="font-bold text-lg mb-1">Failed to load article</h2>
-                            <p className="text-sm">
-                                Something went wrong while trying to load the article. Please try again later.
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => toast.dismiss(t)}
-                            className="text-white hover:text-gray-200"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ));
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Failed to load article",
+                    message: "Something went wrong while trying to load the article. Please try again later."
+                });
                 navigate("/admin/article-management");
             } finally {
                 setIsLoading(false);
@@ -112,133 +109,135 @@ export default function AdminArticleEdit() {
     };
 
     const handleSave = async (postStatusId) => {
-        setIsSaving(true);
-        const formData = new FormData();
+        // Validate required fields
+        if (!post.title.trim()) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Title is required"
+            });
+            return;
+        }
 
-        formData.append("title", post.title);
-        formData.append("category_id", post.category_id);
-        formData.append("description", post.description);
-        formData.append("content", post.content);
-        formData.append("status_id", postStatusId);
-        formData.append("user_id", state.user.id);
-        formData.append("image", "");
+        if (!post.category_id) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Please select a category"
+            });
+            return;
+        }
 
-        if (imageFile.file) {
-            const reader = new FileReader();
-            reader.onload = async () => {
-                formData.set("image", reader.result);
+        if (!post.description.trim()) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Description is required"
+            });
+            return;
+        }
 
-                try {
-                    await axios.put(
-                        `http://localhost:4001/posts/${articleId}`,
-                        Object.fromEntries(formData),
-                        {
-                            headers: { "Content-Type": "application/json" },
-                        }
-                    );
+        if (!post.content.trim()) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Content is required"
+            });
+            return;
+        }
 
-                    toast.custom((t) => (
-                        <div className="bg-green-500 text-white p-4 rounded-sm flex justify-between items-start">
-                            <div>
-                                <h2 className="font-bold text-lg mb-1">
-                                    Updated article successfully
-                                </h2>
-                                <p className="text-sm">
-                                    {postStatusId === 1
-                                        ? "Your article has been successfully saved as draft."
-                                        : postStatusId === 2
-                                            ? "Your article has been successfully published."
-                                            : ""}
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => toast.dismiss(t)}
-                                className="text-white hover:text-gray-200"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                    ));
-                    navigate("/admin/article-management");
-                } catch (error) {
-                    console.error("Error updating post:", error);
-                    toast.custom((t) => (
-                        <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                            <div>
-                                <h2 className="font-bold text-lg mb-1">Failed to update article</h2>
-                                <p className="text-sm">
-                                    Something went wrong while trying to update article. Please try
-                                    again later.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => toast.dismiss(t)}
-                                className="text-white hover:text-gray-200"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                    ));
-                } finally {
-                    setIsSaving(false);
-                }
-            };
-            reader.readAsDataURL(imageFile.file);
-        } else {
-            try {
-                await axios.put(
-                    `http://localhost:4001/posts/${articleId}`,
-                    Object.fromEntries(formData),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                    }
-                );
+        // Check if title already exists (excluding current article)
+        try {
+            const titleCheckResponse = await axios.get(
+                `http://localhost:4001/posts/check-title/${encodeURIComponent(post.title.trim())}?excludeId=${articleId}`
+            );
 
-                toast.custom((t) => (
-                    <div className="bg-green-500 text-white p-4 rounded-sm flex justify-between items-start">
-                        <div>
-                            <h2 className="font-bold text-lg mb-1">
-                                Updated article successfully
-                            </h2>
-                            <p className="text-sm">
-                                {postStatusId === 1
-                                    ? "Your article has been successfully saved as draft."
-                                    : postStatusId === 2
-                                        ? "Your article has been successfully published."
-                                        : ""}
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => toast.dismiss(t)}
-                            className="text-white hover:text-gray-200"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ));
-                navigate("/admin/article-management");
-            } catch (error) {
-                console.error("Error updating post:", error);
-                toast.custom((t) => (
-                    <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                        <div>
-                            <h2 className="font-bold text-lg mb-1">Failed to update article</h2>
-                            <p className="text-sm">
-                                Something went wrong while trying to update article. Please try
-                                again later.
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => toast.dismiss(t)}
-                            className="text-white hover:text-gray-200"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ));
-            } finally {
-                setIsSaving(false);
+            if (titleCheckResponse.data.exists) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Title Already Exists",
+                    message: "An article with this title already exists. Please choose a different title."
+                });
+                return;
             }
+        } catch (error) {
+            console.error("Error checking title:", error);
+            // Continue with save if title check fails (don't block user)
+        }
+
+        setIsSaving(true);
+
+        try {
+            // Create the article data for update
+            const articleData = {
+                title: post.title.trim(),
+                category_id: parseInt(post.category_id),
+                description: post.description.trim(),
+                content: post.content.trim(),
+                status_id: parseInt(postStatusId),
+                image: post.image || "" // Keep existing image or empty string
+            };
+
+            await axios.put(
+                `http://localhost:4001/posts/${articleId}`,
+                articleData,
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+
+            // Navigate immediately and pass alert data via state
+            const alertData = {
+                show: true,
+                type: "success",
+                title: postStatusId === 1 ? "Update article and saved as draft" : "Update article and published",
+                message: postStatusId === 1 ? "You can publish article later" : "Your article is now live"
+            };
+
+            navigate("/admin/article-management", {
+                state: { alertData }
+            });
+        } catch (error) {
+            console.error("Error updating post:", error);
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to update article",
+                message: "Something went wrong while trying to update article. Please try again later."
+            });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleAlertClose = () => {
+        setAlertState(prev => ({ ...prev, show: false }));
+    };
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`http://localhost:4001/posts/${articleId}`);
+
+            const alertData = {
+                show: true,
+                type: "success",
+                title: "Deleted article successfully",
+                message: "The article has been removed."
+            };
+            navigate("/admin/article-management", { state: { alertData } });
+        } catch (error) {
+            console.error("Error deleting article:", error);
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to delete article",
+                message: "Something went wrong. Please try again later."
+            });
         }
     };
 
@@ -252,43 +251,23 @@ export default function AdminArticleEdit() {
         }
 
         if (!allowedTypes.includes(file.type)) {
-            toast.custom((t) => (
-                <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">Failed to upload file</h2>
-                        <p className="text-sm">
-                            Please upload a valid image file (JPEG, PNG, GIF, WebP).
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to upload file",
+                message: "Please upload a valid image file (JPEG, PNG, GIF, WebP)."
+            });
             return;
         }
 
         const maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
-            toast.custom((t) => (
-                <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">Failed to upload file</h2>
-                        <p className="text-sm">
-                            The file is too large. Please upload an image smaller than 5MB.
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to upload file",
+                message: "The file is too large. Please upload an image smaller than 5MB."
+            });
             return;
         }
 
@@ -452,10 +431,26 @@ export default function AdminArticleEdit() {
                                     className="mt-1 max-w-4xl py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
                                 />
                             </div>
+
+                            {/* Delete Article Link */}
+                            <div className="flex justify-start mt-6">
+                                <DeletePostDialog onDelete={handleDelete} triggerStyle="text" />
+                            </div>
                         </form>
                     </main>
                 )}
             </SidebarInset>
+
+            {/* Attention Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={handleAlertClose}
+                autoHide={true}
+                duration={3000}
+            />
         </SidebarProvider>
     );
 }

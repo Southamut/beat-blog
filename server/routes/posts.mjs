@@ -61,6 +61,44 @@ router.get("/", async (req, res) => {
     }
 });
 
+// GET /posts/check-title/:title - Check if title already exists
+router.get("/check-title/:title", async (req, res) => {
+    try {
+        const { title } = req.params;
+        const { excludeId } = req.query; // Optional: exclude current article when editing
+
+        let query = supabase
+            .from('posts')
+            .select('id, title')
+            .eq('title', decodeURIComponent(title));
+
+        // If editing, exclude the current article from the check
+        if (excludeId) {
+            query = query.neq('id', excludeId);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({
+                message: "Server could not check title because database connection"
+            });
+        }
+
+        return res.status(200).json({
+            exists: data && data.length > 0,
+            count: data ? data.length : 0
+        });
+
+    } catch (error) {
+        console.error('Server error:', error);
+        return res.status(500).json({
+            message: "Server could not check title because database connection"
+        });
+    }
+});
+
 // GET /posts/:postId - นักเขียนสามารถดูข้อมูลบทความอันเดียวได้
 router.get("/:postId", async (req, res) => {
     try {
