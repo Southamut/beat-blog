@@ -69,11 +69,8 @@ export const validatePostDataSingle = (req, res, next) => {
         return res.status(400).json({ message: "Title must be a string" });
     }
 
-    // Check image
-    if (!image) {
-        return res.status(400).json({ message: "Image is required" });
-    }
-    if (typeof image !== 'string') {
+    // Check image (allow empty string for now)
+    if (image !== undefined && typeof image !== 'string') {
         return res.status(400).json({ message: "Image must be a string" });
     }
 

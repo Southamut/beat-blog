@@ -1,4 +1,4 @@
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/select";
 import { AdminPanel } from "@/components/AdminPanel";
 import { Textarea } from "@/components/ui/textarea";
+import { AttentionAlert } from "@/components/AttentionAlert";
+import { DeletePostDialog } from "@/components/DeletePostDialog";
 import { useAuth } from "@/contexts/authentication";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function AdminArticleCreate() {
@@ -34,6 +35,12 @@ export default function AdminArticleCreate() {
     const [isSaving, setIsSaving] = useState(null);
     const [categories, setCategories] = useState([]);
     const [imageFile, setImageFile] = useState({});
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
+    });
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -72,136 +79,118 @@ export default function AdminArticleCreate() {
     };
 
     const handleSave = async (postStatusId) => {
-        setIsSaving(true);
-        const formData = new FormData();
-
-        formData.append("title", post.title);
-        formData.append("category_id", post.category_id);
-        formData.append("description", post.description);
-        formData.append("content", post.content);
-        formData.append("status_id", postStatusId);
-        formData.append("user_id", state.user.id); // Add user_id from auth context
-        formData.append("image", ""); // For now, empty string since we removed multer
-
-        if (imageFile.file) {
-            // Convert image to base64 for now (you can implement proper file upload later)
-            const reader = new FileReader();
-            reader.onload = async () => {
-                formData.set("image", reader.result);
-
-                try {
-                    await axios.post(
-                        "http://localhost:4001/posts",
-                        Object.fromEntries(formData),
-                        {
-                            headers: { "Content-Type": "application/json" },
-                        }
-                    );
-
-                    toast.custom((t) => (
-                        <div className="bg-green-500 text-white p-4 rounded-sm flex justify-between items-start">
-                            <div>
-                                <h2 className="font-bold text-lg mb-1">
-                                    Created article successfully
-                                </h2>
-                                <p className="text-sm">
-                                    {postStatusId === 1
-                                        ? "Your article has been successfully saved as draft."
-                                        : postStatusId === 2
-                                            ? "Your article has been successfully published."
-                                            : ""}
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => toast.dismiss(t)}
-                                className="text-white hover:text-gray-200"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                    ));
-                    navigate("/admin/article-management");
-                } catch (error) {
-                    console.error("Error creating post:", error);
-                    toast.custom((t) => (
-                        <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                            <div>
-                                <h2 className="font-bold text-lg mb-1">Failed to create article</h2>
-                                <p className="text-sm">
-                                    Something went wrong while trying to create article. Please try
-                                    again later.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => toast.dismiss(t)}
-                                className="text-white hover:text-gray-200"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                    ));
-                } finally {
-                    setIsSaving(false);
-                }
-            };
-            reader.readAsDataURL(imageFile.file);
-        } else {
-            // No image file, proceed with empty image
-            try {
-                await axios.post(
-                    "http://localhost:4001/posts",
-                    Object.fromEntries(formData),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                    }
-                );
-
-                toast.custom((t) => (
-                    <div className="bg-green-500 text-white p-4 rounded-sm flex justify-between items-start">
-                        <div>
-                            <h2 className="font-bold text-lg mb-1">
-                                Created article successfully
-                            </h2>
-                            <p className="text-sm">
-                                {postStatusId === 1
-                                    ? "Your article has been successfully saved as draft."
-                                    : postStatusId === 2
-                                        ? "Your article has been successfully published."
-                                        : ""}
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => toast.dismiss(t)}
-                            className="text-white hover:text-gray-200"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ));
-                navigate("/admin/article-management");
-            } catch (error) {
-                console.error("Error creating post:", error);
-                toast.custom((t) => (
-                    <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                        <div>
-                            <h2 className="font-bold text-lg mb-1">Failed to create article</h2>
-                            <p className="text-sm">
-                                Something went wrong while trying to create article. Please try
-                                again later.
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => toast.dismiss(t)}
-                            className="text-white hover:text-gray-200"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ));
-            } finally {
-                setIsSaving(false);
-            }
+        // Validate required fields
+        if (!post.title.trim()) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Title is required"
+            });
+            return;
         }
+
+        if (!post.category_id) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Please select a category"
+            });
+            return;
+        }
+
+        if (!post.description.trim()) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Description is required"
+            });
+            return;
+        }
+
+        if (!post.content.trim()) {
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Validation Error",
+                message: "Content is required"
+            });
+            return;
+        }
+
+        // Check if title already exists
+        try {
+            const titleCheckResponse = await axios.get(
+                `http://localhost:4001/posts/check-title/${encodeURIComponent(post.title.trim())}`
+            );
+
+            if (titleCheckResponse.data.exists) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Title Already Exists",
+                    message: "An article with this title already exists. Please choose a different title."
+                });
+                return;
+            }
+        } catch (error) {
+            console.error("Error checking title:", error);
+            // Continue with save if title check fails (don't block user)
+        }
+
+        setIsSaving(true);
+
+        try {
+            // Create the article data without image
+            const articleData = {
+                title: post.title.trim(),
+                category_id: parseInt(post.category_id), // Ensure it's a number
+                description: post.description.trim(),
+                content: post.content.trim(),
+                status_id: parseInt(postStatusId), // Ensure it's a number
+                image: "" // Empty image for now
+            };
+
+            await axios.post(
+                "http://localhost:4001/posts",
+                articleData,
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+
+            // Navigate immediately and pass alert data via state
+            const alertData = {
+                show: true,
+                type: "success",
+                title: postStatusId === 1 ? "Create article and saved as draft" : "Create article and published",
+                message: postStatusId === 1 ? "You can publish article later" : "Your article is now live"
+            };
+
+            navigate("/admin/article-management", {
+                state: { alertData }
+            });
+        } catch (error) {
+            console.error("Error creating post:", error);
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to create article",
+                message: "Something went wrong while trying to create article. Please try again later."
+            });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleAlertClose = () => {
+        setAlertState(prev => ({ ...prev, show: false }));
+    };
+
+    const handleDiscardConfirm = () => {
+        navigate("/admin/article-management");
     };
 
     const handleFileChange = (event) => {
@@ -214,43 +203,23 @@ export default function AdminArticleCreate() {
         }
 
         if (!allowedTypes.includes(file.type)) {
-            toast.custom((t) => (
-                <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">Failed to upload file</h2>
-                        <p className="text-sm">
-                            Please upload a valid image file (JPEG, PNG, GIF, WebP).
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to upload file",
+                message: "Please upload a valid image file (JPEG, PNG, GIF, WebP)."
+            });
             return;
         }
 
         const maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
-            toast.custom((t) => (
-                <div className="bg-red-500 text-white p-4 rounded-sm flex justify-between items-start">
-                    <div>
-                        <h2 className="font-bold text-lg mb-1">Failed to upload file</h2>
-                        <p className="text-sm">
-                            The file is too large. Please upload an image smaller than 5MB.
-                        </p>
-                    </div>
-                    <button
-                        onClick={() => toast.dismiss(t)}
-                        className="text-white hover:text-gray-200"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-            ));
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to upload file",
+                message: "The file is too large. Please upload an image smaller than 5MB."
+            });
             return;
         }
 
@@ -406,10 +375,32 @@ export default function AdminArticleCreate() {
                                     className="mt-1 max-w-4xl py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
                                 />
                             </div>
+
+                            {/* Discard Button */}
+                            <div className="flex justify-start mt-6">
+                                <DeletePostDialog
+                                    onDelete={handleDiscardConfirm}
+                                    triggerStyle="text"
+                                    title="Discard Article"
+                                    message="Are you sure you want to discard this article? All unsaved changes will be lost."
+                                    confirmText="Discard"
+                                />
+                            </div>
                         </form>
                     </main>
                 )}
             </SidebarInset>
+
+            {/* Attention Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={handleAlertClose}
+                autoHide={true}
+                duration={3000}
+            />
         </SidebarProvider>
     );
 }
