@@ -62,14 +62,14 @@ export function AdminArticleManagement() {
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="border border-[#DAD6D1] pl-10"
+                                className="py-3 px-4 pl-10 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
                             />
                         </div>
 
                         <div className="flex gap-4">
                             {/* Status Filter */}
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="border border-[#DAD6D1] w-32">
+                                <SelectTrigger className="py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
                                     <SelectValue placeholder="Status" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -82,7 +82,7 @@ export function AdminArticleManagement() {
 
                             {/* Category Filter */}
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="border border-[#DAD6D1] w-32">
+                                <SelectTrigger className="py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -98,31 +98,31 @@ export function AdminArticleManagement() {
                     </div>
 
                     {/* Table */}
-                    <div className="rounded-lg border border-[#DAD6D1] overflow-hidden">
+                    <div className="rounded-lg border border-gray-200 overflow-hidden">
                         <Table>
-                            <TableHeader className="border-b border-[#DAD6D1]">
-                                <TableRow className="bg-[#F9F8F6] border-none hover:bg-gray-50">
-                                    <TableHead className="font-medium text-[#43403B] py-4">Article title</TableHead>
-                                    <TableHead className="font-medium text-[#43403B] py-4">Category</TableHead>
-                                    <TableHead className="font-medium text-[#43403B] py-4">Status</TableHead>
-                                    <TableHead className="font-medium text-[#43403B] py-4 text-right w-24"></TableHead>
+                            <TableHeader className="border-b border-gray-200">
+                                <TableRow className="bg-brown-200 border-none hover:bg-brown-200">
+                                    <TableHead className="font-medium text-brown-600 py-4 border-none">Article title</TableHead>
+                                    <TableHead className="font-medium text-brown-600 py-4 border-none">Category</TableHead>
+                                    <TableHead className="font-medium text-brown-600 py-4 border-none">Status</TableHead>
+                                    <TableHead className="font-medium text-brown-600 py-4 text-right w-24 border-none"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {filteredArticles.length > 0 ? (
                                     filteredArticles.map((article, index) => (
-                                        <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-white hover:bg-gray-50" : "bg-[#F9F8F6] hover:bg-gray-100"}`}>
-                                            <TableCell className="py-4">
-                                                <div className="font-medium text-[#43403B] text-sm leading-5">
+                                        <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-white" : "bg-brown-100"}`}>
+                                            <TableCell className="py-4 border-none">
+                                                <div className="font-medium text-gray-700 text-sm leading-5">
                                                     {article.title}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-4">
-                                                <span className="text-sm text-[#43403B]">
+                                            <TableCell className="py-4 border-none">
+                                                <span className="text-sm text-gray-700">
                                                     {article.category}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="py-4">
+                                            <TableCell className="py-4 border-none">
                                                 <div className="flex items-center gap-2">
                                                     <div className="h-2 w-2 rounded-full bg-green-500"></div>
                                                     <span className="text-sm text-green-600 font-medium">
@@ -130,13 +130,13 @@ export function AdminArticleManagement() {
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-4 text-right">
+                                            <TableCell className="py-4 text-right border-none">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <button
-                                                        className="p-2 hover:bg-gray-200 rounded transition-colors"
+                                                        className="p-2 hover:bg-brown-200 rounded transition-colors"
                                                         onClick={() => navigate(`/admin/article-management/edit/${article.id}`)}
                                                     >
-                                                        <Edit className="h-4 w-4 text-[#43403B]" />
+                                                        <Edit className="h-4 w-4 text-brown-600" />
                                                     </button>
                                                     <DeletePostDialog onDelete={() => console.log("Delete post", article.id)} />
                                                 </div>
@@ -144,8 +144,8 @@ export function AdminArticleManagement() {
                                         </TableRow>
                                     ))
                                 ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={4} className="h-24 text-center">
+                                    <TableRow className="border-none">
+                                        <TableCell colSpan={4} className="h-24 text-center border-none">
                                             <div className="flex flex-col items-center gap-2">
                                                 <p className="text-gray-500">No articles found</p>
                                                 <p className="text-sm text-gray-400">
@@ -174,7 +174,7 @@ function DeletePostDialog({ onDelete }) {
         <AlertDialog>
             <AlertDialogTrigger asChild>
                 <button>
-                    <Trash2 className="h-4 w-4 hover:text-muted-foreground text-[#43403B]" />
+                    <Trash2 className="h-4 w-4 hover:text-muted-foreground text-brown-600" />
                 </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-white rounded-md pt-16 pb-6 max-w-[22rem] sm:max-w-md flex flex-col items-center">
@@ -185,12 +185,12 @@ function DeletePostDialog({ onDelete }) {
                     Do you want to delete this post?
                 </AlertDialogDescription>
                 <div className="flex flex-row gap-4">
-                    <AlertDialogCancel className="bg-background rounded-full text-foreground border border-foreground hover:border-muted-foreground hover:text-muted-foreground transition-colors w-28 h-12 flex items-center justify-center">
+                    <AlertDialogCancel className="bg-white rounded-full text-brown-600 border border-brown-400 hover:bg-brown-100 transition-colors w-28 h-12 flex items-center justify-center">
                         Cancel
                     </AlertDialogCancel>
                     <button
                         onClick={onDelete}
-                        className="rounded-full text-white bg-black hover:bg-muted-foreground transition-colors w-28 h-12 flex items-center justify-center"
+                        className="rounded-full text-white bg-brown-600 hover:bg-brown-500 transition-colors w-28 h-12 flex items-center justify-center"
                     >
                         Delete
                     </button>
