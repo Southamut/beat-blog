@@ -11,7 +11,9 @@ app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:3000', 'https://beat-blog-client.vercel.app'],
     credentials: true
 }));
-app.use(express.json());
+
+app.use(express.json({ limit: '50mb' })); // Increase from default ~1mb
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.get("/test", (req, res) => {
     return res.json("Server API is working 🚀");

@@ -104,7 +104,6 @@ router.post("/", validatePostDataSingle, async (req, res) => {
                     description: description,
                     content: content,
                     status_id: parseInt(status_id),
-                    user_id: user_id || null, // Add user_id if provided
                     date: new Date().toISOString(), // Add current timestamp
                     likes_count: 0 // Default likes count to 0
                 }
@@ -113,8 +112,10 @@ router.post("/", validatePostDataSingle, async (req, res) => {
 
         if (error) {
             console.error('Database error:', error);
+            console.error('Error details:', JSON.stringify(error, null, 2));
             return res.status(500).json({
-                message: "Server could not create post because database connection"
+                message: "Server could not create post because database connection",
+                error: error.message
             });
         }
 

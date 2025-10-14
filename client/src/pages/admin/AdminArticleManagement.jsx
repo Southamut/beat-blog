@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AdminPanel } from "../../components/AdminPanel"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
@@ -6,33 +6,138 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, Edit, Trash2, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { blogPosts } from "../../data/blogPosts"
-import { useNavigate } from "react-router-dom"
+import { AttentionAlert } from "@/components/AttentionAlert"
+import { useNavigate, useLocation } from "react-router-dom"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import axios from "axios";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AdminArticleManagement() {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [categoryFilter, setCategoryFilter] = useState("all")
+    const [articles, setArticles] = useState([])
+    const [categories, setCategories] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
+    })
 
     const navigate = useNavigate()
+    const location = useLocation()
 
-    // Add status to blog posts (for demo purposes, all are published)
-    const articlesWithStatus = blogPosts.map(post => ({
-        ...post,
-        status: "Published"
-    }))
+    // Check for alert data from navigation
+    useEffect(() => {
+        if (location.state?.alertData) {
+            setAlertState(location.state.alertData)
+            // Refresh data to show the new article
+            fetchData()
+            // Clear the state to prevent showing alert on refresh
+            navigate(location.pathname, { replace: true, state: {} })
+        }
+    }, [location.state, navigate, location.pathname])
 
-    // Get unique categories
-    const categories = [...new Set(blogPosts.map(post => post.category))]
+    // Extract fetchData function to be reusable
+    const fetchData = async () => {
+        try {
+            setIsLoading(true)
 
-    // Filter articles and show only first one for demo
-    const filteredArticles = articlesWithStatus.filter(article => {
+            // Fetch articles with status and category information
+            // Use a large limit to get all posts for admin management
+            const articlesResponse = await axios.get("http://localhost:4001/posts?limit=100")
+            const categoriesResponse = await axios.get("http://localhost:4001/categories")
+
+            setArticles(articlesResponse.data.posts || [])
+            setCategories(categoriesResponse.data || [])
+        } catch (error) {
+            console.error("Error fetching data:", error)
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to load articles",
+                message: "Something went wrong while trying to load articles. Please try again later."
+            })
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    // Fetch articles and categories from Supabase
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    // Get status name from status_id
+    const getStatusName = (statusId) => {
+        const statusMap = {
+            1: "Draft",
+            2: "Published",
+            3: "Archived"
+        }
+        return statusMap[statusId] || "Unknown"
+    }
+
+    // Get status color and dot color
+    const getStatusStyle = (statusId) => {
+        if (statusId === 2) { // Published
+            return {
+                dotColor: "bg-green-500",
+                textColor: "text-green-600"
+            }
+        } else if (statusId === 1) { // Draft
+            return {
+                dotColor: "bg-gray-500",
+                textColor: "text-gray-600"
+            }
+        } else { // Archived or other
+            return {
+                dotColor: "bg-red-500",
+                textColor: "text-red-600"
+            }
+        }
+    }
+
+    // Get category name from category_id
+    const getCategoryName = (categoryId) => {
+        const category = categories.find(cat => cat.id === categoryId)
+        return category ? category.name : "Unknown"
+    }
+
+    // Filter articles
+    const filteredArticles = articles.filter(article => {
         const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesStatus = statusFilter === "all" || article.status.toLowerCase() === statusFilter.toLowerCase()
-        const matchesCategory = categoryFilter === "all" || article.category === categoryFilter
+        const matchesStatus = statusFilter === "all" || getStatusName(article.status_id).toLowerCase() === statusFilter.toLowerCase()
+        const matchesCategory = categoryFilter === "all" || getCategoryName(article.category_id) === categoryFilter
         return matchesSearch && matchesStatus && matchesCategory
     })
+
+    const handleDelete = async (articleId) => {
+        try {
+            await axios.delete(`http://localhost:4001/posts/${articleId}`)
+            setAlertState({
+                show: true,
+                type: "success",
+                title: "Deleted article successfully",
+                message: "The article has been removed."
+            })
+            setArticles(articles.filter(article => article.id !== articleId))
+        } catch (error) {
+            console.error("Error deleting article:", error)
+            setAlertState({
+                show: true,
+                type: "error",
+                title: "Failed to delete article",
+                message: "Something went wrong. Please try again later."
+            })
+        }
+    }
+
+    const handleAlertClose = () => {
+        setAlertState(prev => ({ ...prev, show: false }))
+    }
 
     return (
         <SidebarProvider>
@@ -88,8 +193,8 @@ export function AdminArticleManagement() {
                                 <SelectContent>
                                     <SelectItem value="all">All Categories</SelectItem>
                                     {categories.map(category => (
-                                        <SelectItem key={category} value={category}>
-                                            {category}
+                                        <SelectItem key={category.id} value={category.name}>
+                                            {category.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -109,40 +214,60 @@ export function AdminArticleManagement() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredArticles.length > 0 ? (
-                                    filteredArticles.map((article, index) => (
-                                        <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-white" : "bg-brown-100"}`}>
+                                {isLoading ? (
+                                    Array(3).fill().map((_, index) => (
+                                        <TableRow key={index} className={`border-none ${index % 2 === 0 ? "bg-white" : "bg-brown-100"}`}>
                                             <TableCell className="py-4 border-none">
-                                                <div className="font-medium text-gray-700 text-sm leading-5">
-                                                    {article.title}
-                                                </div>
+                                                <Skeleton className="h-6 w-[300px] bg-gray-200" />
                                             </TableCell>
                                             <TableCell className="py-4 border-none">
-                                                <span className="text-sm text-gray-700">
-                                                    {article.category}
-                                                </span>
+                                                <Skeleton className="h-6 w-[100px] bg-gray-200" />
                                             </TableCell>
                                             <TableCell className="py-4 border-none">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                                                    <span className="text-sm text-green-600 font-medium">
-                                                        {article.status}
-                                                    </span>
-                                                </div>
+                                                <Skeleton className="h-6 w-[80px] bg-gray-200" />
                                             </TableCell>
                                             <TableCell className="py-4 text-right border-none">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <button
-                                                        className="p-2 hover:bg-brown-200 rounded transition-colors"
-                                                        onClick={() => navigate(`/admin/article-management/edit/${article.id}`)}
-                                                    >
-                                                        <Edit className="h-4 w-4 text-brown-600" />
-                                                    </button>
-                                                    <DeletePostDialog onDelete={() => console.log("Delete post", article.id)} />
-                                                </div>
+                                                <Skeleton className="h-6 w-[75px] bg-gray-200" />
                                             </TableCell>
                                         </TableRow>
                                     ))
+                                ) : filteredArticles.length > 0 ? (
+                                    filteredArticles.map((article, index) => {
+                                        const statusStyle = getStatusStyle(article.status_id)
+                                        return (
+                                            <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-white" : "bg-brown-100"}`}>
+                                                <TableCell className="py-4 border-none">
+                                                    <div className="font-medium text-gray-700 text-sm leading-5">
+                                                        {article.title}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="py-4 border-none">
+                                                    <span className="text-sm text-gray-700">
+                                                        {getCategoryName(article.category_id)}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell className="py-4 border-none">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`h-2 w-2 rounded-full ${statusStyle.dotColor}`}></div>
+                                                        <span className={`text-sm font-medium ${statusStyle.textColor}`}>
+                                                            {getStatusName(article.status_id)}
+                                                        </span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="py-4 text-right border-none">
+                                                    <div className="flex items-center justify-end gap-1">
+                                                        <button
+                                                            className="p-2 hover:bg-brown-200 rounded transition-colors"
+                                                            onClick={() => navigate(`/admin/article-management/edit/${article.id}`)}
+                                                        >
+                                                            <Edit className="h-4 w-4 text-brown-600" />
+                                                        </button>
+                                                        <DeletePostDialog onDelete={() => handleDelete(article.id)} />
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    })
                                 ) : (
                                     <TableRow className="border-none">
                                         <TableCell colSpan={4} className="h-24 text-center border-none">
@@ -161,10 +286,21 @@ export function AdminArticleManagement() {
 
                     {/* Results info */}
                     <div className="text-sm text-gray-500">
-                        Showing {filteredArticles.length} of {articlesWithStatus.length} articles
+                        Showing {filteredArticles.length} of {articles.length} articles
                     </div>
                 </div>
             </SidebarInset>
+
+            {/* Attention Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={handleAlertClose}
+                autoHide={true}
+                duration={3000}
+            />
         </SidebarProvider>
     )
 }
@@ -173,8 +309,8 @@ function DeletePostDialog({ onDelete }) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <button>
-                    <Trash2 className="h-4 w-4 hover:text-muted-foreground text-brown-600" />
+                <button className="p-2 hover:bg-brown-200 rounded transition-colors">
+                    <Trash2 className="h-4 w-4 text-brown-600" />
                 </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-white rounded-md pt-16 pb-6 max-w-[22rem] sm:max-w-md flex flex-col items-center">
