@@ -1,5 +1,6 @@
 import express from "express";
 import supabase from "../utils/supabase.js";
+import protectAdmin from "./middlewares/protectAdmin.mjs";
 
 const router = express.Router();
 
@@ -132,7 +133,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /categories - Create new category
-router.post("/", async (req, res) => {
+router.post("/", protectAdmin , async (req, res) => {
     try {
         const { name } = req.body;
 
@@ -162,7 +163,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT /categories/:id - Update category
-router.put("/:id", async (req, res) => {
+router.put("/:id", protectAdmin , async (req, res) => {
     try {
         const { id } = req.params;
         const { name } = req.body;
@@ -198,7 +199,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE /categories/:id - Delete category
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protectAdmin , async (req, res) => {
     try {
         const { id } = req.params;
 
