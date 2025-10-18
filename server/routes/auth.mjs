@@ -1,6 +1,7 @@
 import express from "express";
-import supabase from "../utils/supabase.js";
+import supabase from "../utils/supabase.mjs";
 import connectionPool from "../utils/db.mjs";
+import protectUser from "../middleware/protectUser.mjs";
 
 const router = express.Router();
 
@@ -97,7 +98,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 //for get user
-authRouter.get("/get-user", async (req, res) => {
+authRouter.get("/get-user", protectUser, async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
@@ -133,7 +134,7 @@ authRouter.get("/get-user", async (req, res) => {
 });
 
 //for reset password
-authRouter.put("/reset-password", async (req, res) => {
+authRouter.put("/reset-password", protectUser, async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1]; // ดึง token จาก Authorization header
   const { oldPassword, newPassword } = req.body;
 
@@ -183,8 +184,5 @@ authRouter.put("/reset-password", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
 
 export default authRouter;

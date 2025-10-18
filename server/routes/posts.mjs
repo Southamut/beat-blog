@@ -1,8 +1,8 @@
 import express from "express";
-import supabase from "../utils/supabase.js";
+import supabase from "../utils/supabase.mjs";
 import { validatePostDataSingle } from "../middleware/validation.mjs";
 import multer from "multer";
-import protectAdmin from "./middlewares/protectAdmin.mjs";
+import protectAdmin from "../middleware/protectAdmin.mjs";
 
 const router = express.Router();
 

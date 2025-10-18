@@ -1,4 +1,4 @@
-import supabase from "../utils/supabase.js";
+import supabase from "../utils/supabase.mjs";
 
 // Middleware ตรวจสอบ JWT token และดึง user_id
 const protectUser = async (req, res, next) => {

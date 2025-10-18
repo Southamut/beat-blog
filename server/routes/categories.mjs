@@ -1,6 +1,6 @@
 import express from "express";
-import supabase from "../utils/supabase.js";
-import protectAdmin from "./middlewares/protectAdmin.mjs";
+import supabase from "../utils/supabase.mjs";
+import protectAdmin from "../middleware/protectAdmin.mjs";
 
 const router = express.Router();
 

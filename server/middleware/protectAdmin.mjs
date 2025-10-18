@@ -1,4 +1,4 @@
-import supabase from "../utils/supabase.js";
+import supabase from "../utils/supabase.mjs";
 import connectionPool from "../utils/db.mjs";
 
 // Middleware ตรวจสอบ JWT token และสิทธิ์ Admin
