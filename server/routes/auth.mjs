@@ -1,9 +1,9 @@
-import express from "express";
+import { Router } from "express";
 import supabase from "../utils/supabase.mjs";
 import connectionPool from "../utils/db.mjs";
 import protectUser from "../middleware/protectUser.mjs";
 
-const router = express.Router();
+const authRouter = Router();
 
 //for register
 authRouter.post("/register", async (req, res) => {

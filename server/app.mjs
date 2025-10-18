@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from "express";
 import postsRouter from "./routes/posts.mjs";
 import categoriesRouter from "./routes/categories.mjs";
+import authRouter from "./routes/auth.mjs"
 import cors from 'cors';
 
 const app = express();
@@ -22,6 +23,7 @@ app.get("/test", (req, res) => {
 // Routes
 app.use("/posts", postsRouter);
 app.use("/categories", categoriesRouter);
+app.use("/auth", authRouter)
 
 
 app.listen(port, () => {
