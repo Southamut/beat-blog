@@ -1,6 +1,6 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/authentication";
+import { Routes, Route } from "react-router-dom";
+import { useAuth } from "./contexts/authentication";
 import { LandingPage } from "./pages/LandingPage";
 import { ViewPostPage } from "./pages/ViewPostPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -14,21 +14,15 @@ import AdminCategoryEdit from "./pages/admin/AdminCategoryEdit";
 import { AdminProfile } from "./pages/admin/AdminProfile";
 import { AdminNotification } from "./pages/admin/AdminNotification";
 import { AdminResetPassword } from "./pages/admin/AdminResetPassword";
-import jwtInterceptor from "./utils/jwtInterceptor.jsx";
 import AdminArticleEdit from "./pages/admin/AdminArticleEdit";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AuthenticationRoute from "./components/auth/AuthenticationRoute";
 
 function App() {
-  
-  // เรียกใช้ jwtInterceptor ก่อนที่แอปจะเริ่มทำงาน
-  jwtInterceptor();
 
   const { isAuthenticated, state } = useAuth();
 
   return (
-    <AuthProvider>
-      <Router>
         <Routes>
           {/* เส้นทางสาธารณะที่ทุกคนเข้าถึงได้ */}
           <Route path="/" element={<LandingPage />} />
@@ -180,8 +174,6 @@ function App() {
           {/* not found */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </Router>
-    </AuthProvider>
   );
 }
 
