@@ -1,4 +1,4 @@
-import { NavBar } from "../components/Homepage";
+import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";

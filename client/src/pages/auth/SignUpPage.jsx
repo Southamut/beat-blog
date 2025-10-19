@@ -1,7 +1,15 @@
-import { NavBar } from "../components/Homepage";
+import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function SignupPage() {
   const navigate = useNavigate();
@@ -18,6 +26,10 @@ export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+
+  //pending confirm email
+  // State สำหรับควบคุม AlertDialog (เปิด/ปิด)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   //for update state when input fields change
   const handleChange = (e) => {
@@ -58,14 +70,10 @@ export function SignupPage() {
 
       //success
       const data = response.data;
-      setSuccessMessage(
-        data.message || "Account created successfully! Redirecting to login."
-      );
+      setSuccessMessage(data.message || "Registration successful!");
 
-      //send user to login page
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      //success then open confirm email dialog
+      setIsDialogOpen(true);
     } catch (err) {
       console.error("Signup error:", err);
 
@@ -79,6 +87,12 @@ export function SignupPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Handler เมื่อกดปุ่ม "Go to Login" ใน Dialog
+  const handleDialogConfirm = () => {
+    setIsDialogOpen(false); // ปิด Dialog
+    navigate("/registration-success"); // นำทางไปหน้า Login
   };
 
   return (
@@ -186,7 +200,7 @@ export function SignupPage() {
           <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-center pt-2 text-muted-foreground font-medium">
             Already have an account?{" "}
             <a
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/registration-success")}
               className="text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
             >
               Log in
@@ -194,6 +208,35 @@ export function SignupPage() {
           </p>
         </div>
       </main>
+
+      {/* 💡 องค์ประกอบ AlertDialog สำหรับ Pending Confirmation */}
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogContent className="bg-white border-none">
+          <AlertDialogTitle className="text-2xl font-bold text-center">
+            Please confirm your email.
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-center space-y-3">
+            <div className="text-center space-y-3"> 
+              <p className="font-semibold text-brown-500 text-foreground">
+                Please check your inbox to confirm your email address.
+              </p>
+              <p className="text-sm text-brown-400">
+                A verification link has been sent to **{formData.email}**. You
+                must click the link before you can log in.
+              </p>
+            </div>
+          </AlertDialogDescription>
+          {/* ปรับปรุงให้มีปุ่มที่พาไปหน้า Login */}
+          <div className="flex flex-col space-y-2 pt-4">
+            <button
+              onClick={handleDialogConfirm}
+              className="w-full px-4 py-2 bg-brown-600 text-white rounded-md hover:bg-muted-foreground transition-colors"
+            >
+              I already confirmed.
+            </button>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
