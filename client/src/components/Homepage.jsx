@@ -16,7 +16,7 @@ export function NavBar() {
   // 🚨 1. ใช้ useAuth แทน useState/useEffect/fetchUserData ทั้งหมด
   const { isAuthenticated, logout, state } = useAuth();
   const user = state.user || { name: "", role: "user", profile_pic: "" };
-  
+
   // 🚨 2. ลบ fetchUserData, useEffect (สำหรับดึงข้อมูล) ออกทั้งหมด
   // 🚨 3. ลบ handleLogout เดิมออก แล้วใช้ logout จาก useAuth แทน
 
@@ -45,46 +45,52 @@ export function NavBar() {
         {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
           <ProfileDropdown user={user} handleLogout={logout} /> // 🚨 ใช้ logout จาก useAuth
         ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
-            <Menu className="w-6 h-6 text-gray-800" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
-            <DropdownMenuItem className="px-4">
-              <button
-                className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors"
-                onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
-              >
-                Log in
-              </button>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="px-4">
-              <button
-                className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors"
-                onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
-              >
-                Sign up
-              </button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
+              <Menu className="w-6 h-6 text-gray-800" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
+              <DropdownMenuItem className="px-4">
+                <button
+                  className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors"
+                  onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
+                >
+                  Log in
+                </button>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="px-4">
+                <button
+                  className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors"
+                  onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
+                >
+                  Sign up
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
 
       {/* Desktop navigation buttons */}
       <div className="gap-3 relative hidden sm:flex">
-        <button
-          className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors"
-          onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
-        >
-          Log in
-        </button>
-        <button
-          className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors relative"
-          onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
-        >
-          Sign up
-        </button>
+        {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
+          <ProfileDropdown user={user} handleLogout={logout} /> // 🚨 ใช้ logout จาก useAuth
+        ) : (
+          <>
+            <button
+              className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors"
+              onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
+            >
+              Log in
+            </button>
+            <button
+              className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors relative"
+              onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
+            >
+              Sign up
+            </button>
+          </>
+        )}
       </div>
     </nav>
   );
