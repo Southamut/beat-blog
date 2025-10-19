@@ -46,7 +46,12 @@ export function LoginPage() {
       localStorage.setItem("access_token", data.access_token);
 
       alert("Login successful! Redirecting to homepage.");
-      navigate("/");
+
+      // 🚨 แก้ไข: ดึง referrer_path และนำทางไป
+      const referrerPath = localStorage.getItem("referrer_path") || "/"; // ใช้ "/" เป็นค่าเริ่มต้น
+      localStorage.removeItem("referrer_path"); // ลบค่าทิ้งหลังใช้งาน
+
+      navigate(referrerPath, { replace: true }); // นำทางไปพาธเดิม
     } catch (err) {
       console.error("Login error:", err);
 

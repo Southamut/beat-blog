@@ -8,7 +8,6 @@ import {
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 export function SignupPage() {
@@ -89,10 +88,61 @@ export function SignupPage() {
     }
   };
 
-  // Handler เมื่อกดปุ่ม "Go to Login" ใน Dialog
-  const handleDialogConfirm = () => {
-    setIsDialogOpen(false); // ปิด Dialog
-    navigate("/registration-success"); // นำทางไปหน้า Login
+  // Handler เมื่อกดปุ่ม "I already confirmed." ใน Dialog
+  const handleDialogConfirm = async () => {
+    setIsLoading(true); // ตั้งค่า Loading ขณะพยายามล็อกอิน
+    setError(null);
+
+    // ตรวจสอบว่ามีข้อมูลสำหรับล็อกอินหรือไม่
+    if (!formData.email || !formData.password) {
+      setError("ไม่สามารถดำเนินการต่อได้: ข้อมูลอีเมลหรือรหัสผ่านหายไป.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // 1. 🚨 พยายามล็อกอินโดยตรงด้วย Email/Password (ใช้เป็นตัวตรวจสอบสถานะการยืนยัน)
+      const loginResponse = await axios.post(
+        "http://localhost:4001/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+
+      // 2. ถ้า LOGIN สำเร็จ (สถานะ 200 OK และมี Access Token กลับมา)
+      if (loginResponse.data.access_token) {
+        // 3. LOGIN SUCCESS: บันทึก Token และนำทาง
+        localStorage.setItem("access_token", loginResponse.data.access_token);
+        setIsDialogOpen(false);
+        // นำทางไปหน้าสำเร็จ
+        navigate("/registration-success");
+      } else {
+        // กรณีที่ Login API ส่งสถานะ 200 กลับมาแต่ไม่มี token (ไม่น่าจะเกิดขึ้น)
+        setError("Plese check your email confirmation.");
+      }
+    } catch (err) {
+      console.error("Login attempt error:", err);
+
+      // 4. ตรวจสอบ Error: หากล็อกอินล้มเหลว (สถานะ 4xx หรือ 5xx)
+      // สันนิษฐานว่าเกิดจากการที่อีเมลยังไม่ได้รับการยืนยัน หรือรหัสผ่านผิด
+
+      const backendError = err.response?.data?.error;
+
+      // เราใช้ข้อความ Error จาก Backend /auth/login เป็นหลัก
+      if (
+        (backendError && backendError.includes("incorrect")) ||
+        backendError.includes("doesn't exist")
+      ) {
+        // ถ้า Backend บอกว่ารหัสผ่านผิด/ผู้ใช้ไม่มี
+        setError("User or password incorrect please try agian.");
+      } else {
+        // กรณีอื่น ๆ (รวมถึงการยังไม่ยืนยันอีเมล ซึ่ง Supabase มักจะถือเป็น invalid credentials)
+        setError("❌ Check your email and try login again.");
+      }
+    } finally {
+      setIsLoading(false); // หยุด Loading
+    }
   };
 
   return (
@@ -216,7 +266,7 @@ export function SignupPage() {
             Please confirm your email.
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center space-y-3">
-            <div className="text-center space-y-3"> 
+            <div className="text-center space-y-3">
               <p className="font-semibold text-brown-500 text-foreground">
                 Please check your inbox to confirm your email address.
               </p>
@@ -226,14 +276,24 @@ export function SignupPage() {
               </p>
             </div>
           </AlertDialogDescription>
-          {/* ปรับปรุงให้มีปุ่มที่พาไปหน้า Login */}
+          {/* redirect button */}
           <div className="flex flex-col space-y-2 pt-4">
             <button
               onClick={handleDialogConfirm}
-              className="w-full px-4 py-2 bg-brown-600 text-white rounded-md hover:bg-muted-foreground transition-colors"
+              disabled={isLoading} // 👈 ปิดปุ่มระหว่างตรวจสอบสถานะ
+              className="w-full px-4 py-2 bg-brown-600 text-white rounded-md hover:bg-muted-foreground transition-colors disabled:opacity-50"
             >
-              I already confirmed.
+              {isLoading ? "Checking Status..." : "I already confirmed."}
             </button>
+            <AlertDialogCancel disabled={isLoading}>
+              Stay on this page
+            </AlertDialogCancel>
+            {/* แสดง Error ใน Dialog ถ้ามี */}
+            {error && (
+              <p className="text-red-600 text-center text-sm font-medium mt-2">
+                {error}
+              </p>
+            )}
           </div>
         </AlertDialogContent>
       </AlertDialog>
