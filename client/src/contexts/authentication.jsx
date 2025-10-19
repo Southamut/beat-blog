@@ -28,9 +28,7 @@ function AuthProvider(props) {
 
     try {
       setState((prevState) => ({ ...prevState, getUserLoading: true }));
-      const response = await axios.get(
-        "http://localhost:4001/auth/get-user"
-      );
+      const response = await axios.get("http://localhost:4001/auth/get-user");
       setState((prevState) => ({
         ...prevState,
         user: response.data,
@@ -59,11 +57,23 @@ function AuthProvider(props) {
         data
       );
       const token = response.data.access_token;
-      localStorage.setItem("token", token);
+      localStorage.setItem("access_token", token);
 
       // ดึงและตั้งค่าข้อมูลผู้ใช้
       setState((prevState) => ({ ...prevState, loading: false, error: null }));
-      navigate("/");
+
+      // 🚨 1. รวม Logic การ Redirect (Clean-up Referrer) เข้ามาใน AuthProvider
+      let referrerPath = localStorage.getItem("referrer_path");
+
+      if (referrerPath === "/login" || referrerPath === "/sign-up") {
+        referrerPath = "/";
+      }
+      referrerPath = referrerPath || "/";
+
+      localStorage.removeItem("referrer_path");
+
+      navigate(referrerPath, { replace: true });
+
       await fetchUser();
     } catch (error) {
       setState((prevState) => ({
@@ -79,10 +89,7 @@ function AuthProvider(props) {
   const register = async (data) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
-      await axios.post(
-        "http://localhost:4001/auth/register",
-        data
-      );
+      await axios.post("http://localhost:4001/auth/register", data);
       setState((prevState) => ({ ...prevState, loading: false, error: null }));
       navigate("/sign-up/success");
     } catch (error) {
@@ -124,4 +131,3 @@ function AuthProvider(props) {
 const useAuth = () => React.useContext(AuthContext);
 
 export { AuthProvider, useAuth };
-

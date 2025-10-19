@@ -6,16 +6,19 @@ export function RegistSuccess() {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-        // 2. ดึง referrer_path ที่บันทึกไว้ใน localStorage
-        const referrerPath = localStorage.getItem("referrer_path") || "/"; // ใช้ "/" เป็นค่าเริ่มต้น
-        
-        // 3. 🚨 ลบค่าทิ้งหลังใช้งาน เพื่อไม่ให้การล็อกอิน/สมัครสมาชิกครั้งต่อไปผิดเพี้ยน
-        localStorage.removeItem("referrer_path"); 
+    let referrerPath = localStorage.getItem("referrer_path");
 
-        // 4. นำทางผู้ใช้ไปยังพาธที่บันทึกไว้
-        // ใช้ { replace: true } เพื่อไม่ให้ผู้ใช้กดปุ่ม Back กลับมาที่หน้านี้
-        navigate(referrerPath, { replace: true });
-    };
+    // 🚨 Logic การตรวจสอบและล้างค่า ยังต้องอยู่ที่นี่ เพราะ AuthProvider ไม่ได้จัดการ
+    if (referrerPath === "/login" || referrerPath === "/sign-up") {
+      referrerPath = "/";
+    }
+
+    referrerPath = referrerPath || "/";
+
+    localStorage.removeItem("referrer_path");
+
+    navigate(referrerPath, { replace: true });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">

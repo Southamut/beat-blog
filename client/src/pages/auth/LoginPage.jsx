@@ -1,10 +1,14 @@
 import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import { useAuth } from "../../contexts/authentication";
 
 export function LoginPage() {
   const navigate = useNavigate();
+
+  // 🚨 ใช้ Hook useAuth
+    const { login, state } = useAuth(); 
+    const { loading, error } = state;
 
   //for collect user, pass
   const [formData, setFormData] = useState({
@@ -12,63 +16,21 @@ export function LoginPage() {
     password: "",
   });
 
-  //for collect loading, error
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   //for update state when input fields change
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    // Clear error message when the user starts typing again
-    setError(null);
   };
 
   //for form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:4001/auth/login",
-        formData,
-        {
-          headers: {},
-        }
-      );
-
-      const data = response.data;
-
-      localStorage.setItem("access_token", data.access_token);
-
-      alert("Login successful! Redirecting to homepage.");
-
-      // 🚨 แก้ไข: ดึง referrer_path และนำทางไป
-      const referrerPath = localStorage.getItem("referrer_path") || "/"; // ใช้ "/" เป็นค่าเริ่มต้น
-      localStorage.removeItem("referrer_path"); // ลบค่าทิ้งหลังใช้งาน
-
-      navigate(referrerPath, { replace: true }); // นำทางไปพาธเดิม
-    } catch (err) {
-      console.error("Login error:", err);
-
-      if (err.response) {
-        setError(
-          err.response.data.error ||
-            "Login failed. Please check your credentials."
-        );
-      } else if (err.request) {
-        setError("No response from server. Check your network connection.");
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        e.preventDefault();
+        // 🚨 เรียกใช้ login จาก useAuth
+        await login(formData); 
+        // Logic Redirect ถูกจัดการใน AuthProvider แล้ว
+    };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -130,10 +92,10 @@ export function LoginPage() {
               <button
                 type="submit"
                 // Disable button when loading to prevent multiple submissions
-                disabled={isLoading}
+                disabled={loading}
                 className="px-8 py-2 bg-foreground text-white rounded-full bg-[#26231E] hover:bg-muted-foreground transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Logging in..." : "Log in"}
+                {loading ? "Logging in..." : "Log in"}
               </button>
             </div>
           </form>
