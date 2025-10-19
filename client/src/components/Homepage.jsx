@@ -1,29 +1,38 @@
-import { Linkedin, Github, Mail, Menu } from 'lucide-react'
+import { Linkedin, Github, Mail, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useNavigate, useLocation } from 'react-router-dom'
-
+} from "@/components/ui/dropdown-menu";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export function NavBar() {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-
-  const location = useLocation()
+  const location = useLocation();
 
   // 🚨 เพิ่ม: Handler Function เพื่อบันทึกพาธ
   const handleAuthNavigation = (path) => {
-    // 1. บันทึกพาธปัจจุบัน (ถ้าไม่ใช่ /login หรือ /signup)
-    // นี่คือการจับ URL ที่ผู้ใช้อยู่ก่อนจะกดปุ่ม (เช่น /post/1)
-    if (location.pathname !== "/signup" && location.pathname !== "/login") {
-        localStorage.setItem("referrer_path", location.pathname);
+    const currentPath = location.pathname;
+    const isCurrentlyAuthPage =
+      currentPath === "/signup" || currentPath === "/login";
+
+    if (!isCurrentlyAuthPage) {
+      // 1. ถ้ามาจากหน้าอื่น (เช่น /post/1) -> บันทึกพาธนั้นไว้
+      localStorage.setItem("referrer_path", currentPath);
     }
+
+    // 🚨 เพิ่ม Logic พิเศษ: ถ้า referrer_path ถูกบันทึกเป็น /login หรือ /sign-up
+    // ให้ล้างมันทิ้งเพื่อให้เป็น / (Home) แทนที่จะวนลูป
+    const currentReferrer = localStorage.getItem("referrer_path");
+    if (currentReferrer === "/login" || currentReferrer === "/sign-up") {
+      localStorage.setItem("referrer_path", "/"); // ตั้งค่าเป็นหน้าหลัก
+    }
+
     // 2. นำทางไปยังหน้า Login หรือ Sign Up
     navigate(path);
-  }
+  };
 
   return (
     <nav className="border-b border-[#DAD6D1] w-full flex justify-between items-center px-4 md:px-16 py-4 bg-white shadow-sm">
@@ -75,7 +84,7 @@ export function NavBar() {
         </button>
       </div>
     </nav>
-  )
+  );
 }
 
 export function HeroSection() {
@@ -85,12 +94,15 @@ export function HeroSection() {
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight mb-4">
-            Stay<br />
-            Informed,<br />
+            Stay
+            <br />
+            Informed,
+            <br />
             Stay Inspired
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed">
-            Discover a World of Knowledge at Your Fingertips. Your Daily Dose of Inspiration and Information.
+            Discover a World of Knowledge at Your Fingertips. Your Daily Dose of
+            Inspiration and Information.
           </p>
         </div>
         {/* Center - Main image */}
@@ -109,18 +121,19 @@ export function HeroSection() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Thompson P.</h2>
           <div className="space-y-4 text-gray-700 leading-relaxed">
             <p>
-              I am a pet enthusiast and freelance writer who specializes in animal behavior and care.
-              With a deep love for cats, I enjoy sharing insights on feline companionship and wellness.
+              I am a pet enthusiast and freelance writer who specializes in
+              animal behavior and care. With a deep love for cats, I enjoy
+              sharing insights on feline companionship and wellness.
             </p>
             <p>
-              When I'm not writing, I spend time volunteering at my local animal shelter,
-              helping cats find loving homes.
+              When I'm not writing, I spend time volunteering at my local animal
+              shelter, helping cats find loving homes.
             </p>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export function Footer() {
@@ -146,7 +159,12 @@ export function Footer() {
         </a>
       </div>
       {/* Right: Home page link */}
-      <a href="#" className="font-medium text-gray-800 underline underline-offset-2 hover:text-black">Home page</a>
+      <a
+        href="#"
+        className="font-medium text-gray-800 underline underline-offset-2 hover:text-black"
+      >
+        Home page
+      </a>
     </footer>
-  )
+  );
 }

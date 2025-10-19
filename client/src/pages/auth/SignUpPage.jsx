@@ -250,7 +250,7 @@ export function SignupPage() {
           <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-center pt-2 text-muted-foreground font-medium">
             Already have an account?{" "}
             <a
-              onClick={() => navigate("/registration-success")}
+              onClick={() => navigate("/login")}
               className="text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
             >
               Log in
