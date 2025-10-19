@@ -6,31 +6,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/authentication";
 
 export function NavBar() {
   const navigate = useNavigate();
 
   const location = useLocation();
 
-  // 🚨 เพิ่ม: Handler Function เพื่อบันทึกพาธ
+  // 🚨 1. ใช้ useAuth แทน useState/useEffect/fetchUserData ทั้งหมด
+  const { isAuthenticated, logout, state } = useAuth();
+  const user = state.user || { name: "", role: "user", profile_pic: "" };
+  
+  // 🚨 2. ลบ fetchUserData, useEffect (สำหรับดึงข้อมูล) ออกทั้งหมด
+  // 🚨 3. ลบ handleLogout เดิมออก แล้วใช้ logout จาก useAuth แทน
+
+  // 🚨 4. Handler Function เพื่อบันทึกพาธ (อันนี้ยังต้องคงอยู่)
   const handleAuthNavigation = (path) => {
     const currentPath = location.pathname;
     const isCurrentlyAuthPage =
       currentPath === "/signup" || currentPath === "/login";
 
     if (!isCurrentlyAuthPage) {
-      // 1. ถ้ามาจากหน้าอื่น (เช่น /post/1) -> บันทึกพาธนั้นไว้
       localStorage.setItem("referrer_path", currentPath);
     }
 
-    // 🚨 เพิ่ม Logic พิเศษ: ถ้า referrer_path ถูกบันทึกเป็น /login หรือ /sign-up
-    // ให้ล้างมันทิ้งเพื่อให้เป็น / (Home) แทนที่จะวนลูป
-    const currentReferrer = localStorage.getItem("referrer_path");
-    if (currentReferrer === "/login" || currentReferrer === "/sign-up") {
-      localStorage.setItem("referrer_path", "/"); // ตั้งค่าเป็นหน้าหลัก
-    }
-
-    // 2. นำทางไปยังหน้า Login หรือ Sign Up
     navigate(path);
   };
 
@@ -43,6 +42,9 @@ export function NavBar() {
 
       {/* Mobile navigation buttons */}
       <div className="flex flex-col sm:hidden">
+        {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
+          <ProfileDropdown user={user} handleLogout={logout} /> // 🚨 ใช้ logout จาก useAuth
+        ) : (
         <DropdownMenu>
           <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
             <Menu className="w-6 h-6 text-gray-800" />
@@ -66,6 +68,7 @@ export function NavBar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        )}
       </div>
 
       {/* Desktop navigation buttons */}
