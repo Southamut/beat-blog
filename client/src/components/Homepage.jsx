@@ -5,12 +5,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 
 export function NavBar() {
 
   const navigate = useNavigate()
+
+  const location = useLocation()
+
+  // 🚨 เพิ่ม: Handler Function เพื่อบันทึกพาธ
+  const handleAuthNavigation = (path) => {
+    // 1. บันทึกพาธปัจจุบัน (ถ้าไม่ใช่ /login หรือ /signup)
+    // นี่คือการจับ URL ที่ผู้ใช้อยู่ก่อนจะกดปุ่ม (เช่น /post/1)
+    if (location.pathname !== "/signup" && location.pathname !== "/login") {
+        localStorage.setItem("referrer_path", location.pathname);
+    }
+    // 2. นำทางไปยังหน้า Login หรือ Sign Up
+    navigate(path);
+  }
 
   return (
     <nav className="border-b border-[#DAD6D1] w-full flex justify-between items-center px-4 md:px-16 py-4 bg-white shadow-sm">
@@ -29,7 +42,7 @@ export function NavBar() {
             <DropdownMenuItem className="px-4">
               <button
                 className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors"
-                onClick={() => navigate("/login")}
+                onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
               >
                 Log in
               </button>
@@ -37,7 +50,7 @@ export function NavBar() {
             <DropdownMenuItem className="px-4">
               <button
                 className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors"
-                onClick={() => navigate("/sign-up")}
+                onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
               >
                 Sign up
               </button>
@@ -50,13 +63,13 @@ export function NavBar() {
       <div className="gap-3 relative hidden sm:flex">
         <button
           className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors"
-          onClick={() => navigate("/login")}
+          onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
         >
           Log in
         </button>
         <button
           className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors relative"
-          onClick={() => navigate("/sign-up")}
+          onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
         >
           Sign up
         </button>
