@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/authentication";
+import { ProfileDropdown } from "../components/ProfileDropdown";
 
 export function NavBar() {
   const navigate = useNavigate();
