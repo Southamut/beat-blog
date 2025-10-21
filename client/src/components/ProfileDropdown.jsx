@@ -78,7 +78,7 @@ export function ProfileDropdown({ user, handleLogout }) {
           onClick={
             isAdmin
               ? () => navigate("/admin/profile")
-              : () => navigate("user/profile")
+              : () => navigate("/user/profile")
           }
         >
           <User className="w-4 h-4" />
@@ -91,7 +91,7 @@ export function ProfileDropdown({ user, handleLogout }) {
           onClick={
             isAdmin
               ? () => navigate("/admin/reset-password")
-              : () => navigate("user/reset-password")
+              : () => navigate("/user/reset-password")
           }
         >
           <Settings className="w-4 h-4" />

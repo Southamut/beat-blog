@@ -122,31 +122,20 @@ function AuthProvider(props) {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
       
-      const token = localStorage.getItem("access_token");
-      const response = await axios.put(
-        "http://localhost:4001/auth/update-profile",
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      
-      // อัปเดตข้อมูลผู้ใช้ใน state
+      // อัปเดตข้อมูลผู้ใช้ใน state โดยตรง (ไม่ต้องเรียก API เพราะข้อมูลถูกอัปเดตแล้ว)
       setState((prevState) => ({
         ...prevState,
-        user: { ...prevState.user, ...response.data },
+        user: { ...prevState.user, ...userData },
         loading: false,
         error: null,
       }));
       
-      return response.data;
+      return userData;
     } catch (error) {
       setState((prevState) => ({
         ...prevState,
         loading: false,
-        error: error.response?.data?.error || "Failed to update profile",
+        error: error.message || "Failed to update profile",
       }));
       throw error;
     }
