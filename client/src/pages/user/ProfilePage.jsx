@@ -182,7 +182,7 @@ export default function ProfilePage() {
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-brown-400 mb-2"
                     >
                       Name
                     </label>
@@ -204,7 +204,7 @@ export default function ProfilePage() {
                   <div>
                     <label
                       htmlFor="username"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-brown-400 mb-2"
                     >
                       Username
                     </label>
@@ -228,7 +228,7 @@ export default function ProfilePage() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium text-gray-500 mb-2"
+                      className="block text-sm font-medium text-brown-400 mb-2"
                     >
                       Email
                     </label>

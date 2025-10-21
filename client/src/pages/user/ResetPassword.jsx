@@ -118,7 +118,7 @@ export default function ResetPasswordPage() {
                 {user?.name} |
               </span>
               <span className="text-brown-600 text-2xl font-medium">
-                Profile
+                Reset Password
               </span>
             </div>
           </div>
@@ -129,13 +129,9 @@ export default function ResetPasswordPage() {
           <UserPanel />
 
           {/* Main Content */}
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-4 max-w-[550px]">
             <div className="max-w-2xl">
               <div className="bg-brown-200 rounded-lg p-6">
-                <h1 className="text-2xl font-semibold text-gray-900 mb-6">
-                  Reset Password
-                </h1>
-
                 {errors.general && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
                     {errors.general}
@@ -147,7 +143,7 @@ export default function ResetPasswordPage() {
                   <div>
                     <label
                       htmlFor="currentPassword"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-brown-400 mb-2"
                     >
                       Current Password
                     </label>
@@ -158,7 +154,7 @@ export default function ResetPasswordPage() {
                         type={showPasswords.current ? "text" : "password"}
                         value={formData.currentPassword}
                         onChange={handleInputChange}
-                        className={`pr-10 ${
+                        className={`pr-10 border-brown-300 h-12 bg-white ${
                           errors.currentPassword ? "border-red-300" : ""
                         }`}
                         placeholder="Enter your current password"
@@ -166,7 +162,7 @@ export default function ResetPasswordPage() {
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("current")}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400 hover:text-brown-500"
                       >
                         {showPasswords.current ? (
                           <EyeOff className="w-4 h-4" />
@@ -186,7 +182,7 @@ export default function ResetPasswordPage() {
                   <div>
                     <label
                       htmlFor="newPassword"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-brown-400 mb-2"
                     >
                       New Password
                     </label>
@@ -197,7 +193,7 @@ export default function ResetPasswordPage() {
                         type={showPasswords.new ? "text" : "password"}
                         value={formData.newPassword}
                         onChange={handleInputChange}
-                        className={`pr-10 ${
+                        className={`pr-10 border-brown-300 h-12 bg-white ${
                           errors.newPassword ? "border-red-300" : ""
                         }`}
                         placeholder="Enter your new password"
@@ -205,7 +201,7 @@ export default function ResetPasswordPage() {
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("new")}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400 hover:text-brown-500"
                       >
                         {showPasswords.new ? (
                           <EyeOff className="w-4 h-4" />
@@ -225,7 +221,7 @@ export default function ResetPasswordPage() {
                   <div>
                     <label
                       htmlFor="confirmPassword"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-brown-400 mb-2"
                     >
                       Confirm New Password
                     </label>
@@ -236,7 +232,7 @@ export default function ResetPasswordPage() {
                         type={showPasswords.confirm ? "text" : "password"}
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`pr-10 ${
+                        className={`pr-10 border-brown-300 h-12  bg-white ${
                           errors.confirmPassword ? "border-red-300" : ""
                         }`}
                         placeholder="Confirm your new password"
@@ -244,7 +240,7 @@ export default function ResetPasswordPage() {
                       <button
                         type="button"
                         onClick={() => togglePasswordVisibility("confirm")}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-brown-400 hover:text-brown-500"
                       >
                         {showPasswords.confirm ? (
                           <EyeOff className="w-4 h-4" />
@@ -265,9 +261,8 @@ export default function ResetPasswordPage() {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white"
+                      className="flex items-center rounded-full h-12 px-8 gap-2 bg-brown-600 hover:bg-brown-500 text-white"
                     >
-                      <Lock className="w-4 h-4" />
                       {isLoading ? "Updating..." : "Update Password"}
                     </Button>
                   </div>
