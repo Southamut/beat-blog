@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/authentication";
 import { NavBar } from "../../components/Homepage";
 import { UserPanel } from "../../components/UserPanel";
+import { AlertDialog } from "../../components/AlertDialog";
 import axios from "axios";
 
 export default function ResetPasswordPage() {
@@ -80,6 +81,10 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    // Don't submit directly, let the dialog handle it
+  };
+
+  const handleResetPassword = async () => {
     setIsLoading(true);
 
     try {
@@ -128,6 +133,16 @@ export default function ResetPasswordPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    // Clear any existing errors when canceling
+    setErrors({});
+  };
+
+  const handleClose = () => {
+    // Clear any existing errors when closing
+    setErrors({});
   };
 
 
@@ -290,15 +305,25 @@ export default function ResetPasswordPage() {
                     )}
                   </div>
 
-                  {/* Submit Button */}
+                  {/* Submit Button with Confirmation Dialog */}
                   <div className="pt-4">
-                    <Button
-                      type="submit"
-                      disabled={isLoading}
-                      className="flex items-center rounded-full h-12 px-8 gap-2 bg-brown-600 hover:bg-brown-500 text-white"
+                    <AlertDialog
+                      title="Reset password"
+                      message="Do you want to reset your password?"
+                      confirmText="Reset"
+                      onConfirm={handleResetPassword}
+                      onCancel={handleCancel}
+                      onClose={handleClose}
+                      triggerStyle="custom"
                     >
-                      {isLoading ? "Updating..." : "Update Password"}
-                    </Button>
+                      <Button
+                        type="button"
+                        disabled={isLoading}
+                        className="flex items-center rounded-full h-12 px-8 gap-2 bg-brown-600 hover:bg-brown-500 text-white"
+                      >
+                        {isLoading ? "Updating..." : "Update Password"}
+                      </Button>
+                    </AlertDialog>
                   </div>
                 </form>
               </div>
