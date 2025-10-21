@@ -117,6 +117,30 @@ function AuthProvider(props) {
     navigate("/", { replace: true }); // เพิ่ม { replace: true } เพื่อให้แน่ใจว่าไม่มีประวัติเก่าค้างอยู่
   };
 
+  // อัปเดตข้อมูลผู้ใช้
+  const updateUser = async (userData) => {
+    try {
+      setState((prevState) => ({ ...prevState, loading: true, error: null }));
+      
+      // อัปเดตข้อมูลผู้ใช้ใน state โดยตรง (ไม่ต้องเรียก API เพราะข้อมูลถูกอัปเดตแล้ว)
+      setState((prevState) => ({
+        ...prevState,
+        user: { ...prevState.user, ...userData },
+        loading: false,
+        error: null,
+      }));
+      
+      return userData;
+    } catch (error) {
+      setState((prevState) => ({
+        ...prevState,
+        loading: false,
+        error: error.message || "Failed to update profile",
+      }));
+      throw error;
+    }
+  };
+
   const isAuthenticated = Boolean(state.user);
 
   return (
@@ -128,6 +152,8 @@ function AuthProvider(props) {
         register,
         isAuthenticated,
         fetchUser,
+        updateUser,
+        user: state.user,
       }}
     >
       {props.children}
