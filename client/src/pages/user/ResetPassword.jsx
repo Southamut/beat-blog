@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/authentication";
 import { NavBar } from "../../components/Homepage";
 import { UserPanel } from "../../components/UserPanel";
 import { AlertDialog } from "../../components/AlertDialog";
+import MobileUserPanel from "../../components/MobileUserPanel";
 import axios from "axios";
 
 export default function ResetPasswordPage() {
@@ -149,10 +150,11 @@ export default function ResetPasswordPage() {
   return (
     <>
       <NavBar />
+      <MobileUserPanel />
       <div className="flex">
         <div className="flex-1 min-h-screen bg-brown-100">
           {/* Header */}
-          <div className="px-4 pt-8 pb-2 md:w-2/3 md:mx-auto">
+          <div className="px-4 md:pt-8 pb-2 md:w-2/3 md:mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-15 h-15 rounded-full overflow-hidden bg-brown-400 flex items-center justify-center">
