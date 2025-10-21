@@ -146,7 +146,7 @@ export function SignupPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-brown-100">
       <NavBar />
       <main className="flex justify-center items-center p-4 my-6 flex-grow">
         <div className="w-full max-w-2xl bg-[#EFEEEB] rounded-sm shadow-md px-3 sm:px-20 py-14">
@@ -247,11 +247,11 @@ export function SignupPage() {
               </button>
             </div>
           </form>
-          <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-center pt-2 text-muted-foreground font-medium">
+          <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-brown-400 text-center pt-2 text-muted-foreground font-medium">
             Already have an account?{" "}
             <a
               onClick={() => navigate("/login")}
-              className="text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
+              className="text-brown-600 text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
             >
               Log in
             </a>
