@@ -180,7 +180,7 @@ export function ArticleSection() {
 
     // Main return
     return (
-        <section className="mx-auto w-full py-8 bg-white">
+        <section className="mx-auto w-full py-8 bg-brown-100">
             {/* separate category tab and search bar */}
             <div className="md:px-16">
                 {/* Header */}

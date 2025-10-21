@@ -35,7 +35,7 @@ export function NavBar() {
   };
 
   return (
-    <nav className="border-b border-[#DAD6D1] w-full flex justify-between items-center px-4 md:px-16 py-4 bg-white shadow-sm">
+    <nav className="border-b border-brown-300 w-full flex justify-between items-center px-4 md:px-16 py-4 bg-brown-100 shadow-sm">
       {/* Logo */}
       <button onClick={() => navigate("/")} className="text-2xl font-bold">
         hh.
@@ -50,10 +50,10 @@ export function NavBar() {
             <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
               <Menu className="w-6 h-6 text-gray-800" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-screen py-6 space-y-2 bg-white border-none rounded-none">
+            <DropdownMenuContent className="w-screen py-6 space-y-2 bg-brown-100 border-none rounded-none">
               <DropdownMenuItem className="px-4">
                 <button
-                  className="w-full px-6 py-3 border border-gray-800 text-gray-800 bg-white rounded-full hover:bg-gray-50 transition-colors"
+                  className="w-full px-6 py-3 border border-brown-600 text-brown-600 bg-white rounded-full hover:bg-brown-100 transition-colors"
                   onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
                 >
                   Log in
@@ -61,7 +61,7 @@ export function NavBar() {
               </DropdownMenuItem>
               <DropdownMenuItem className="px-4">
                 <button
-                  className="w-full px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors"
+                  className="w-full px-6 py-3 bg-brown-600 text-white rounded-full hover:bg-brown-500 transition-colors"
                   onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
                 >
                   Sign up
@@ -79,13 +79,13 @@ export function NavBar() {
         ) : (
           <>
             <button
-              className="px-6 py-2 border border-gray-800 text-black bg-white rounded-full hover:bg-gray-50 transition-colors"
+              className="px-6 py-2 border border-brown-600 text-brown-600 bg-white rounded-full hover:bg-brown-100 transition-colors"
               onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
             >
               Log in
             </button>
             <button
-              className="px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors relative"
+              className="px-6 py-2 bg-brown-600 text-white rounded-full hover:bg-brown-500 transition-colors relative"
               onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
             >
               Sign up
@@ -99,7 +99,7 @@ export function NavBar() {
 
 export function HeroSection() {
   return (
-    <section className="w-full mx-auto px-4 md:px-16 py-12 bg-white">
+    <section className="w-full mx-auto px-4 md:px-16 py-12 bg-brown-100">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">
@@ -148,7 +148,7 @@ export function HeroSection() {
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#EFEEEB] h-36 py-6 px-4 md:px-16 flex items-center justify-between">
+    <footer className="w-full bg-brown-200 h-36 py-6 px-4 md:px-16 flex items-center justify-between">
       {/* Left: Get in touch and icons */}
       <div className="flex items-center gap-4">
         <span className="font-medium text-gray-800">Get in touch</span>

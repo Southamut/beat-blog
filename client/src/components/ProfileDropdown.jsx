@@ -1,71 +1,125 @@
 // src/components/ProfileDropdown.jsx
 
-import { LogOut, User, Settings, ChevronDown, Bell, LayoutDashboard } from 'lucide-react';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  LogOut,
+  User,
+  Settings,
+  ChevronDown,
+  Menu,
+  LayoutDashboard,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 // Component ProfileDropdown
 export function ProfileDropdown({ user, handleLogout }) {
-    
-    // เราใช้ useNavigate ที่นี่ เพราะ Dropdown เป็นตัวควบคุมการนำทาง
-    const navigate = useNavigate(); 
-    const isAdmin = user.role === 'admin';
+  // เราใช้ useNavigate ที่นี่ เพราะ Dropdown เป็นตัวควบคุมการนำทาง
+  const navigate = useNavigate();
+  const isAdmin = user.role === "admin";
 
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-2 cursor-pointer focus:outline-none">
-                <Bell className="w-6 h-6 text-gray-800" />
-                <img
-                    src={user.profile_pic || 'https://via.placeholder.com/150'}
-                    alt="User Profile"
-                    className="w-8 h-8 rounded-full object-cover"
-                />
-                <span className="text-gray-800 font-medium hidden sm:inline">{user.name}</span>
-                <ChevronDown className="w-4 h-4 text-gray-800" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-white border border-[#DAD6D1] rounded-lg shadow-lg mt-2">
-                
-                {/* Profile */}
-                <DropdownMenuItem 
-                  className="flex items-center gap-2 cursor-pointer px-4 py-2 hover:bg-gray-50 transition-colors"
-                  onClick={() => navigate("/profile")}>
-                    <User className="w-4 h-4" />
-                    Profile
-                </DropdownMenuItem>
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        {/* desktop */}
+        <div className="hidden md:flex items-center gap-2 cursor-pointer focus:outline-none">
+          {user.profile_pic ? (
+            <img
+              src={user.profile_pic}
+              alt="User Profile"
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+              <User className="w-5 h-5 text-gray-600" />
+            </div>
+          )}
+          <span className="text-gray-800 font-medium hidden sm:inline">
+            {user.name}
+          </span>
+          <ChevronDown className="w-4 h-4 text-gray-800" />
+        </div>
+        {/* mobile */}
+        <div className="flex md:hidden items-center justify-center">
+          <Menu className="w-5 h-5 text-gray-400" />
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className="w-screen md:w-56 border-none bg-brown-100 md:rounded-lg shadow-lg mt-2"
+      >
+        {/* Mobile Profile Section */}
+        <div className="md:hidden px-4 py-3">
+          <div className="flex items-center gap-3">
+            {user.profile_pic ? (
+              <img
+                src={user.profile_pic}
+                alt="User Profile"
+                className="w-12 h-12 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="w-6 h-6 text-gray-600" />
+              </div>
+            )}
+            <div>
+              <p className="font-medium text-gray-900">{user.name}</p>
+            </div>
+          </div>
+        </div>
 
-                {/* Reset Password */}
-                <DropdownMenuItem 
-                  className="flex items-center gap-2 cursor-pointer px-4 py-2 hover:bg-gray-50 transition-colors"
-                  onClick={() => navigate("/reset-password")}>
-                    <Settings className="w-4 h-4" />
-                    Reset password
-                </DropdownMenuItem>
-                
-                {/* Admin Panel - แสดงผลตาม Role */}
-                {isAdmin && (
-                    <DropdownMenuItem 
-                      className="flex items-center gap-2 cursor-pointer px-4 py-2 hover:bg-gray-50 transition-colors"
-                      onClick={() => navigate("/admin/article-management")}>
-                        <LayoutDashboard className="w-4 h-4" />
-                        Admin panel
-                    </DropdownMenuItem>
-                )}
+        {/* Profile */}
+        <DropdownMenuItem
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-gray-50 transition-colors"
+          onClick={
+            isAdmin
+              ? () => navigate("/admin/profile")
+              : () => navigate("user/profile")
+          }
+        >
+          <User className="w-4 h-4" />
+          Profile
+        </DropdownMenuItem>
 
-                <div className="border-t border-[#DAD6D1] my-1"></div>
+        {/* Reset Password */}
+        <DropdownMenuItem
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-gray-50 transition-colors"
+          onClick={
+            isAdmin
+              ? () => navigate("/admin/reset-password")
+              : () => navigate("user/reset-password")
+          }
+        >
+          <Settings className="w-4 h-4" />
+          Reset password
+        </DropdownMenuItem>
 
-                {/* Log out */}
-                <DropdownMenuItem 
-                  className="flex items-center gap-2 cursor-pointer px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
-                  onClick={handleLogout}>
-                    <LogOut className="w-4 h-4" />
-                    Log out
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-    );
+        {/* Admin Panel - แสดงผลตาม Role */}
+        {isAdmin && (
+          <DropdownMenuItem
+            className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-gray-50 transition-colors"
+            onClick={() => navigate("/admin/article-management")}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            Admin panel
+          </DropdownMenuItem>
+        )}
+
+        <div className="border-t border-brown-300 my-1"></div>
+
+        {/* Log out */}
+        <DropdownMenuItem
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-red-50 transition-colors"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-4 h-4" />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }

@@ -124,7 +124,7 @@ export function ViewPostComponent() {
 
 
             {/* only image */}
-            <div className="md:px-16 md:pt-12 bg-white">
+            <div className="md:px-16 md:pt-12 bg-brown-100">
                 <div className="w-full mb-6 md:mb-8">
                     {/* Featured Image - Full Width */}
                     <div className="w-full">

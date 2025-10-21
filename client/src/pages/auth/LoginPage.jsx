@@ -33,10 +33,10 @@ export function LoginPage() {
     };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-brown-100">
       <NavBar />
       <main className="flex justify-center items-center p-4 my-4 flex-grow">
-        <div className="w-full max-w-2xl bg-[#EFEEEB] rounded-sm shadow-md px-3 sm:px-20 py-14">
+        <div className="w-full max-w-2xl bg-brown-200 rounded-sm shadow-md px-3 sm:px-20 py-14">
           <h2 className="text-4xl font-semibold text-center mb-6 text-foreground">
             Log in
           </h2>
@@ -58,7 +58,7 @@ export function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-white rounded-md border border-[#DAD6D1] px-3 py-2 text-sm shadow-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-muted-foreground"
+                className="w-full bg-white rounded-md border border-brown-300 px-3 py-2 text-sm shadow-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-muted-foreground"
               />
             </div>
             <div className="relative space-y-1">
@@ -77,7 +77,7 @@ export function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full bg-white rounded-md border border-[#DAD6D1] px-3 py-2 text-sm shadow-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-muted-foreground"
+                className="w-full bg-white rounded-md border border-brown-300 px-3 py-2 text-sm shadow-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-muted-foreground"
               />
             </div>
 
@@ -93,17 +93,17 @@ export function LoginPage() {
                 type="submit"
                 // Disable button when loading to prevent multiple submissions
                 disabled={loading}
-                className="px-8 py-2 bg-foreground text-white rounded-full bg-[#26231E] hover:bg-muted-foreground transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-2 bg-foreground text-white rounded-full bg-brown-600 hover:bg-muted-foreground transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Logging in..." : "Log in"}
               </button>
             </div>
           </form>
-          <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-center pt-2 text-muted-foreground font-medium">
+          <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-brown-400 text-center pt-2 text-muted-foreground font-medium">
             Don't have an account?
             <a
               onClick={() => navigate("/sign-up")}
-              className="text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
+              className="text-brown-600 text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
             >
               Sign up
             </a>
