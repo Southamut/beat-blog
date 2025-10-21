@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/authentication";
 import { NavBar } from "../../components/Homepage";
+import { UserPanel } from "../../components/UserPanel";
 
 export default function ResetPasswordPage() {
   const { user } = useAuth();
@@ -101,22 +102,6 @@ export default function ResetPasswordPage() {
     }
   };
 
-  const sidebarItems = [
-    {
-      id: "profile",
-      label: "Profile",
-      icon: User,
-      isActive: false,
-      onClick: () => navigate("/user/profile"),
-    },
-    {
-      id: "reset-password",
-      label: "Reset password",
-      icon: Settings,
-      isActive: true,
-      onClick: () => navigate("/user/reset-password"),
-    },
-  ];
 
   return (
     <>
@@ -140,35 +125,13 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="flex md:w-2/3 md:mx-auto">
-          {/* Sidebar desktop */}
-          <div className="hidden md:block w-64 min-h-screen">
-            <div className="p-4">
-              <nav className="space-y-2">
-                {sidebarItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={item.onClick}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                        item.isActive
-                          ? "bg-gray-700 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-          </div>
+          {/* UserPanel Sidebar */}
+          <UserPanel />
 
           {/* Main Content */}
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-4">
             <div className="max-w-2xl">
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="bg-brown-200 rounded-lg p-6">
                 <h1 className="text-2xl font-semibold text-gray-900 mb-6">
                   Reset Password
                 </h1>

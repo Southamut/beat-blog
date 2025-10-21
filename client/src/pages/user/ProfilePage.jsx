@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/authentication";
 import { NavBar } from "../../components/Homepage";
+import { UserPanel } from "../../components/UserPanel";
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
@@ -75,12 +76,7 @@ export default function ProfilePage() {
       newErrors.username = "Username must be at least 3 characters";
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-
+    // Email validation removed since it's read-only
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -109,22 +105,6 @@ export default function ProfilePage() {
     }
   };
 
-  const sidebarItems = [
-    {
-      id: "profile",
-      label: "Profile",
-      icon: User,
-      isActive: true,
-      onClick: () => navigate("/user/profile"),
-    },
-    {
-      id: "reset-password",
-      label: "Reset password",
-      icon: Settings,
-      isActive: false,
-      onClick: () => navigate("/user/reset-password"),
-    },
-  ];
 
   return (
     <>
@@ -148,39 +128,13 @@ export default function ProfilePage() {
         </div>
 
         <div className="flex md:w-2/3 md:mx-auto">
-          {/* Sidebar desktop */}
-          <div className="hidden md:block w-64 min-h-screen">
-            <div className="p-4">
-              <nav className="space-y-2">
-                {sidebarItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={item.onClick}
-                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                        item.isActive
-                          ? "bg-gray-700 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </nav>
-            </div>
-          </div>
+          {/* UserPanel Sidebar */}
+          <UserPanel />
 
           {/* Main Content */}
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-4 max-w-[550px]">
             <div className="max-w-2xl">
-              <div className="bg-gray-100 rounded-lg p-6">
-                <h1 className="text-2xl font-semibold text-gray-900 mb-6">
-                  Edit Profile
-                </h1>
-
+              <div className="bg-brown-200 rounded-lg py-6 px-8">
                 {errors.general && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
                     {errors.general}
@@ -189,9 +143,9 @@ export default function ProfilePage() {
 
                 <form onSubmit={handleSave} className="space-y-6">
                   {/* Profile Picture Section */}
-                  <div className="flex items-start gap-6">
+                  <div className="flex items-center gap-6">
                     <div className="flex-shrink-0">
-                      <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                      <div className="w-30 h-30 rounded-full bg-brown-400 flex items-center justify-center overflow-hidden">
                         {formData.profile_pic ? (
                           <img
                             src={formData.profile_pic}
@@ -199,14 +153,11 @@ export default function ProfilePage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <User className="w-12 h-12 text-gray-400" />
+                          <User className="w-12 h-12 text-brown-100" />
                         )}
                       </div>
                     </div>
                     <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Profile Picture
-                      </label>
                       <input
                         type="file"
                         accept="image/*"
@@ -220,9 +171,8 @@ export default function ProfilePage() {
                         onClick={() =>
                           document.getElementById("profile-pic-upload").click()
                         }
-                        className="flex items-center gap-2 bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                        className="flex h-12 w-4/5 items-center rounded-full gap-2 bg-white border-brown-400 text-brown-600 hover:bg-brown-100"
                       >
-                        <Upload className="w-4 h-4" />
                         Upload profile picture
                       </Button>
                     </div>
@@ -242,7 +192,7 @@ export default function ProfilePage() {
                       type="text"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className={`bg-white ${errors.name ? "border-red-300" : ""}`}
+                      className={`bg-white border-brown-300 h-12 ${errors.name ? "border-red-300" : ""}`}
                       placeholder="Enter your name"
                     />
                     {errors.name && (
@@ -264,7 +214,7 @@ export default function ProfilePage() {
                       type="text"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className={`bg-white ${errors.username ? "border-red-300" : ""}`}
+                      className={`bg-white border-brown-300 h-12 ${errors.username ? "border-red-300" : ""}`}
                       placeholder="Enter your username"
                     />
                     {errors.username && (
@@ -274,11 +224,11 @@ export default function ProfilePage() {
                     )}
                   </div>
 
-                  {/* Email Field */}
+                  {/* Email Field - Read Only */}
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-gray-500 mb-2"
                     >
                       Email
                     </label>
@@ -287,15 +237,11 @@ export default function ProfilePage() {
                       name="email"
                       type="email"
                       value={formData.email}
-                      onChange={handleInputChange}
-                      className={`bg-white ${errors.email ? "border-red-300" : ""}`}
-                      placeholder="Enter your email"
+                      readOnly
+                      disabled
+                      className="h-12 text-brown-400 border-none bg-none shadow-none cursor-not-allowed"
+                      placeholder="Email cannot be changed"
                     />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.email}
-                      </p>
-                    )}
                   </div>
 
                   {/* Save Button */}
@@ -303,9 +249,8 @@ export default function ProfilePage() {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white"
+                      className="flex items-center h-12 w-30 rounded-full gap-2 bg-brown-600 hover:bg-brown-500 text-white"
                     >
-                      <Save className="w-4 h-4" />
                       {isLoading ? "Saving..." : "Save"}
                     </Button>
                   </div>
