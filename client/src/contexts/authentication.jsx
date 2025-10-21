@@ -117,6 +117,41 @@ function AuthProvider(props) {
     navigate("/", { replace: true }); // เพิ่ม { replace: true } เพื่อให้แน่ใจว่าไม่มีประวัติเก่าค้างอยู่
   };
 
+  // อัปเดตข้อมูลผู้ใช้
+  const updateUser = async (userData) => {
+    try {
+      setState((prevState) => ({ ...prevState, loading: true, error: null }));
+      
+      const token = localStorage.getItem("access_token");
+      const response = await axios.put(
+        "http://localhost:4001/auth/update-profile",
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      // อัปเดตข้อมูลผู้ใช้ใน state
+      setState((prevState) => ({
+        ...prevState,
+        user: { ...prevState.user, ...response.data },
+        loading: false,
+        error: null,
+      }));
+      
+      return response.data;
+    } catch (error) {
+      setState((prevState) => ({
+        ...prevState,
+        loading: false,
+        error: error.response?.data?.error || "Failed to update profile",
+      }));
+      throw error;
+    }
+  };
+
   const isAuthenticated = Boolean(state.user);
 
   return (
@@ -128,6 +163,8 @@ function AuthProvider(props) {
         register,
         isAuthenticated,
         fetchUser,
+        updateUser,
+        user: state.user,
       }}
     >
       {props.children}

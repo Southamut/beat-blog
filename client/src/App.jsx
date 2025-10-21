@@ -18,6 +18,8 @@ import { RegistSuccess } from "./pages/auth/RegistSuccessPage";
 import AdminArticleEdit from "./pages/admin/AdminArticleEdit";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AuthenticationRoute from "./components/auth/AuthenticationRoute";
+import ProfilePage from "./pages/user/ProfilePage";
+import ResetPasswordPage from "./pages/user/ResetPassword";
 
 function App() {
   const { isAuthenticated, state } = useAuth();
@@ -53,16 +55,47 @@ function App() {
       />
 
       {/* user */}
-      <Route path="/registration-success" element={
-        <ProtectedRoute
-        isLoading={state.getUserLoading}
-        isAuthenticated={isAuthenticated}
-        userRole={state.user?.role}
-        requiredRole="user"
-      >
-        <RegistSuccess />
-        </ProtectedRoute>
-        } />
+      <Route
+        path="/registration-success"
+        element={
+          <ProtectedRoute
+            isLoading={state.getUserLoading}
+            isAuthenticated={isAuthenticated}
+            userRole={state.user?.role}
+            requiredRole="user"
+          >
+            <RegistSuccess />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/user/profile"
+        element={
+          <ProtectedRoute
+            isLoading={state.getUserLoading}
+            isAuthenticated={isAuthenticated}
+            userRole={state.user?.role}
+            requiredRole="user"
+          >
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/user/reset-password"
+        element={
+          <ProtectedRoute
+            isLoading={state.getUserLoading}
+            isAuthenticated={isAuthenticated}
+            userRole={state.user?.role}
+            requiredRole="user"
+          >
+            <ResetPasswordPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* admin */}
       <Route
