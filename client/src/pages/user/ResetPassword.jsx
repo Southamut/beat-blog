@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/authentication";
 import { NavBar } from "../../components/Homepage";
 import { UserPanel } from "../../components/UserPanel";
+import axios from "axios";
 
 export default function ResetPasswordPage() {
   const { user } = useAuth();
@@ -82,9 +83,25 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
 
     try {
-      // Here you would typically make an API call to reset the password
-      // For now, we'll just simulate the process
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const token = localStorage.getItem("access_token");
+      
+      if (!token) {
+        setErrors({ general: "You must be logged in to change your password." });
+        return;
+      }
+
+      const response = await axios.put(
+        "http://localhost:4001/auth/reset-password",
+        {
+          oldPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("Password updated successfully!");
 
@@ -94,9 +111,20 @@ export default function ResetPasswordPage() {
         newPassword: "",
         confirmPassword: "",
       });
+
+      // Show success message
+      setErrors({ success: "Password updated successfully!" });
+
     } catch (error) {
       console.error("Error updating password:", error);
-      setErrors({ general: "Failed to update password. Please try again." });
+      
+      if (error.response?.data?.error) {
+        setErrors({ general: error.response.data.error });
+      } else if (error.response?.status === 401) {
+        setErrors({ general: "Invalid current password. Please try again." });
+      } else {
+        setErrors({ general: "Failed to update password. Please try again." });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +163,12 @@ export default function ResetPasswordPage() {
                 {errors.general && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
                     {errors.general}
+                  </div>
+                )}
+                
+                {errors.success && (
+                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
+                    {errors.success}
                   </div>
                 )}
 

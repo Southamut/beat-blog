@@ -134,12 +134,12 @@ export default function ProfilePage() {
           {/* Main Content */}
           <div className="flex-1 p-4 max-w-[550px]">
             <div className="max-w-2xl">
-              <div className="bg-brown-200 rounded-lg py-6 px-8">
-                {errors.general && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
-                    {errors.general}
-                  </div>
-                )}
+                <div className="bg-brown-200 rounded-lg py-6 px-8">
+                  {errors.general && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                      {errors.general}
+                    </div>
+                  )}
 
                 <form onSubmit={handleSave} className="space-y-6">
                   {/* Profile Picture Section */}
