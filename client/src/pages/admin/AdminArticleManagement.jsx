@@ -103,7 +103,10 @@ export function AdminArticleManagement() {
 
     // Get category name from category_id
     const getCategoryName = (categoryId) => {
-        const category = categories.find(cat => cat.id === categoryId)
+        // Convert categoryId to number if it's a string
+        const numericCategoryId = typeof categoryId === 'string' ? parseInt(categoryId) : categoryId
+        
+        const category = categories.find(cat => cat.id === numericCategoryId)
         return category ? category.name : "Unknown"
     }
 
@@ -111,7 +114,8 @@ export function AdminArticleManagement() {
     const filteredArticles = articles.filter(article => {
         const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase())
         const matchesStatus = statusFilter === "all" || getStatusName(article.status_id).toLowerCase() === statusFilter.toLowerCase()
-        const matchesCategory = categoryFilter === "all" || getCategoryName(article.category_id) === categoryFilter
+        const categoryName = article.category || getCategoryName(article.category_id)
+        const matchesCategory = categoryFilter === "all" || categoryName === categoryFilter
         return matchesSearch && matchesStatus && matchesCategory
     })
 
@@ -244,7 +248,7 @@ export function AdminArticleManagement() {
                                                 </TableCell>
                                                 <TableCell className="py-4 border-none">
                                                     <span className="text-sm text-gray-700">
-                                                        {getCategoryName(article.category_id)}
+                                                        {article.category || getCategoryName(article.category_id)}
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="py-4 border-none">

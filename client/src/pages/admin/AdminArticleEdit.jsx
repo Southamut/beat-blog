@@ -27,6 +27,7 @@ export default function AdminArticleEdit() {
     const [post, setPost] = useState({
         image: "",
         category_id: null,
+        category: "", // Add this field
         title: "",
         description: "",
         date: null,
@@ -48,6 +49,7 @@ export default function AdminArticleEdit() {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
+
 
                 // Fetch categories
                 const responseCategories = await axios.get(
@@ -77,13 +79,24 @@ export default function AdminArticleEdit() {
 
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setAlertState({
-                    show: true,
-                    type: "error",
-                    title: "Failed to load article",
-                    message: "Something went wrong while trying to load the article. Please try again later."
-                });
-                navigate("/admin/article-management");
+                
+                // Handle authentication errors specifically
+                if (error.response?.status === 401 || error.response?.status === 403) {
+                    setAlertState({
+                        show: true,
+                        type: "error",
+                        title: "Authentication Error",
+                        message: "Your session has expired. Please log in again."
+                    });
+                } else {
+                    setAlertState({
+                        show: true,
+                        type: "error",
+                        title: "Failed to load article",
+                        message: "Something went wrong while trying to load the article. Please try again later."
+                    });
+                }
+                // Don't redirect automatically - let user see the error message
             } finally {
                 setIsLoading(false);
             }
@@ -174,6 +187,26 @@ export default function AdminArticleEdit() {
         setIsSaving(true);
 
         try {
+            let imageUrl = post.image || "";
+
+            // Upload new image if provided
+            if (imageFile.file) {
+                const formData = new FormData();
+                formData.append('articleImage', imageFile.file);
+
+                const uploadResponse = await axios.post(
+                    `${API_URL}/upload/article-image`,
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+
+                imageUrl = uploadResponse.data.imageUrl;
+            }
+
             // Create the article data for update
             const articleData = {
                 title: post.title.trim(),
@@ -181,7 +214,7 @@ export default function AdminArticleEdit() {
                 description: post.description.trim(),
                 content: post.content.trim(),
                 status_id: parseInt(postStatusId),
-                image: post.image || "" // Keep existing image or empty string
+                image: imageUrl
             };
 
             await axios.put(
@@ -205,12 +238,23 @@ export default function AdminArticleEdit() {
             });
         } catch (error) {
             console.error("Error updating post:", error);
-            setAlertState({
-                show: true,
-                type: "error",
-                title: "Failed to update article",
-                message: "Something went wrong while trying to update article. Please try again later."
-            });
+            
+            // Handle authentication errors specifically
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Authentication Error",
+                    message: "Your session has expired. Please log in again."
+                });
+            } else {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Failed to update article",
+                    message: error.response?.data?.message || "Something went wrong while trying to update article. Please try again later."
+                });
+            }
         } finally {
             setIsSaving(false);
         }
@@ -363,7 +407,7 @@ export default function AdminArticleEdit() {
                             <div>
                                 <label htmlFor="category" className="block text-gray-700 font-medium mb-2">Category</label>
                                 <Select
-                                    value={post.category}
+                                    value={post.category || ""}
                                     onValueChange={(value) => {
                                         handleCategoryChange(value);
                                     }}
