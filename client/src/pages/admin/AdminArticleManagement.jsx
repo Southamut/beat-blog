@@ -148,7 +148,7 @@ export function AdminArticleManagement() {
         <SidebarProvider>
             <AdminPanel />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
+                <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
                         <h1 className="text-xl font-semibold">Article Management</h1>
@@ -162,7 +162,7 @@ export function AdminArticleManagement() {
                     </Button>
                 </header>
 
-                <div className="flex flex-1 flex-col gap-4 p-8">
+                <div className="flex flex-1 flex-col gap-4 p-8 bg-brown-100">
                     {/* Filter Section */}
                     <div className="flex justify-between items-center">
                         {/* Search */}
@@ -172,17 +172,17 @@ export function AdminArticleManagement() {
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="py-3 px-4 pl-10 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
+                                className="py-3 px-4 pl-10 rounded-md bg-white border-brown-200 text-brown-600 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
                             />
                         </div>
 
                         <div className="flex gap-4">
                             {/* Status Filter */}
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
+                                <SelectTrigger className="py-3 px-4 rounded-md bg-white border-brown-200 text-brown-600 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
                                     <SelectValue placeholder="Status" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white text-brown-600 border-none focus:ring-0 focus:ring-offset-0 focus:border-gray-500">
                                     <SelectItem value="all">All Status</SelectItem>
                                     <SelectItem value="published">Published</SelectItem>
                                     <SelectItem value="draft">Draft</SelectItem>
@@ -192,10 +192,10 @@ export function AdminArticleManagement() {
 
                             {/* Category Filter */}
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
+                                <SelectTrigger className="py-3 px-4 rounded-md bg-bg-white border-brown-200 text-brown-600 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-white text-brown-600 border-none focus:ring-0 focus:ring-offset-0 focus:border-gray-500">
                                     <SelectItem value="all">All Categories</SelectItem>
                                     {categories.map(category => (
                                         <SelectItem key={category.id} value={category.name}>
@@ -208,9 +208,9 @@ export function AdminArticleManagement() {
                     </div>
 
                     {/* Table */}
-                    <div className="rounded-lg border border-gray-200 overflow-hidden">
+                    <div className="rounded-lg border border-brown-200 overflow-hidden">
                         <Table>
-                            <TableHeader className="border-b border-gray-200">
+                            <TableHeader className="border-b border-brown-200">
                                 <TableRow className="bg-brown-200 border-none hover:bg-brown-200">
                                     <TableHead className="font-medium text-brown-600 py-4 border-none">Article title</TableHead>
                                     <TableHead className="font-medium text-brown-600 py-4 border-none">Category</TableHead>
@@ -223,16 +223,16 @@ export function AdminArticleManagement() {
                                     Array(3).fill().map((_, index) => (
                                         <TableRow key={index} className={`border-none ${index % 2 === 0 ? "bg-white" : "bg-brown-100"}`}>
                                             <TableCell className="py-4 border-none">
-                                                <Skeleton className="h-6 w-[300px] bg-gray-200" />
+                                                <Skeleton className="h-6 w-[300px] bg-brown-200" />
                                             </TableCell>
                                             <TableCell className="py-4 border-none">
-                                                <Skeleton className="h-6 w-[100px] bg-gray-200" />
+                                                <Skeleton className="h-6 w-[100px] bg-brown-200" />
                                             </TableCell>
                                             <TableCell className="py-4 border-none">
-                                                <Skeleton className="h-6 w-[80px] bg-gray-200" />
+                                                <Skeleton className="h-6 w-[80px] bg-brown-200" />
                                             </TableCell>
                                             <TableCell className="py-4 text-right border-none">
-                                                <Skeleton className="h-6 w-[75px] bg-gray-200" />
+                                                <Skeleton className="h-6 w-[75px] bg-brown-200" />
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -240,14 +240,14 @@ export function AdminArticleManagement() {
                                     filteredArticles.map((article, index) => {
                                         const statusStyle = getStatusStyle(article.status_id)
                                         return (
-                                            <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-white" : "bg-brown-100"}`}>
+                                            <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-brown-100" : "bg-brown-200"}`}>
                                                 <TableCell className="py-4 border-none">
-                                                    <div className="font-medium text-gray-700 text-sm leading-5">
+                                                    <div className="font-medium text-brown-600 text-sm leading-5">
                                                         {article.title}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-4 border-none">
-                                                    <span className="text-sm text-gray-700">
+                                                    <span className="text-sm text-brown-600">
                                                         {article.category || getCategoryName(article.category_id)}
                                                     </span>
                                                 </TableCell>
