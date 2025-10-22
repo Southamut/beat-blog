@@ -78,8 +78,10 @@ export const validatePostDataSingle = (req, res, next) => {
     if (category_id === undefined || category_id === null) {
         return res.status(400).json({ message: "Category_id is required" });
     }
-    if (typeof category_id !== 'number') {
-        return res.status(400).json({ message: "Category_id must be a number" });
+    // Convert string to number if needed
+    const categoryIdNum = parseInt(category_id);
+    if (isNaN(categoryIdNum)) {
+        return res.status(400).json({ message: "Category_id must be a valid number" });
     }
 
     // Check description
@@ -102,8 +104,10 @@ export const validatePostDataSingle = (req, res, next) => {
     if (status_id === undefined || status_id === null) {
         return res.status(400).json({ message: "Status_id is required" });
     }
-    if (typeof status_id !== 'number') {
-        return res.status(400).json({ message: "Status_id must be a number" });
+    // Convert string to number if needed
+    const statusIdNum = parseInt(status_id);
+    if (isNaN(statusIdNum)) {
+        return res.status(400).json({ message: "Status_id must be a valid number" });
     }
 
     // If all validations pass, continue

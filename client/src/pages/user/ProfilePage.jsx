@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/authentication";
 import { NavBar } from "../../components/Homepage";
 import { UserPanel } from "../../components/UserPanel";
 import MobileUserPanel from "../../components/MobileUserPanel";
+import { AttentionAlert } from "../../components/AttentionAlert";
 import axios from "axios";
 import API_URL from "@/config/api";
 
@@ -24,6 +25,12 @@ export default function ProfilePage() {
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [alertState, setAlertState] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    message: ""
+  });
 
   useEffect(() => {
     if (user) {
@@ -155,16 +162,32 @@ export default function ProfilePage() {
       setFormData((prev) => ({
         ...prev,
         profile_pic: response.data.user.profile_pic,
+        bio: response.data.user.bio || "",
       }));
 
-      alert("Profile updated successfully!");
+      setAlertState({
+        show: true,
+        type: "success",
+        title: "Saved profile",
+        message: "Your profile has been successfully updated"
+      });
     } catch (error) {
       console.error("Error updating profile:", error);
 
       if (error.response?.data?.error) {
-        alert(error.response.data.error);
+        setAlertState({
+          show: true,
+          type: "error",
+          title: "Error",
+          message: error.response.data.error
+        });
       } else {
-        alert("Failed to update profile. Please try again.");
+        setAlertState({
+          show: true,
+          type: "error",
+          title: "Error",
+          message: "Failed to update profile. Please try again."
+        });
       }
     } finally {
       setIsLoading(false);
@@ -338,6 +361,17 @@ export default function ProfilePage() {
         </div>
         </div>
       </div>
+      
+      {/* Success/Error Alert */}
+      <AttentionAlert
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        isVisible={alertState.show}
+        onClose={() => setAlertState(prev => ({ ...prev, show: false }))}
+        autoHide={true}
+        duration={4000}
+      />
     </>
   );
 }

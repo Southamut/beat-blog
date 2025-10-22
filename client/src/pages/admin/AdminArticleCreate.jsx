@@ -26,6 +26,7 @@ export default function AdminArticleCreate() {
     const [post, setPost] = useState({
         image: "",
         category_id: null,
+        category: "", // Add category field for Select component
         title: "",
         description: "",
         date: null,
@@ -47,20 +48,40 @@ export default function AdminArticleCreate() {
         const fetchCategories = async () => {
             try {
                 setIsLoading(true);
+                console.log("AdminArticleCreate - Fetching categories from:", `${API_URL}/categories`);
                 const responseCategories = await axios.get(
                     `${API_URL}/categories`
                 );
+                console.log("AdminArticleCreate - Categories response:", responseCategories.data);
                 setCategories(responseCategories.data);
-            } catch (error) {
-                console.error("Error fetching categories data:", error);
-                navigate("*");
-            } finally {
-                setIsLoading(false);
-            }
+                } catch (error) {
+                    console.error("AdminArticleCreate - Error fetching categories data:", error);
+                    console.error("AdminArticleCreate - Error response:", error.response?.data);
+                    
+                    // Handle authentication errors specifically
+                    if (error.response?.status === 401 || error.response?.status === 403) {
+                        setAlertState({
+                            show: true,
+                            type: "error",
+                            title: "Authentication Error",
+                            message: "Your session has expired. Please log in again."
+                        });
+                    } else {
+                        setAlertState({
+                            show: true,
+                            type: "error",
+                            title: "Failed to load categories",
+                            message: "Something went wrong while trying to load categories. Please try again later."
+                        });
+                    }
+                    // Don't navigate away, just show error
+                } finally {
+                    setIsLoading(false);
+                }
         };
 
         fetchCategories();
-    }, [navigate]);
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -144,15 +165,49 @@ export default function AdminArticleCreate() {
         setIsSaving(true);
 
         try {
-            // Create the article data without image
+            let imageUrl = "";
+
+            console.log("AdminArticleCreate - Saving article with data:", {
+                title: post.title,
+                category_id: post.category_id,
+                description: post.description,
+                content: post.content,
+                status_id: postStatusId,
+                image: imageUrl
+            });
+
+            // Upload image if provided
+            if (imageFile.file) {
+                console.log("AdminArticleCreate - Uploading image");
+                const formData = new FormData();
+                formData.append('articleImage', imageFile.file);
+
+                const uploadResponse = await axios.post(
+                    `${API_URL}/upload/article-image`,
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    }
+                );
+
+                imageUrl = uploadResponse.data.imageUrl;
+                console.log("AdminArticleCreate - Image uploaded:", imageUrl);
+            }
+
+            // Create the article data with image
             const articleData = {
                 title: post.title.trim(),
-                category_id: parseInt(post.category_id), // Ensure it's a number
+                category_id: parseInt(post.category_id),
                 description: post.description.trim(),
                 content: post.content.trim(),
-                status_id: parseInt(postStatusId), // Ensure it's a number
-                image: "" // Empty image for now
+                status_id: parseInt(postStatusId),
+                image: imageUrl
             };
+
+            console.log("AdminArticleCreate - Sending POST request to:", `${API_URL}/posts`);
+            console.log("AdminArticleCreate - Article data:", articleData);
 
             await axios.post(
                 `${API_URL}/posts`,
@@ -161,6 +216,8 @@ export default function AdminArticleCreate() {
                     headers: { "Content-Type": "application/json" },
                 }
             );
+
+            console.log("AdminArticleCreate - Article created successfully, navigating to management");
 
             // Navigate immediately and pass alert data via state
             const alertData = {
@@ -174,13 +231,26 @@ export default function AdminArticleCreate() {
                 state: { alertData }
             });
         } catch (error) {
-            console.error("Error creating post:", error);
-            setAlertState({
-                show: true,
-                type: "error",
-                title: "Failed to create article",
-                message: "Something went wrong while trying to create article. Please try again later."
-            });
+            console.error("AdminArticleCreate - Error creating post:", error);
+            console.error("AdminArticleCreate - Error response:", error.response?.data);
+            
+            // Handle authentication errors specifically
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Authentication Error",
+                    message: "Your session has expired. Please log in again."
+                });
+                // Don't redirect automatically - let user see the error message
+            } else {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Failed to create article",
+                    message: error.response?.data?.message || "Something went wrong while trying to create article. Please try again later."
+                });
+            }
         } finally {
             setIsSaving(false);
         }
@@ -307,7 +377,9 @@ export default function AdminArticleCreate() {
                             <div>
                                 <label htmlFor="category" className="block text-gray-700 font-medium mb-2">Category</label>
                                 <Select
-                                    value={post.category}
+                                    id="category"
+                                    name="category"
+                                    value={post.category || ""}
                                     onValueChange={(value) => {
                                         handleCategoryChange(value);
                                     }}

@@ -24,8 +24,8 @@ app.get("/test", (req, res) => {
 // Routes
 app.use("/posts", postsRouter);
 app.use("/categories", categoriesRouter);
-app.use("/auth", authRouter)
-app.use("/upload", uploadRouter)
+app.use("/auth", authRouter);
+app.use("/upload", uploadRouter);
 
 app.listen(port, () => {
     console.log(`Server is running at ${port}`);

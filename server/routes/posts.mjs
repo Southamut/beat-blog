@@ -1,16 +1,9 @@
 import express from "express";
 import supabase from "../utils/supabase.mjs";
 import { validatePostDataSingle } from "../middleware/validation.mjs";
-import multer from "multer";
 import protectAdmin from "../middleware/protectAdmin.mjs";
 
 const router = express.Router();
-
-// Configure multer for file uploads
-const upload = multer({
-  storage: multer.memoryStorage(), // Use memory storage for buffer access
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-});
 
 // GET /posts - นักเขียนสามารถดูข้อมูลบทความทั้งหมดในระบบได้
 router.get("/", async (req, res) => {
@@ -60,6 +53,7 @@ router.get("/", async (req, res) => {
       id: post.id,
       image: post.image,
       category: post.categories?.name || 'General',
+      category_id: post.category_id, // Keep category_id for admin management
       title: post.title,
       description: post.description,
       author: 'Admin', // TODO: Add author field to posts table or join with users
@@ -153,6 +147,7 @@ router.get("/:postId", async (req, res) => {
       id: post.id,
       image: post.image,
       category: post.categories?.name || 'General',
+      category_id: post.category_id, // Keep category_id for admin management
       title: post.title,
       description: post.description,
       author: 'Admin', // TODO: Add author field to posts table or join with users
@@ -252,10 +247,10 @@ router.put(
         .update({
           title: title,
           image: image,
-          category_id: category_id,
+          category_id: parseInt(category_id),
           description: description,
           content: content,
-          status_id: status_id,
+          status_id: parseInt(status_id),
         })
         .eq("id", postId)
         .select();
@@ -342,66 +337,5 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// PUT /posts/:id - Update post
-router.put(
-  "/:id",
-  [upload.single("imageFile"), protectAdmin],
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { title, category_id, description, content, status_id, user_id } =
-        req.body;
-
-      let imageUrl = null;
-      if (req.file) {
-        // Upload to Supabase Storage and get URL
-        const fileExt = req.file.originalname.split(".").pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("post-images")
-          .upload(fileName, req.file.buffer, {
-            contentType: req.file.mimetype,
-          });
-
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from("post-images")
-          .getPublicUrl(fileName);
-
-        imageUrl = urlData.publicUrl;
-      }
-
-      const updateData = {
-        title,
-        category_id: parseInt(category_id),
-        description,
-        content,
-        status_id: parseInt(status_id),
-        user_id,
-        date: new Date().toISOString(),
-      };
-
-      // Only update image if new file is uploaded
-      if (imageUrl) {
-        updateData.image = imageUrl;
-      }
-
-      const { data, error } = await supabase
-        .from("posts")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      res.json(data);
-    } catch (error) {
-      console.error("Error updating post:", error);
-      res.status(500).json({ error: error.message });
-    }
-  }
-);
 
 export default router;

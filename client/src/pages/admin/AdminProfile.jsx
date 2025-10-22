@@ -4,37 +4,159 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { AdminPanel } from "../../components/AdminPanel"
+import { AttentionAlert } from "../../components/AttentionAlert"
 import { useAuth } from "../../contexts/authentication"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import API_URL from "@/config/api"
 
 export function AdminProfile() {
-    const { state, setState } = useAuth()
+    const { user, updateUser } = useAuth()
+    const navigate = useNavigate()
+    
     const [formData, setFormData] = useState({
-        name: state.user.name || "Thompson P.",
-        username: "thompson",
-        email: state.user.email || "thompson.p@gmail.com",
-        bio: "I am a pet enthusiast and freelance writer who specializes in animal behavior and care. With a deep love for cats, I enjoy sharing insights on feline companionship and wellness.\nWhen i'm not writing, I spends time volunteering at my local animal shelter, helping cats find loving homes."
+        name: "",
+        username: "",
+        email: "",
+        profile_pic: "",
+        bio: ""
+    })
+    
+    const [profilePicFile, setProfilePicFile] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [errors, setErrors] = useState({})
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
     })
 
-    const handleInputChange = (field, value) => {
+    // Load user data when component mounts
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || "",
+                username: user.username || "",
+                email: user.email || "",
+                profile_pic: user.profile_pic || "",
+                bio: user.bio || "I am a pet enthusiast and freelance writer who specializes in animal behavior and care. With a deep love for cats, I enjoy sharing insights on feline companionship and wellness.\nWhen i'm not writing, I spends time volunteering at my local animal shelter, helping cats find loving homes."
+            })
+        }
+    }, [user])
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target
         setFormData(prev => ({
             ...prev,
-            [field]: value
+            [name]: value
         }))
+        
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ""
+            }))
+        }
     }
 
-    const handleSave = () => {
-        setState(prev => ({
-            ...prev,
-            user: {
-                ...prev.user,
-                name: formData.name,
-                email: formData.email
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            setProfilePicFile(file)
+            // Preview the image
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                setFormData(prev => ({
+                    ...prev,
+                    profile_pic: e.target.result
+                }))
             }
-        }))
-        // Here you would typically make an API call to save the profile
-        console.log("Profile saved:", formData)
+            reader.readAsDataURL(file)
+        }
+    }
+
+    const handleSave = async () => {
+        try {
+            setIsLoading(true)
+            setErrors({})
+
+            const token = localStorage.getItem("access_token")
+            if (!token) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Authentication Required",
+                    message: "Please log in to update your profile"
+                })
+                return
+            }
+
+            // Create FormData for file upload
+            const formDataToSend = new FormData()
+            formDataToSend.append("name", formData.name)
+            formDataToSend.append("email", formData.email)
+            formDataToSend.append("username", formData.username)
+            formDataToSend.append("bio", formData.bio)
+
+            // Add profile picture file if selected
+            if (profilePicFile) {
+                formDataToSend.append("profilePicFile", profilePicFile)
+            }
+
+            // Send to backend
+            const response = await axios.put(
+                `${API_URL}/upload/profile`,
+                formDataToSend,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            console.log("Profile updated successfully!", response.data)
+
+            // Update local context
+            await updateUser(response.data.user)
+
+            // Update formData with new profile picture URL and bio
+            setFormData(prev => ({
+                ...prev,
+                profile_pic: response.data.user.profile_pic,
+                bio: response.data.user.bio || "",
+            }))
+
+            setAlertState({
+                show: true,
+                type: "success",
+                title: "Saved profile",
+                message: "Your profile has been successfully updated"
+            })
+        } catch (error) {
+            console.error("Error updating profile:", error)
+            
+            if (error.response?.data?.error) {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Error",
+                    message: error.response.data.error
+                })
+            } else {
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Error",
+                    message: "Failed to update profile. Please try again."
+                })
+            }
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -49,9 +171,10 @@ export function AdminProfile() {
 
                     <Button
                         className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"
-                        onClick={() => navigate("/admin/category-management/create")}
+                        onClick={handleSave}
+                        disabled={isLoading}
                     >
-                        Save
+                        {isLoading ? "Saving..." : "Save"}
                     </Button>
                 </header>
 
@@ -59,18 +182,33 @@ export function AdminProfile() {
                     {/* Profile Picture Section */}
                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center">
-                            <img
-                                src="/src/assets/man_and_cat.jpg"
-                                alt="Profile"
-                                className="w-full h-full object-cover"
-                            />
+                            {formData.profile_pic ? (
+                                <img
+                                    src={formData.profile_pic}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-brown-200 flex items-center justify-center text-brown-600 font-bold">
+                                    {formData.name ? formData.name.charAt(0).toUpperCase() : "A"}
+                                </div>
+                            )}
                         </div>
-                        <Button
-                            className="bg-white text-black border border-brown-400 hover:bg-brown-200 rounded-full px-4 py-2"
-                            onClick={() => console.log("Upload profile picture")}
-                        >
-                            Upload profile picture
-                        </Button>
+                        <div>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="hidden"
+                                id="profile-pic-upload"
+                            />
+                            <Button
+                                className="bg-white text-black border border-brown-400 hover:bg-brown-200 rounded-full px-4 py-2"
+                                onClick={() => document.getElementById('profile-pic-upload').click()}
+                            >
+                                Upload profile picture
+                            </Button>
+                        </div>
                     </div>
 
                     <div className="w-2/4">
@@ -81,44 +219,51 @@ export function AdminProfile() {
                     <div className="space-y-6">
                         {/* Name Field */}
                         <div className="space-y-2">
-                            <label className=" text-sm font-medium text-brown-400">Name</label>
+                            <label className="text-sm font-medium text-brown-400">Name</label>
                             <Input
+                                name="name"
                                 value={formData.name}
-                                onChange={(e) => handleInputChange('name', e.target.value)}
+                                onChange={handleInputChange}
                                 className="w-2/4 bg-white text-black border-brown-300 rounded-lg"
                                 placeholder="Enter your name"
                             />
+                            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                         </div>
 
                         {/* Username Field */}
                         <div className="space-y-2">
-                            <label className=" text-sm font-medium text-brown-400">Username</label>
+                            <label className="text-sm font-medium text-brown-400">Username</label>
                             <Input
+                                name="username"
                                 value={formData.username}
-                                onChange={(e) => handleInputChange('username', e.target.value)}
+                                onChange={handleInputChange}
                                 className="w-2/4 bg-white text-black border-brown-300 rounded-lg"
                                 placeholder="Enter your username"
                             />
+                            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
                         </div>
 
                         {/* Email Field */}
                         <div className="space-y-2">
-                            <label className=" text-sm font-medium text-brown-400">Email</label>
+                            <label className="text-sm font-medium text-brown-400">Email</label>
                             <Input
+                                name="email"
                                 value={formData.email}
-                                onChange={(e) => handleInputChange('email', e.target.value)}
+                                onChange={handleInputChange}
                                 className="w-2/4 bg-white text-black border-brown-300 rounded-lg"
                                 placeholder="Enter your email"
                                 type="email"
                             />
+                            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                         </div>
 
                         {/* Bio Field */}
                         <div className="space-y-2">
-                            <label className=" text-sm font-medium text-brown-400">Bio (max 120 letters)</label>
+                            <label className="text-sm font-medium text-brown-400">Bio (max 120 letters)</label>
                             <Textarea
+                                name="bio"
                                 value={formData.bio}
-                                onChange={(e) => handleInputChange('bio', e.target.value)}
+                                onChange={handleInputChange}
                                 className="bg-white text-brown-400 border-brown-300 rounded-lg resize-none"
                                 placeholder="Tell us about yourself..."
                                 rows={4}
@@ -127,11 +272,23 @@ export function AdminProfile() {
                             <div className="text-brown-400 text-xs text-right">
                                 {formData.bio.length}/120 characters
                             </div>
+                            {errors.bio && <p className="text-red-500 text-sm">{errors.bio}</p>}
                         </div>
 
                     </div>
                 </div>
             </SidebarInset>
+            
+            {/* Success/Error Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={() => setAlertState(prev => ({ ...prev, show: false }))}
+                autoHide={true}
+                duration={4000}
+            />
         </SidebarProvider>
     )
 }

@@ -2,12 +2,12 @@ import axios from "axios";
 
 function jwtInterceptor() {
   axios.interceptors.request.use((req) => {
-    const hasToken = Boolean(window.localStorage.getItem("token"));
+    const hasToken = Boolean(window.localStorage.getItem("access_token"));
 
     if (hasToken) {
       req.headers = {
         ...req.headers,
-        Authorization: <Code>Bearer ${window.localStorage.getItem("token")}</Code>,
+        Authorization: `Bearer ${window.localStorage.getItem("access_token")}`,
       };
     }
 
@@ -24,8 +24,9 @@ function jwtInterceptor() {
         error.response.status === 401 &&
         error.response.data.error.includes("Unauthorized")
       ) {
-        window.localStorage.removeItem("token");
-        window.location.replace("/");
+        window.localStorage.removeItem("access_token");
+        // Don't automatically redirect - let the components handle the error
+        console.error("Authentication failed:", error.response.data.error);
       }
       return Promise.reject(error);
     }
