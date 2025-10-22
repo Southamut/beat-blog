@@ -127,6 +127,7 @@ authRouter.get("/get-user", protectUser, async (req, res) => {
       name: rows[0].name,
       role: rows[0].role,
       profile_pic: rows[0].profile_pic,
+      bio: rows[0].bio,
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

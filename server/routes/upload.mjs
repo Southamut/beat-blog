@@ -77,7 +77,7 @@ postRouter.post("/", [imageFileUpload, protectAdmin], async (req, res) => {
 // Route สำหรับการอัปเดตโปรไฟล์ผู้ใช้
 postRouter.put("/profile", [profilePicUpload, protectUser], async (req, res) => {
   try {
-    const { name, username } = req.body;
+    const { name, username, bio } = req.body;
     const file = req.files?.profilePicFile?.[0];
     const token = req.headers.authorization?.split(" ")[1];
     
@@ -86,7 +86,18 @@ postRouter.put("/profile", [profilePicUpload, protectUser], async (req, res) => 
       return res.status(401).json({ error: "Unauthorized: Invalid token" });
     }
 
-    let profilePicUrl = userData.user.user_metadata?.profile_pic || "";
+    // Get current user data from database to preserve existing profile picture
+    const { data: currentUserData, error: currentUserError } = await supabase
+      .from('users')
+      .select('profile_pic')
+      .eq('id', userData.user.id)
+      .single();
+
+    if (currentUserError) {
+      return res.status(400).json({ error: "Failed to fetch user data" });
+    }
+
+    let profilePicUrl = currentUserData.profile_pic || "";
 
     // ถ้ามีไฟล์ใหม่ ให้อัปโหลด
     if (file && file.size > 0) {
@@ -112,7 +123,8 @@ postRouter.put("/profile", [profilePicUpload, protectUser], async (req, res) => 
       .update({ 
         name, 
         username, 
-        profile_pic: profilePicUrl 
+        profile_pic: profilePicUrl,
+        bio: bio || null
       })
       .eq('id', userData.user.id)
       .select();
@@ -129,6 +141,7 @@ postRouter.put("/profile", [profilePicUpload, protectUser], async (req, res) => 
         name,
         username,
         profile_pic: profilePicUrl,
+        bio: bio || null,
       },
     });
   } catch (err) {

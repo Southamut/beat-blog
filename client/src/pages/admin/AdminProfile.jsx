@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { AdminPanel } from "../../components/AdminPanel"
+import { AttentionAlert } from "../../components/AttentionAlert"
 import { useAuth } from "../../contexts/authentication"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
@@ -25,6 +26,12 @@ export function AdminProfile() {
     const [profilePicFile, setProfilePicFile] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [errors, setErrors] = useState({})
+    const [alertState, setAlertState] = useState({
+        show: false,
+        type: "success",
+        title: "",
+        message: ""
+    })
 
     // Load user data when component mounts
     useEffect(() => {
@@ -78,7 +85,12 @@ export function AdminProfile() {
 
             const token = localStorage.getItem("access_token")
             if (!token) {
-                alert("Please log in to update your profile")
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Authentication Required",
+                    message: "Please log in to update your profile"
+                })
                 return
             }
 
@@ -111,20 +123,36 @@ export function AdminProfile() {
             // Update local context
             await updateUser(response.data.user)
 
-            // Update formData with new profile picture URL
+            // Update formData with new profile picture URL and bio
             setFormData(prev => ({
                 ...prev,
                 profile_pic: response.data.user.profile_pic,
+                bio: response.data.user.bio || "",
             }))
 
-            alert("Profile updated successfully!")
+            setAlertState({
+                show: true,
+                type: "success",
+                title: "Saved profile",
+                message: "Your profile has been successfully updated"
+            })
         } catch (error) {
             console.error("Error updating profile:", error)
             
             if (error.response?.data?.error) {
-                alert(error.response.data.error)
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Error",
+                    message: error.response.data.error
+                })
             } else {
-                alert("Failed to update profile. Please try again.")
+                setAlertState({
+                    show: true,
+                    type: "error",
+                    title: "Error",
+                    message: "Failed to update profile. Please try again."
+                })
             }
         } finally {
             setIsLoading(false)
@@ -250,6 +278,17 @@ export function AdminProfile() {
                     </div>
                 </div>
             </SidebarInset>
+            
+            {/* Success/Error Alert */}
+            <AttentionAlert
+                type={alertState.type}
+                title={alertState.title}
+                message={alertState.message}
+                isVisible={alertState.show}
+                onClose={() => setAlertState(prev => ({ ...prev, show: false }))}
+                autoHide={true}
+                duration={4000}
+            />
         </SidebarProvider>
     )
 }
