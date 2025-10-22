@@ -37,8 +37,9 @@ export function NavBar() {
   return (
     <nav className="border-b border-brown-300 w-full flex justify-between items-center px-4 md:px-16 py-4 bg-brown-100 shadow-sm">
       {/* Logo */}
-      <button onClick={() => navigate("/")} className="text-2xl font-bold">
-        hh.
+      <button onClick={() => navigate("/")} className="font-bold">
+        <span className="text-brown-600 text-2xl">BEAT</span> 
+        <span className="text-md text-brown-400"> Personal Blog</span>
       </button>
 
       {/* Mobile navigation buttons */}
@@ -103,14 +104,14 @@ export function HeroSection() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight mb-4">
+          <h1 className="text-4xl lg:text-5xl font-bold text-brown-600 leading-tight mb-4">
             Stay
             <br />
             Informed,
             <br />
             Stay Inspired
           </h1>
-          <p className="text-lg text-gray-600 leading-relaxed">
+          <p className="text-lg text-brown-400 leading-relaxed">
             Discover a World of Knowledge at Your Fingertips. Your Daily Dose of
             Inspiration and Information.
           </p>
@@ -127,9 +128,9 @@ export function HeroSection() {
         </div>
         {/* Right Content - Author bio */}
         <div className="lg:col-span-1">
-          <div className="text-sm text-gray-500 mb-2">-Author</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Thompson P.</h2>
-          <div className="space-y-4 text-gray-700 leading-relaxed">
+          <div className="text-sm text-brown-400 mb-2">-Author</div>
+          <h2 className="text-2xl font-bold text-brown-500 mb-4">Punyakit Noinon</h2>
+          <div className="space-y-4 text-brown-400 leading-relaxed">
             <p>
               I am a pet enthusiast and freelance writer who specializes in
               animal behavior and care. With a deep love for cats, I enjoy
@@ -151,19 +152,19 @@ export function Footer() {
     <footer className="w-full bg-brown-200 h-36 py-6 px-4 md:px-16 flex items-center justify-between">
       {/* Left: Get in touch and icons */}
       <div className="flex items-center gap-4">
-        <span className="font-medium text-gray-800">Get in touch</span>
-        <a href="#" className="hover:opacity-80" aria-label="LinkedIn">
-          <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center">
+        <span className="font-medium text-brown-600">Get in touch</span>
+        <a href="https://www.linkedin.com/in/punyakit-n" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="LinkedIn">
+          <div className="w-6 h-6 bg-brown-600 rounded-full flex items-center justify-center">
             <Linkedin className="w-3 h-3 text-white" />
           </div>
         </a>
-        <a href="#" className="hover:opacity-80" aria-label="GitHub">
-          <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center">
+        <a href="https://github.com/Southamut" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="GitHub">
+          <div className="w-6 h-6 bg-brown-600 rounded-full flex items-center justify-center">
             <Github className="w-3 h-3 text-white" />
           </div>
         </a>
-        <a href="#" className="hover:opacity-80" aria-label="Email">
-          <div className="w-6 h-6 bg-gray-700 rounded-full flex items-center justify-center">
+        <a href="mailto:punyakit.noi@gmail.com" className="hover:opacity-80" aria-label="Email">
+          <div className="w-6 h-6 bg-brown-600 rounded-full flex items-center justify-center">
             <Mail className="w-3 h-3 text-white" />
           </div>
         </a>
@@ -171,7 +172,7 @@ export function Footer() {
       {/* Right: Home page link */}
       <a
         href="#"
-        className="font-medium text-gray-800 underline underline-offset-2 hover:text-black"
+        className="font-medium text-brown-600 underline underline-offset-2 hover:text-black"
       >
         Home page
       </a>
