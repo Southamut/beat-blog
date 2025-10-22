@@ -227,9 +227,9 @@ export default function AdminArticleCreate() {
                 message: postStatusId === 1 ? "You can publish article later" : "Your article is now live"
             };
 
-            // navigate("/admin/article-management", {
-            //     state: { alertData }
-            // });
+            navigate("/admin/article-management", {
+                state: { alertData }
+            });
         } catch (error) {
             console.error("AdminArticleCreate - Error creating post:", error);
             console.error("AdminArticleCreate - Error response:", error.response?.data);
@@ -377,6 +377,8 @@ export default function AdminArticleCreate() {
                             <div>
                                 <label htmlFor="category" className="block text-gray-700 font-medium mb-2">Category</label>
                                 <Select
+                                    id="category"
+                                    name="category"
                                     value={post.category || ""}
                                     onValueChange={(value) => {
                                         handleCategoryChange(value);

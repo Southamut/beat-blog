@@ -407,6 +407,8 @@ export default function AdminArticleEdit() {
                             <div>
                                 <label htmlFor="category" className="block text-gray-700 font-medium mb-2">Category</label>
                                 <Select
+                                    id="category"
+                                    name="category"
                                     value={post.category || ""}
                                     onValueChange={(value) => {
                                         handleCategoryChange(value);
