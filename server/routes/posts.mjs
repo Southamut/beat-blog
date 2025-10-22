@@ -18,11 +18,20 @@ router.get("/", async (req, res) => {
     const { page = 1, limit = 6, category, keyword } = req.query;
     const offset = (page - 1) * limit;
 
-    let query = supabase.from("posts").select("*", { count: "exact" });
+    // Join with categories table to get category name
+    let query = supabase
+      .from("posts")
+      .select(`
+        *,
+        categories (
+          id,
+          name
+        )
+      `, { count: "exact" });
 
-    // Filter by category if provided
+    // Filter by category name if provided
     if (category) {
-      query = query.eq("category", category);
+      query = query.eq("categories.name", category);
     }
 
     // Search by keyword if provided
@@ -32,8 +41,10 @@ router.get("/", async (req, res) => {
       );
     }
 
-    // Add pagination
-    query = query.range(offset, offset + limit - 1);
+    // Add pagination and ordering
+    query = query
+      .order('date', { ascending: false })
+      .range(offset, offset + limit - 1);
 
     const { data: posts, error, count } = await query;
 
@@ -44,6 +55,20 @@ router.get("/", async (req, res) => {
       });
     }
 
+    // Transform the data to match frontend expectations
+    const transformedPosts = posts.map(post => ({
+      id: post.id,
+      image: post.image,
+      category: post.categories?.name || 'General',
+      title: post.title,
+      description: post.description,
+      author: 'Admin', // TODO: Add author field to posts table or join with users
+      date: post.date,
+      content: post.content,
+      status_id: post.status_id,
+      likes_count: post.likes_count
+    }));
+
     const totalPages = Math.ceil(count / limit);
     const nextPage = page < totalPages ? parseInt(page) + 1 : null;
 
@@ -52,7 +77,7 @@ router.get("/", async (req, res) => {
       totalPages: totalPages,
       currentPage: parseInt(page),
       limit: parseInt(limit),
-      posts: posts,
+      posts: transformedPosts,
       nextPage: nextPage,
     });
   } catch (error) {
@@ -107,7 +132,13 @@ router.get("/:postId", async (req, res) => {
 
     const { data: post, error } = await supabase
       .from("posts")
-      .select("*")
+      .select(`
+        *,
+        categories (
+          id,
+          name
+        )
+      `)
       .eq("id", postId)
       .single();
 
@@ -117,7 +148,22 @@ router.get("/:postId", async (req, res) => {
       });
     }
 
-    return res.status(200).json(post);
+    // Transform the data to match frontend expectations
+    const transformedPost = {
+      id: post.id,
+      image: post.image,
+      category: post.categories?.name || 'General',
+      title: post.title,
+      description: post.description,
+      author: 'Admin', // TODO: Add author field to posts table or join with users
+      date: post.date,
+      content: post.content,
+      status_id: post.status_id,
+      likes_count: post.likes_count,
+      likes: post.likes_count // Adding 'likes' alias for frontend compatibility
+    };
+
+    return res.status(200).json(transformedPost);
   } catch (error) {
     console.error("Server error:", error);
     return res.status(500).json({

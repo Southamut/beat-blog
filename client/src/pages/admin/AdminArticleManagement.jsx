@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { DeletePostDialog } from "@/components/DeletePostDialog";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
+import API_URL from "@/config/api";
 
 export function AdminArticleManagement() {
     const [searchTerm, setSearchTerm] = useState("")
@@ -47,8 +48,8 @@ export function AdminArticleManagement() {
 
             // Fetch articles with status and category information
             // Use a large limit to get all posts for admin management
-            const articlesResponse = await axios.get("http://localhost:4001/posts?limit=100")
-            const categoriesResponse = await axios.get("http://localhost:4001/categories")
+            const articlesResponse = await axios.get(`${API_URL}/posts?limit=100`)
+            const categoriesResponse = await axios.get(`${API_URL}/categories`)
 
             setArticles(articlesResponse.data.posts || [])
             setCategories(categoriesResponse.data || [])
@@ -116,7 +117,7 @@ export function AdminArticleManagement() {
 
     const handleDelete = async (articleId) => {
         try {
-            await axios.delete(`http://localhost:4001/posts/${articleId}`)
+            await axios.delete(`${API_URL}/posts/${articleId}`)
             setAlertState({
                 show: true,
                 type: "success",

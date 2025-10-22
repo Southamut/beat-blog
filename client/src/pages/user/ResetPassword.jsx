@@ -9,6 +9,7 @@ import { UserPanel } from "../../components/UserPanel";
 import { AlertDialog } from "../../components/AlertDialog";
 import MobileUserPanel from "../../components/MobileUserPanel";
 import axios from "axios";
+import API_URL from "@/config/api";
 
 export default function ResetPasswordPage() {
   const { user } = useAuth();
@@ -99,7 +100,7 @@ export default function ResetPasswordPage() {
       }
 
       const response = await axios.put(
-        "http://localhost:4001/auth/reset-password",
+        `${API_URL}/auth/reset-password`,
         {
           oldPassword: formData.currentPassword,
           newPassword: formData.newPassword,

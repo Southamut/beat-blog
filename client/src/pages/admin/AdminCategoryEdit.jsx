@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { X, PenSquare } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import API_URL from "@/config/api";
 
 export default function AdminCategoryEdit() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function AdminCategoryEdit() {
             try {
                 setIsLoading(true);
                 const response = await axios.get(
-                    `http://localhost:4001/categories/${categoryId}`
+                    `${API_URL}/categories/${categoryId}`
                 );
                 setCategoryName(response.data.name);
             } catch (error) {
@@ -63,7 +64,7 @@ export default function AdminCategoryEdit() {
 
         try {
             await axios.put(
-                `http://localhost:4001/categories/${categoryId}`,
+                `${API_URL}/categories/${categoryId}`,
                 {
                     name: categoryName.trim(),
                 }

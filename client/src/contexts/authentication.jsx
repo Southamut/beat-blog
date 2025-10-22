@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from "@/config/api";
 
 const AuthContext = React.createContext();
 
@@ -28,7 +29,7 @@ function AuthProvider(props) {
 
     try {
       setState((prevState) => ({ ...prevState, getUserLoading: true }));
-      const response = await axios.get("http://localhost:4001/auth/get-user", {
+      const response = await axios.get(`${API_URL}/auth/get-user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -59,7 +60,7 @@ function AuthProvider(props) {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
       const response = await axios.post(
-        "http://localhost:4001/auth/login",
+        `${API_URL}/auth/login`,
         data
       );
       const token = response.data.access_token;
@@ -97,7 +98,7 @@ function AuthProvider(props) {
   const register = async (data) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
-      await axios.post("http://localhost:4001/auth/register", data);
+      await axios.post(`${API_URL}/auth/register`, data);
       setState((prevState) => ({ ...prevState, loading: false, error: null }));
       navigate("/sign-up/success");
     } catch (error) {

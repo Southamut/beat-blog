@@ -9,6 +9,7 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import API_URL from "@/config/api";
 
 export function SignupPage() {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ export function SignupPage() {
     try {
       //send form to regist
       const response = await axios.post(
-        "http://localhost:4001/auth/register",
+        `${API_URL}/auth/register`,
         formData
       );
 
@@ -103,7 +104,7 @@ export function SignupPage() {
     try {
       // 1. 🚨 พยายามล็อกอินโดยตรงด้วย Email/Password (ใช้เป็นตัวตรวจสอบสถานะการยืนยัน)
       const loginResponse = await axios.post(
-        "http://localhost:4001/auth/login",
+        `${API_URL}/auth/login`,
         {
           email: formData.email,
           password: formData.password,

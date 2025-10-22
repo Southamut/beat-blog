@@ -7,6 +7,7 @@ import { AttentionAlert } from "@/components/AttentionAlert";
 import axios from "axios";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import API_URL from "@/config/api";
 
 export default function AdminCategoryCreate() {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function AdminCategoryCreate() {
 
         try {
             await axios.post(
-                "http://localhost:4001/categories",
+                `${API_URL}/categories`,
                 {
                     name: categoryName.trim(),
                 }

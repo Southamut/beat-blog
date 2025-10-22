@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import API_URL from "@/config/api";
 
 export default function AdminArticleEdit() {
     const { state } = useAuth();
@@ -50,13 +51,13 @@ export default function AdminArticleEdit() {
 
                 // Fetch categories
                 const responseCategories = await axios.get(
-                    "http://localhost:4001/categories"
+                    `${API_URL}/categories`
                 );
                 setCategories(responseCategories.data);
 
                 // Fetch article data
                 const responseArticle = await axios.get(
-                    `http://localhost:4001/posts/${articleId}`
+                    `${API_URL}/posts/${articleId}`
                 );
                 const articleData = responseArticle.data;
 
@@ -153,7 +154,7 @@ export default function AdminArticleEdit() {
         // Check if title already exists (excluding current article)
         try {
             const titleCheckResponse = await axios.get(
-                `http://localhost:4001/posts/check-title/${encodeURIComponent(post.title.trim())}?excludeId=${articleId}`
+                `${API_URL}/posts/check-title/${encodeURIComponent(post.title.trim())}?excludeId=${articleId}`
             );
 
             if (titleCheckResponse.data.exists) {
@@ -184,7 +185,7 @@ export default function AdminArticleEdit() {
             };
 
             await axios.put(
-                `http://localhost:4001/posts/${articleId}`,
+                `${API_URL}/posts/${articleId}`,
                 articleData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -221,7 +222,7 @@ export default function AdminArticleEdit() {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:4001/posts/${articleId}`);
+            await axios.delete(`${API_URL}/posts/${articleId}`);
 
             const alertData = {
                 show: true,
