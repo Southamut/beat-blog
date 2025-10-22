@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import axios from 'axios'
 import ReactMarkdown from 'react-markdown'
-import { ArrowLeft, Smile, Copy, FacebookIcon, Linkedin, Twitter } from 'lucide-react'
+import { ArrowLeft, Smile, Copy, FacebookIcon, Linkedin, Twitter, ImageOff } from 'lucide-react'
 import { Toaster, toast } from 'sonner'
+import API_URL from '@/config/api';
 
 
 // Loading Spinner Component
@@ -35,7 +36,7 @@ export function ViewPostComponent() {
         const fetchPost = async () => {
             try {
                 setLoading(true)
-                const response = await axios.get(`https://blog-post-project-api.vercel.app/posts/${postId}`)
+                const response = await axios.get(`${API_URL}/posts/${postId}`)
                 setPost(response.data)
                 setError(null)
             } catch (err) {
@@ -118,6 +119,8 @@ export function ViewPostComponent() {
         }
     }
 
+    const hasImage = post.image && post.image.trim() !== '';
+
     // Main return
     return (
         <>
@@ -128,11 +131,17 @@ export function ViewPostComponent() {
                 <div className="w-full mb-6 md:mb-8">
                     {/* Featured Image - Full Width */}
                     <div className="w-full">
-                        <img
-                            src={post.image}
-                            alt={post.title}
-                            className="w-full aspect-[18/9] md:aspect-[21/9] object-cover md:rounded-2xl"
-                        />
+                        {hasImage ? (
+                            <img
+                                src={post.image}
+                                alt={post.title}
+                                className="w-full aspect-[18/9] md:aspect-[21/9] object-cover md:rounded-2xl"
+                            />
+                        ) : (
+                            <div className="w-full aspect-[18/9] md:aspect-[21/9] bg-gray-100 md:rounded-2xl flex items-center justify-center">
+                                <ImageOff className="w-24 h-24 text-gray-400" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

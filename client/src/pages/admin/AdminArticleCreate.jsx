@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import API_URL from "@/config/api";
 
 export default function AdminArticleCreate() {
     const { state } = useAuth();
@@ -47,7 +48,7 @@ export default function AdminArticleCreate() {
             try {
                 setIsLoading(true);
                 const responseCategories = await axios.get(
-                    "http://localhost:4001/categories"
+                    `${API_URL}/categories`
                 );
                 setCategories(responseCategories.data);
             } catch (error) {
@@ -123,7 +124,7 @@ export default function AdminArticleCreate() {
         // Check if title already exists
         try {
             const titleCheckResponse = await axios.get(
-                `http://localhost:4001/posts/check-title/${encodeURIComponent(post.title.trim())}`
+                `${API_URL}/posts/check-title/${encodeURIComponent(post.title.trim())}`
             );
 
             if (titleCheckResponse.data.exists) {
@@ -154,7 +155,7 @@ export default function AdminArticleCreate() {
             };
 
             await axios.post(
-                "http://localhost:4001/posts",
+                `${API_URL}/posts`,
                 articleData,
                 {
                     headers: { "Content-Type": "application/json" },

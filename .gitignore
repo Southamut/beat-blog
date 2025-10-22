@@ -49,3 +49,8 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Documentation and notes (temporary/local only)
+CHANGES_SUMMARY.md
+DATABASE_SETUP_GUIDE.md
+API_MIGRATION_COMPLETE.md

@@ -8,6 +8,7 @@ import { NavBar } from "../../components/Homepage";
 import { UserPanel } from "../../components/UserPanel";
 import MobileUserPanel from "../../components/MobileUserPanel";
 import axios from "axios";
+import API_URL from "@/config/api";
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
@@ -135,7 +136,7 @@ export default function ProfilePage() {
 
       // ส่งข้อมูลไปยัง Backend
       const response = await axios.put(
-        "http://localhost:4001/upload/profile",
+        `${API_URL}/upload/profile`,
         formDataToSend,
         {
           headers: {

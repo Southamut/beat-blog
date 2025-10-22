@@ -13,6 +13,7 @@ import { AdminPanel } from "../../components/AdminPanel";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AttentionAlert } from "@/components/AttentionAlert";
 import { DeletePostDialog } from "@/components/DeletePostDialog";
+import API_URL from "@/config/api";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -45,7 +46,7 @@ export function AdminCategoryManagement() {
             try {
                 setIsLoading(true);
                 const responseCategories = await axios.get(
-                    "http://localhost:4001/categories"
+                    `${API_URL}/categories`
                 );
                 setCategories(responseCategories.data);
             } catch (error) {
@@ -75,7 +76,7 @@ export function AdminCategoryManagement() {
         try {
             setIsLoading(true);
             await axios.delete(
-                `http://localhost:4001/categories/${categoryId}`
+                `${API_URL}/categories/${categoryId}`
             );
             setAlertState({
                 show: true,

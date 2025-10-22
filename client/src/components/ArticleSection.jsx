@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { Search, ImageOff } from 'lucide-react'
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -9,8 +9,10 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select"
+import API_URL from '@/config/api';
 
 export function ArticleSection() {
+
     // blog posts state
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(true)
@@ -24,7 +26,7 @@ export function ArticleSection() {
     const [searchLoading, setSearchLoading] = useState(false)
 
     // categories
-    const categories = ["Highlight", "Cat", "Inspiration", "General"]
+    const [categories, setCategories] = useState(["Highlight"])
     //select category
     const [selectedCategory, setSelectedCategory] = useState("Highlight")
 
@@ -36,6 +38,25 @@ export function ArticleSection() {
         setPage((prevPage) => prevPage + 1);
     };
 
+    // Fetch categories from API
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/categories`)
+            const categoryNames = response.data.map(cat => cat.name)
+            // Add "Highlight" as the first option to show all posts
+            setCategories(["Highlight", ...categoryNames])
+        } catch (err) {
+            console.error('Error fetching categories:', err)
+            // Fallback to default categories if API fails
+            setCategories(["Highlight", "General"])
+        }
+    }
+
+    // Fetch categories on component mount
+    useEffect(() => {
+        fetchCategories()
+    }, [])
+
     // Search function
     const handleSearch = async (keyword) => {
         if (!keyword.trim()) {
@@ -46,7 +67,7 @@ export function ArticleSection() {
 
         try {
             setSearchLoading(true)
-            const response = await axios.get('https://blog-post-project-api.vercel.app/posts', {
+            const response = await axios.get(`${API_URL}/posts`, {
                 params: {
                     keyword: keyword,
                     limit: 6
@@ -95,7 +116,7 @@ export function ArticleSection() {
             // Use category parameter only when not Highlight
             const categoryParam = selectedCategory === "Highlight" ? "" : selectedCategory;
 
-            const response = await axios.get('https://blog-post-project-api.vercel.app/posts', {
+            const response = await axios.get(`${API_URL}/posts`, {
                 params: {
                     page: pageNum,
                     limit: 6,
@@ -357,10 +378,22 @@ export function ArticleSection() {
 
 // components
 function BlogCard(props) {
+    const hasImage = props.image && props.image.trim() !== '';
+
     return (
         <div className="flex flex-col gap-4">
             <Link to={`/post/${props.id}`} className="relative">
-                <img className="w-full aspect-[16/10] object-cover rounded-2xl" src={props.image} alt={props.title} />
+                {hasImage ? (
+                    <img 
+                        className="w-full aspect-[16/10] object-cover rounded-2xl" 
+                        src={props.image} 
+                        alt={props.title}
+                    />
+                ) : (
+                    <div className="w-full aspect-[16/10] bg-gray-100 rounded-2xl flex items-center justify-center">
+                        <ImageOff className="w-16 h-16 text-gray-400" />
+                    </div>
+                )}
             </Link>
             <div className="flex flex-col">
                 <div className="flex">
