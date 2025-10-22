@@ -57,6 +57,19 @@ export function ArticleSection() {
         fetchCategories()
     }, [])
 
+    // Add event listeners for closing suggestions
+    useEffect(() => {
+        if (showSuggestions) {
+            document.addEventListener('click', handleClickOutside)
+            document.addEventListener('keydown', handleKeyDown)
+        }
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside)
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [showSuggestions])
+
     // Search function
     const handleSearch = async (keyword) => {
         if (!keyword.trim()) {
@@ -102,6 +115,20 @@ export function ArticleSection() {
         setShowSuggestions(false)
         // Navigate to post page
         window.location.href = `/post/${post.id}`
+    }
+
+    // Handle clicking outside to close suggestions
+    const handleClickOutside = (e) => {
+        if (!e.target.closest('.search-container')) {
+            setShowSuggestions(false)
+        }
+    }
+
+    // Handle Escape key to close suggestions
+    const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            setShowSuggestions(false)
+        }
     }
 
     // Fetch posts from API
@@ -212,7 +239,7 @@ export function ArticleSection() {
                 {/* Mobile layout - stacked */}
                 <div className="md:hidden px-4 py-4 bg-brown-200">
                     {/* Search bar */}
-                    <div className="relative">
+                    <div className="relative search-container">
                         <div className="relative bg-white rounded-xl">
                             <input
                                 type="text"
@@ -290,7 +317,7 @@ export function ArticleSection() {
                         ))}
                     </div>
                     {/* Search bar */}
-                    <div className="relative w-80 ">
+                    <div className="relative w-80 search-container">
                         <input
                             type="text"
                             placeholder="Search"
@@ -360,10 +387,10 @@ export function ArticleSection() {
                                 className={`hover:text-brown-500 font-medium text-brown-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto ${!loadingMore ? 'underline' : ''}`}
                             >
                                 {loadingMore ? (
-                                    <>
+                                    <div>
                                         <LoadingSpinner message="" size="small" />
-                                        Loading more...
-                                    </>
+                                        <span className="font-medium text-brown-600">Loading more...</span>
+                                    </div>
                                 ) : (
                                     'View more'
                                 )}

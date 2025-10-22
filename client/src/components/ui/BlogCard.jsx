@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ImageOff } from 'lucide-react';
+import { Spinner } from '@/components/ui/spinner';
 
 // BlogCard Component
 export function BlogCard(props) {
@@ -55,17 +56,17 @@ export function ArticleButton(props) {
     )
 }
 
-// LoadingSpinner Component
+// LoadingSpinner Component using shadcn/ui Spinner
 export function LoadingSpinner({ message = "Loading...", size = "large" }) {
     const sizeClasses = {
-        small: "h-8 w-8",
-        medium: "h-12 w-12",
-        large: "h-16 w-16"
+        small: "size-4",
+        medium: "size-6", 
+        large: "size-8"
     }
 
     return (
         <div className="flex flex-col justify-center items-center gap-3">
-            <div className={`${sizeClasses[size]} border-4 border-brown-200 border-t-brown-600 rounded-full animate-spin`}></div>
+            <Spinner className={`${sizeClasses[size]} text-brown-600`} />
             <div className="text-brown-600">{message}</div>
         </div>
     )
