@@ -88,6 +88,7 @@ export function ArticleSection() {
           keyword: keyword,
           limit: 6,
         },
+        headers: { "X-Disable-Global-Loading": "1" },
       });
       setSearchSuggestions(response.data.posts);
       setShowSuggestions(true);
@@ -153,6 +154,7 @@ export function ArticleSection() {
           limit: 6,
           category: categoryParam,
         },
+        headers: { "X-Disable-Global-Loading": "1" },
       });
 
       if (resetPosts) {

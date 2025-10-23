@@ -69,7 +69,7 @@ export function ViewPostComponent() {
     const fetchComments = async () => {
       try {
         setCommentsLoading(true);
-        const res = await axios.get(`${API_URL}/posts/${postId}/comments`);
+        const res = await axios.get(`${API_URL}/posts/${postId}/comments`, { headers: { "X-Disable-Global-Loading": "1" } });
         setComments(res.data || []);
       } catch (err) {
         console.error("Error fetching comments:", err);
@@ -101,13 +101,7 @@ export function ViewPostComponent() {
   };
 
   if (loading) {
-    return (
-      <>
-        <div className="min-h-screen flex items-center justify-center">
-          <LoadingSpinner message="Loading post..." />
-        </div>
-      </>
-    );
+    return <></>;
   }
 
   if (error || !post) {
@@ -146,7 +140,7 @@ export function ViewPostComponent() {
       const res = await axios.post(
         `${API_URL}/posts/${postId}/like`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}`, "X-Disable-Global-Loading": "1" } }
       );
       const newCount = res.data?.likes_count;
       setPost((prev) => (prev ? { ...prev, likes_count: newCount, likes: newCount } : prev));
@@ -167,7 +161,7 @@ export function ViewPostComponent() {
       const res = await axios.post(
         `${API_URL}/posts/${postId}/comments`,
         { comment_text: commentText.trim() },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}`, "X-Disable-Global-Loading": "1" } }
       );
       const created = res.data;
       setComments((prev) => [created, ...prev]);
