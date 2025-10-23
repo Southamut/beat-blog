@@ -19,6 +19,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/authentication";
 
 // Menu items for main navigation
 const navigationItems = [
@@ -65,6 +66,7 @@ const footerItems = [
 
 export function AdminPanel() {
   const location = useLocation();
+  const { logout } = useAuth();
 
   return (
     <Sidebar className="bg-brown-200 border-none">
@@ -114,10 +116,17 @@ export function AdminPanel() {
                     asChild
                     className={`w-full justify-start px-6 py-7 rounded-none font-medium text-brown-400 hover:bg-brown-300 transition-colors`}
                   >
-                    <a href={item.url} className="flex items-center gap-3">
-                      <item.icon className="h-5 w-5" />
-                      <span className="text-sm">{item.title}</span>
-                    </a>
+                    {item.title === "Log out" ? (
+                      <button onClick={logout} className="flex items-center gap-3 w-full text-left">
+                        <item.icon className="h-5 w-5" />
+                        <span className="text-sm">{item.title}</span>
+                      </button>
+                    ) : (
+                      <a href={item.url} className="flex items-center gap-3">
+                        <item.icon className="h-5 w-5" />
+                        <span className="text-sm">{item.title}</span>
+                      </a>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
