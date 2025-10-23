@@ -2,6 +2,7 @@ import express from "express";
 import supabase from "../utils/supabase.mjs";
 import { validatePostDataSingle } from "../middleware/validation.mjs";
 import protectAdmin from "../middleware/protectAdmin.mjs";
+import protectUser from "../middleware/protectUser.mjs";
 
 const router = express.Router();
 
@@ -357,3 +358,168 @@ router.get("/:id", async (req, res) => {
 
 
 export default router;
+
+// POST /posts/:postId/like - ผู้ใช้กดถูกใจ/เลิกถูกใจ
+router.post("/:postId/like", protectUser, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // ตรวจสอบว่าโพสต์มีอยู่จริง
+    const { data: post, error: postError } = await supabase
+      .from("posts")
+      .select("id, likes_count")
+      .eq("id", postId)
+      .single();
+
+    if (postError || !post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // ตรวจสอบว่ามี like อยู่แล้วหรือไม่
+    const { data: existingLikes, error: likeCheckError } = await supabase
+      .from("likes")
+      .select("id")
+      .eq("post_id", postId)
+      .eq("user_id", userId);
+
+    if (likeCheckError) {
+      return res.status(500).json({ message: "Could not check like" });
+    }
+
+    let newLikesCount = post.likes_count || 0;
+
+    if (existingLikes && existingLikes.length > 0) {
+      // ถ้ามี like แล้ว ให้ลบออก (toggle off)
+      const likeIdList = existingLikes.map((l) => l.id);
+      const { error: deleteError } = await supabase
+        .from("likes")
+        .delete()
+        .in("id", likeIdList);
+
+      if (deleteError) {
+        return res.status(500).json({ message: "Could not unlike" });
+      }
+
+      newLikesCount = Math.max(0, (post.likes_count || 0) - 1);
+    } else {
+      // ถ้ายังไม่มี like ให้สร้างใหม่ (toggle on)
+      const { error: insertError } = await supabase
+        .from("likes")
+        .insert([{ post_id: Number(postId), user_id: userId }]);
+
+      if (insertError) {
+        return res.status(500).json({ message: "Could not like" });
+      }
+
+      newLikesCount = (post.likes_count || 0) + 1;
+    }
+
+    // อัปเดต likes_count บนตาราง posts
+    const { data: updatedPosts, error: updateError } = await supabase
+      .from("posts")
+      .update({ likes_count: newLikesCount })
+      .eq("id", postId)
+      .select("id, likes_count")
+      .single();
+
+    if (updateError) {
+      return res.status(500).json({ message: "Could not update likes count" });
+    }
+
+    return res.status(200).json({
+      message: "Like status updated",
+      likes_count: updatedPosts.likes_count,
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// GET /posts/:postId/comments - ดึงคอมเมนต์ของโพสต์
+router.get("/:postId/comments", async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    const { data, error } = await supabase
+      .from("comments")
+      .select(
+        `id, comment_text, created_at, user_id, users ( id, name, profile_pic )`
+      )
+      .eq("post_id", postId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({ message: "Could not fetch comments" });
+    }
+
+    const transformed = (data || []).map((c) => ({
+      id: c.id,
+      comment_text: c.comment_text,
+      created_at: c.created_at,
+      user: {
+        id: c.users?.id,
+        name: c.users?.name,
+        profile_pic: c.users?.profile_pic,
+      },
+    }));
+
+    return res.status(200).json(transformed);
+  } catch (error) {
+    console.error("Server error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /posts/:postId/comments - เพิ่มคอมเมนต์ใหม่
+router.post("/:postId/comments", protectUser, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { comment_text } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    if (!comment_text || String(comment_text).trim() === "") {
+      return res.status(400).json({ message: "Comment text is required" });
+    }
+
+    // แทรกคอมเมนต์ใหม่
+    const { data, error } = await supabase
+      .from("comments")
+      .insert([{ post_id: Number(postId), user_id: userId, comment_text }])
+      .select("id, comment_text, created_at, user_id")
+      .single();
+
+    if (error) {
+      return res.status(500).json({ message: "Could not create comment" });
+    }
+
+    // ดึงข้อมูลผู้ใช้ของคอมเมนต์ที่เพิ่งสร้าง
+    const { data: userRow } = await supabase
+      .from("users")
+      .select("id, name, profile_pic")
+      .eq("id", userId)
+      .single();
+
+    return res.status(201).json({
+      id: data.id,
+      comment_text: data.comment_text,
+      created_at: data.created_at,
+      user: userRow ? {
+        id: userRow.id,
+        name: userRow.name,
+        profile_pic: userRow.profile_pic,
+      } : { id: userId },
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
