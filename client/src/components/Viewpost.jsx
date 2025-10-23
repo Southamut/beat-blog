@@ -224,18 +224,18 @@ export function ViewPostComponent() {
               <span className="bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-green-600">
                 {post.category}
               </span>
-              <span className="text-sm text-gray-500 ml-4">
+              <span className="text-sm text-brown-400 ml-4">
                 {formatDate(post.date)}
               </span>
             </div>
 
             {/* Post Title */}
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight mb-6">
+            <h1 className="text-4xl lg:text-5xl font-bold text-brown-600 leading-tight mb-6">
               {post.title}
             </h1>
 
             {/* Post Content with Markdown */}
-            <div className="markdown text-gray-700 leading-relaxed">
+            <div className="markdown text-brown-500 leading-relaxed">
               <ReactMarkdown>{post.content}</ReactMarkdown>
             </div>
 
@@ -307,14 +307,14 @@ export function ViewPostComponent() {
 }
 
 //author bio
-function AuthorBio(post) {
+function AuthorBio({ post }) {
   return (
     <div className="bg-brown-200 rounded-2xl p-6">
       {/* Author Profile */}
       <div className="flex items-center gap-4 mb-4 pb-4 border-b border-brown-300">
         <img
           className="w-12 h-12 rounded-full object-cover"
-          src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+          src={post.authorImage || "https://ui-avatars.com/api/?name=Admin&background=EEE&color=888"}
           alt={post.author}
         />
         <div>
@@ -326,11 +326,7 @@ function AuthorBio(post) {
 
       {/* Author Bio */}
       <div className="space-y-4 text-brown-400 leading-relaxed">
-        <p>
-          I am a pet enthusiast and freelance writer who specializes in animal
-          behavior and care. With a deep love for cats, I enjoy sharing insights
-          on feline companionship and wellness.
-        </p>
+        <p>{post.authorBio || ""}</p>
       </div>
     </div>
   );
