@@ -163,10 +163,10 @@ export function AdminProfile() {
         <SidebarProvider>
             <AdminPanel />
             <SidebarInset className=" min-h-screen">
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
+                <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1 " />
-                        <h1 className="text-xl font-semibold ">Profile</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold ">Profile</h1>
                     </div>
 
                     <Button
@@ -178,10 +178,10 @@ export function AdminProfile() {
                     </Button>
                 </header>
 
-                <div className="p-12">
+                <div className="p-12 bg-brown-100">
                     {/* Profile Picture Section */}
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-700 flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full overflow-hidden bg-brown-600 flex items-center justify-center">
                             {formData.profile_pic ? (
                                 <img
                                     src={formData.profile_pic}
@@ -203,7 +203,7 @@ export function AdminProfile() {
                                 id="profile-pic-upload"
                             />
                             <Button
-                                className="bg-white text-black border border-brown-400 hover:bg-brown-200 rounded-full px-4 py-2"
+                                className="bg-white font-medium text-brown-600 border border-brown-400 hover:bg-brown-200 rounded-full px-4 py-2"
                                 onClick={() => document.getElementById('profile-pic-upload').click()}
                             >
                                 Upload profile picture
@@ -224,7 +224,7 @@ export function AdminProfile() {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="w-2/4 bg-white text-black border-brown-300 rounded-lg"
+                                className="w-2/4 bg-white font-medium text-brown-500 border-brown-300 rounded-lg"
                                 placeholder="Enter your name"
                             />
                             {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
@@ -237,7 +237,7 @@ export function AdminProfile() {
                                 name="username"
                                 value={formData.username}
                                 onChange={handleInputChange}
-                                className="w-2/4 bg-white text-black border-brown-300 rounded-lg"
+                                className="w-2/4 bg-white font-medium text-brown-500 border-brown-300 rounded-lg"
                                 placeholder="Enter your username"
                             />
                             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
@@ -250,7 +250,7 @@ export function AdminProfile() {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                className="w-2/4 bg-white text-black border-brown-300 rounded-lg"
+                                className="w-2/4 bg-white font-medium text-brown-500 border-brown-300 rounded-lg"
                                 placeholder="Enter your email"
                                 type="email"
                             />

@@ -34,18 +34,18 @@ export function ProfileDropdown({ user, handleLogout }) {
               className="w-8 h-8 rounded-full object-cover"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <User className="w-5 h-5 text-gray-600" />
+            <div className="w-8 h-8 rounded-full bg-brown-400 flex items-center justify-center">
+              <User className="w-5 h-5 text-white" />
             </div>
           )}
-          <span className="text-gray-800 font-medium hidden sm:inline">
+          <span className="text-brown-500 font-medium hidden sm:inline">
             {user.name}
           </span>
-          <ChevronDown className="w-4 h-4 text-gray-800" />
+          <ChevronDown className="w-4 h-4 text-brown-500" />
         </div>
         {/* mobile */}
         <div className="flex md:hidden items-center justify-center">
-          <Menu className="w-5 h-5 text-gray-400" />
+          <Menu className="w-5 h-5 text-brown-400" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -62,19 +62,19 @@ export function ProfileDropdown({ user, handleLogout }) {
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                <User className="w-6 h-6 text-gray-600" />
+              <div className="w-12 h-12 rounded-full bg-brown-400 flex items-center justify-center">
+                <User className="w-6 h-6 text-white" />
               </div>
             )}
             <div>
-              <p className="font-medium text-gray-900">{user.name}</p>
+              <p className="font-medium text-brown-500">{user.name}</p>
             </div>
           </div>
         </div>
 
         {/* Profile */}
         <DropdownMenuItem
-          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-brown-200 transition-colors"
           onClick={
             isAdmin
               ? () => navigate("/admin/profile")
@@ -87,7 +87,7 @@ export function ProfileDropdown({ user, handleLogout }) {
 
         {/* Reset Password */}
         <DropdownMenuItem
-          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-brown-200 transition-colors"
           onClick={
             isAdmin
               ? () => navigate("/admin/reset-password")
@@ -101,7 +101,7 @@ export function ProfileDropdown({ user, handleLogout }) {
         {/* Admin Panel - แสดงผลตาม Role */}
         {isAdmin && (
           <DropdownMenuItem
-            className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-brown-200 transition-colors"
             onClick={() => navigate("/admin/article-management")}
           >
             <LayoutDashboard className="w-4 h-4" />
@@ -113,7 +113,7 @@ export function ProfileDropdown({ user, handleLogout }) {
 
         {/* Log out */}
         <DropdownMenuItem
-          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-red-50 transition-colors"
+          className="flex items-center gap-2 cursor-pointer px-4 py-2 text-brown-500 hover:bg-brown-200 transition-colors"
           onClick={handleLogout}
         >
           <LogOut className="w-4 h-4" />

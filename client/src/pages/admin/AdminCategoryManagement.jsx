@@ -107,10 +107,10 @@ export function AdminCategoryManagement() {
         <SidebarProvider>
             <AdminPanel />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
+                <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
-                        <h1 className="text-xl font-semibold">Category Management</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold">Category Management</h1>
                     </div>
                     <Button
                         className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"
@@ -121,7 +121,7 @@ export function AdminCategoryManagement() {
                     </Button>
                 </header>
 
-                <main className="flex-1 p-8 bg-white overflow-auto">
+                <main className="flex-1 p-8 bg-brown-100 overflow-auto">
                     <div className="space-y-6">
                         {/* Search Section */}
                         <div>
@@ -135,12 +135,12 @@ export function AdminCategoryManagement() {
                         </div>
 
                         {/* Table Section */}
-                        <div className="rounded-lg border border-[#DAD6D1] overflow-hidden">
+                        <div className="rounded-lg border border-brown-300 overflow-hidden">
                             <Table>
-                                <TableHeader className="border-b border-[#DAD6D1]">
-                                    <TableRow className="bg-[#F9F8F6] border-none hover:bg-gray-50">
-                                        <TableHead className="font-medium text-[#43403B] py-4 border-none">Category</TableHead>
-                                        <TableHead className="font-medium text-[#43403B] py-4 text-right w-24 border-none">Actions</TableHead>
+                                <TableHeader className="border-b border-brown-300">
+                                    <TableRow className="bg-brown-100 border-none">
+                                        <TableHead className="font-medium text-brown-400 py-4 border-none">Category</TableHead>
+                                        <TableHead className="font-medium text-brown-400 py-4 text-center w-24 border-none">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -148,12 +148,12 @@ export function AdminCategoryManagement() {
                                         Array(3)
                                             .fill()
                                             .map((_, index) => (
-                                                <TableRow key={index} className={`border-none ${index % 2 === 0 ? "bg-white hover:bg-gray-50" : "bg-[#F9F8F6] hover:bg-gray-100"}`}>
+                                                <TableRow key={index} className={`border-none ${index % 2 === 0 ? "bg-brown-100" : "bg-brown-200"}`}>
                                                     <TableCell className="py-4 border-none">
-                                                        <Skeleton className="h-6 w-[200px] bg-gray-200" />
+                                                        <Skeleton className="h-6 w-[200px] bg-brown-200" />
                                                     </TableCell>
                                                     <TableCell className="text-right py-4 border-none">
-                                                        <Skeleton className="h-6 w-[75px] bg-gray-200" />
+                                                        <Skeleton className="h-6 w-[75px] bg-brown-200" />
                                                     </TableCell>
                                                 </TableRow>
                                             ))
@@ -161,24 +161,24 @@ export function AdminCategoryManagement() {
                                         filteredCategories.map((category, index) => (
                                             <TableRow
                                                 key={category.id}
-                                                className={`border-none ${index % 2 === 0 ? "bg-white hover:bg-gray-50" : "bg-[#F9F8F6] hover:bg-gray-100"}`}
+                                                className={`border-none ${index % 2 === 0 ? "bg-brown-100" : "bg-brown-200"}`}
                                             >
                                                 <TableCell className="py-4 border-none">
-                                                    <div className="font-medium text-[#43403B] text-sm leading-5">
+                                                    <div className="font-medium text-brown-500 text-sm leading-5">
                                                         {category.name}
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="text-right py-4 border-none">
-                                                    <div className="flex items-center justify-end gap-1">
+                                                <TableCell className="text-center py-4 border-none">
+                                                    <div className="flex items-center justify-center gap-1">
                                                         <button
-                                                            className="p-2 hover:bg-gray-200 rounded transition-colors"
+                                                            className="p-2 text-brown-400 hover:text-brown-500 rounded transition-colors"
                                                             onClick={() => {
                                                                 navigate(
                                                                     `/admin/category-management/edit/${category.id}`
                                                                 );
                                                             }}
                                                         >
-                                                            <PenSquare className="h-4 w-4 text-brown-600" />
+                                                            <PenSquare className="h-4 w-4" />
                                                         </button>
                                                         <DeletePostDialog
                                                             onDelete={() => handleDelete(category.id)}
@@ -195,8 +195,8 @@ export function AdminCategoryManagement() {
                                         <TableRow className="border-none">
                                             <TableCell colSpan={2} className="h-24 text-center border-none">
                                                 <div className="flex flex-col items-center gap-2">
-                                                    <p className="text-gray-500">No categories found</p>
-                                                    <p className="text-sm text-gray-400">
+                                                    <p className="text-brown-500">No categories found</p>
+                                                    <p className="text-sm text-brown-400">
                                                         Try adjusting your search criteria
                                                     </p>
                                                 </div>

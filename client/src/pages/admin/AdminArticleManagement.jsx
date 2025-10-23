@@ -85,18 +85,18 @@ export function AdminArticleManagement() {
     const getStatusStyle = (statusId) => {
         if (statusId === 2) { // Published
             return {
-                dotColor: "bg-green-500",
-                textColor: "text-green-600"
+                dotColor: "bg-green",
+                textColor: "text-green"
             }
         } else if (statusId === 1) { // Draft
             return {
-                dotColor: "bg-gray-500",
-                textColor: "text-gray-600"
+                dotColor: "bg-brown-400",
+                textColor: "text-brown-400"
             }
         } else { // Archived or other
             return {
-                dotColor: "bg-red-500",
-                textColor: "text-red-600"
+                dotColor: "bg-red",
+                textColor: "text-red"
             }
         }
     }
@@ -151,7 +151,7 @@ export function AdminArticleManagement() {
                 <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
-                        <h1 className="text-xl font-semibold">Article Management</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold">Article Management</h1>
                     </div>
                     <Button
                         className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"
@@ -167,22 +167,22 @@ export function AdminArticleManagement() {
                     <div className="flex justify-between items-center">
                         {/* Search */}
                         <div className="relative flex-1 max-w-sm">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brown-400 h-4 w-4" />
                             <Input
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="py-3 px-4 pl-10 rounded-md bg-white border-brown-200 text-brown-600 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
+                                className="py-3 px-4 pl-10 rounded-md font-medium bg-white border-brown-200 text-brown-500 placeholder:text-brown-400 focus:ring-0 focus:ring-offset-0"
                             />
                         </div>
 
                         <div className="flex gap-4">
                             {/* Status Filter */}
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="py-3 px-4 rounded-md bg-white border-brown-200 text-brown-600 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
+                                <SelectTrigger className="py-3 px-4 rounded-md font-medium bg-white border-brown-200 text-brown-400 focus:ring-0 focus:ring-offset-0 w-32">
                                     <SelectValue placeholder="Status" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-white text-brown-600 border-none focus:ring-0 focus:ring-offset-0 focus:border-gray-500">
+                                <SelectContent className="bg-white font-medium text-brown-400 border-none focus:ring-0 focus:ring-offset-0">
                                     <SelectItem value="all">All Status</SelectItem>
                                     <SelectItem value="published">Published</SelectItem>
                                     <SelectItem value="draft">Draft</SelectItem>
@@ -192,10 +192,10 @@ export function AdminArticleManagement() {
 
                             {/* Category Filter */}
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="py-3 px-4 rounded-md bg-bg-white border-brown-200 text-brown-600 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 w-32">
+                                <SelectTrigger className="py-3 px-4 rounded-md font-medium bg-white border-brown-200 text-brown-400 focus:ring-0 focus:ring-offset-0 w-32">
                                     <SelectValue placeholder="Category" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-white text-brown-600 border-none focus:ring-0 focus:ring-offset-0 focus:border-gray-500">
+                                <SelectContent className="bg-white font-medium text-brown-400 border-none focus:ring-0 focus:ring-offset-0">
                                     <SelectItem value="all">All Categories</SelectItem>
                                     {categories.map(category => (
                                         <SelectItem key={category.id} value={category.name}>
@@ -208,14 +208,14 @@ export function AdminArticleManagement() {
                     </div>
 
                     {/* Table */}
-                    <div className="rounded-lg border border-brown-200 overflow-hidden">
+                    <div className="rounded-lg border border-brown-300 overflow-hidden">
                         <Table>
-                            <TableHeader className="border-b border-brown-200">
-                                <TableRow className="bg-brown-200 border-none hover:bg-brown-200">
-                                    <TableHead className="font-medium text-brown-600 py-4 border-none">Article title</TableHead>
-                                    <TableHead className="font-medium text-brown-600 py-4 border-none">Category</TableHead>
-                                    <TableHead className="font-medium text-brown-600 py-4 border-none">Status</TableHead>
-                                    <TableHead className="font-medium text-brown-600 py-4 text-right w-24 border-none"></TableHead>
+                            <TableHeader className="border-b border-brown-300">
+                                <TableRow className="bg-brown-100 border-none hover:bg-brown-200">
+                                    <TableHead className="font-medium text-brown-400 py-4 border-none">Article title</TableHead>
+                                    <TableHead className="font-medium text-brown-400 py-4 border-none">Category</TableHead>
+                                    <TableHead className="font-medium text-brown-400 py-4 border-none">Status</TableHead>
+                                    <TableHead className="border-none"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -242,19 +242,19 @@ export function AdminArticleManagement() {
                                         return (
                                             <TableRow key={article.id} className={`border-none ${index % 2 === 0 ? "bg-brown-100" : "bg-brown-200"}`}>
                                                 <TableCell className="py-4 border-none">
-                                                    <div className="font-medium text-brown-600 text-sm leading-5">
+                                                    <div className="font-medium text-brown-500 text-sm leading-5">
                                                         {article.title}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="py-4 border-none">
-                                                    <span className="text-sm text-brown-600">
+                                                    <span className="font-medium text-sm text-brown-500">
                                                         {article.category || getCategoryName(article.category_id)}
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="py-4 border-none">
                                                     <div className="flex items-center gap-2">
                                                         <div className={`h-2 w-2 rounded-full ${statusStyle.dotColor}`}></div>
-                                                        <span className={`text-sm font-medium ${statusStyle.textColor}`}>
+                                                        <span className={`font-medium text-sm ${statusStyle.textColor}`}>
                                                             {getStatusName(article.status_id)}
                                                         </span>
                                                     </div>
@@ -262,10 +262,10 @@ export function AdminArticleManagement() {
                                                 <TableCell className="py-4 text-right border-none">
                                                     <div className="flex items-center justify-end gap-1">
                                                         <button
-                                                            className="p-2 hover:bg-brown-200 rounded transition-colors"
+                                                            className="p-2 text-brown-400 hover:text-brown-500 rounded transition-colors"
                                                             onClick={() => navigate(`/admin/article-management/edit/${article.id}`)}
                                                         >
-                                                            <Edit className="h-4 w-4 text-brown-600" />
+                                                            <Edit className="h-4 w-4" />
                                                         </button>
                                                         <DeletePostDialog onDelete={() => handleDelete(article.id)} triggerStyle="icon" />
                                                     </div>
@@ -290,7 +290,7 @@ export function AdminArticleManagement() {
                     </div>
 
                     {/* Results info */}
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-brown-400">
                         Showing {filteredArticles.length} of {articles.length} articles
                     </div>
                 </div>

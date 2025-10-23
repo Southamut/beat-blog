@@ -306,10 +306,10 @@ export default function AdminArticleCreate() {
             <AdminPanel />
             <SidebarInset>
 
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
+                <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
-                        <h1 className="text-xl font-semibold">Create article</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold">Create article</h1>
                     </div>
                     <div className="space-x-2">
                         <Button
@@ -331,12 +331,12 @@ export default function AdminArticleCreate() {
                 </header>
 
                 {!isLoading && (
-                    <main className="flex-1 p-8 bg-white overflow-auto">
+                    <main className="flex-1 p-8 bg-brown-100 overflow-auto">
                         <form className="space-y-7 max-w-4xl">
                             <div>
                                 <label
                                     htmlFor="thumbnail"
-                                    className="block text-gray-700 font-medium mb-2"
+                                    className="block text-brown-400 font-medium mb-2"
                                 >
                                     Thumbnail image
                                 </label>
@@ -348,9 +348,9 @@ export default function AdminArticleCreate() {
                                             className="rounded-md object-cover w-80 h-48"
                                         />
                                     ) : (
-                                        <div className="flex justify-center items-center w-80 h-48 border-2 border-gray-300 border-dashed rounded-md bg-gray-50">
+                                        <div className="flex justify-center items-center w-80 h-48 border-2 border-brown-300 border-dashed rounded-md bg-brown-200">
                                             <div className="text-center">
-                                                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <svg className="mx-auto h-12 w-12 text-brown-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
                                             </div>
@@ -359,7 +359,7 @@ export default function AdminArticleCreate() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="px-6 py-2 rounded-full bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                                        className="px-6 py-2 rounded-full bg-white border-brown-300 text-brown-600 hover:bg-brown-200"
                                         onClick={handleUploadClick}
                                     >
                                         Upload thumbnail image
@@ -375,7 +375,7 @@ export default function AdminArticleCreate() {
                             </div>
 
                             <div>
-                                <label htmlFor="category" className="block text-gray-700 font-medium mb-2">Category</label>
+                                <label htmlFor="category" className="block text-brown-400 font-medium mb-2">Category</label>
                                 <Select
                                     id="category"
                                     name="category"
@@ -384,10 +384,10 @@ export default function AdminArticleCreate() {
                                         handleCategoryChange(value);
                                     }}
                                 >
-                                    <SelectTrigger className="w-full max-w-lg mt-1 py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500">
+                                    <SelectTrigger className="w-full max-w-lg mt-1 py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500">
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
-                                    <SelectContent className={`bg-white border-none ${categories.length === 0 ? "hidden" : ""}`}>
+                                    <SelectContent className={`bg-white font-medium text-brown-500 border-none ${categories.length === 0 ? "hidden" : ""}`}>
                                         {categories.map((cat) => (
                                             <SelectItem key={cat.id} value={cat.name}>
                                                 {cat.name}
@@ -398,30 +398,30 @@ export default function AdminArticleCreate() {
                             </div>
 
                             <div>
-                                <label htmlFor="author" className="block text-gray-700 font-medium mb-2">Author name</label>
+                                <label htmlFor="author" className="block text-brown-400 font-medium mb-2">Author name</label>
                                 <Input
                                     id="author"
                                     name="author"
                                     value={state.user.name}
-                                    className="mt-1 max-w-lg py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
+                                    className="mt-1 max-w-lg py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500"
                                     disabled
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="title" className="block text-gray-700 font-medium mb-2">Title</label>
+                                <label htmlFor="title" className="block text-brown-400 font-medium mb-2">Title</label>
                                 <Input
                                     id="title"
                                     name="title"
                                     placeholder="Article title"
                                     value={post.title}
                                     onChange={handleInputChange}
-                                    className="mt-1 max-w-lg py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
+                                    className="mt-1 max-w-lg py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="introduction" className="block text-gray-700 font-medium mb-2">
+                                <label htmlFor="introduction" className="block text-brown-400 font-medium mb-2">
                                     Introduction (max 120 letters)
                                 </label>
                                 <Textarea
@@ -431,13 +431,13 @@ export default function AdminArticleCreate() {
                                     rows={3}
                                     value={post.description}
                                     onChange={handleInputChange}
-                                    className="mt-1 max-w-lg py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
+                                    className="mt-1 max-w-lg py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400"
                                     maxLength={120}
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="content" className="block text-gray-700 font-medium mb-2">Content</label>
+                                <label htmlFor="content" className="block text-brown-400 font-medium mb-2">Content</label>
                                 <Textarea
                                     id="content"
                                     name="content"
@@ -445,7 +445,7 @@ export default function AdminArticleCreate() {
                                     rows={15}
                                     value={post.content}
                                     onChange={handleInputChange}
-                                    className="mt-1 max-w-4xl py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
+                                    className="mt-1 max-w-4xl py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400"
                                 />
                             </div>
 
