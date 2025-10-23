@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminPanel } from "../../components/AdminPanel";
 import { AlertDialog } from "../../components/AlertDialog";
+import { AttentionAlert } from "../../components/AttentionAlert";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import API_URL from "@/config/api";
 import { useAuth } from "@/contexts/authentication";
@@ -30,6 +31,26 @@ export function AdminResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [alertState, setAlertState] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    message: ""
+  });
+
+  // On mount, show any persisted alert (e.g., after silent re-login navigation)
+  useEffect(() => {
+    const persistedMsg = localStorage.getItem("password_reset_success");
+    if (persistedMsg) {
+      setAlertState({
+        show: true,
+        type: "success",
+        title: "Password updated",
+        message: persistedMsg
+      });
+      localStorage.removeItem("password_reset_success");
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -116,9 +137,18 @@ export function AdminResetPassword() {
           // Stay on the same page after login
           localStorage.setItem("referrer_path", window.location.pathname);
           await login({ email: user.email, password: formData.newPassword });
+          // Persist a success message across the navigation
+          localStorage.setItem("password_reset_success", "Your password has been changed successfully.");
         } catch (reloginError) {
           // If re-login fails, show an error
-          setErrors({ general: reloginError?.response?.data?.error || "Re-login failed. Please sign in again." });
+          const msg = reloginError?.response?.data?.error || "Re-login failed. Please sign in again.";
+          setErrors({ general: msg });
+          setAlertState({
+            show: true,
+            type: "error",
+            title: "Error",
+            message: msg
+          });
         }
       }
 
@@ -129,13 +159,37 @@ export function AdminResetPassword() {
       });
 
       setErrors({ success: "Password updated successfully!" });
+      setAlertState({
+        show: true,
+        type: "success",
+        title: "Password updated",
+        message: "Your password has been changed successfully."
+      });
     } catch (error) {
       if (error.response?.data?.error) {
         setErrors({ general: error.response.data.error });
+        setAlertState({
+          show: true,
+          type: "error",
+          title: "Error",
+          message: error.response.data.error
+        });
       } else if (error.response?.status === 401) {
         setErrors({ general: "Invalid current password. Please try again." });
+        setAlertState({
+          show: true,
+          type: "error",
+          title: "Error",
+          message: "Invalid current password. Please try again."
+        });
       } else {
         setErrors({ general: "Failed to update password. Please try again." });
+        setAlertState({
+          show: true,
+          type: "error",
+          title: "Error",
+          message: "Failed to update password. Please try again."
+        });
       }
     } finally {
       setIsLoading(false);
@@ -314,6 +368,17 @@ export function AdminResetPassword() {
           </div>
         </div>
       </SidebarInset>
+
+      {/* Success/Error Alert */}
+      <AttentionAlert
+        type={alertState.type}
+        title={alertState.title}
+        message={alertState.message}
+        isVisible={alertState.show}
+        onClose={() => setAlertState(prev => ({ ...prev, show: false }))}
+        autoHide={true}
+        duration={4000}
+      />
     </SidebarProvider>
   );
 }
