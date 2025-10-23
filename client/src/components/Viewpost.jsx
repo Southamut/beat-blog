@@ -90,6 +90,16 @@ export function ViewPostComponent() {
     });
   };
 
+  const formatCommentDate = (dateString) => {
+    const d = new Date(dateString);
+    const day = d.getDate();
+    const month = d.toLocaleString("en-US", { month: "long" });
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    return `${day} ${month} ${year} at ${hours}:${minutes}`;
+  };
+
   if (loading) {
     return (
       <>
@@ -265,7 +275,7 @@ export function ViewPostComponent() {
               setDialogState={setIsDialogOpen}
               comments={(comments || []).map((c) => ({
                 name: c.user?.name || "User",
-                date: new Date(c.created_at).toLocaleString(),
+                date: formatCommentDate(c.created_at),
                 comment: c.comment_text,
                 image:
                   c.user?.profile_pic ||
@@ -299,9 +309,9 @@ export function ViewPostComponent() {
 //author bio
 function AuthorBio(post) {
   return (
-    <div className="bg-[#EFEEEB] rounded-2xl p-6">
+    <div className="bg-brown-200 rounded-2xl p-6">
       {/* Author Profile */}
-      <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[#DAD6D1]">
+      <div className="flex items-center gap-4 mb-4 pb-4 border-b border-brown-300">
         <img
           className="w-12 h-12 rounded-full object-cover"
           src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
@@ -309,21 +319,17 @@ function AuthorBio(post) {
         />
         <div>
           {/* Author Header */}
-          <div className="text-sm text-gray-500">Author</div>
-          <h3 className="text-xl font-bold text-gray-800">{post.author}</h3>
+          <div className="text-sm text-brown-400">Author</div>
+          <h3 className="text-xl font-bold text-brown-500">{post.author}</h3>
         </div>
       </div>
 
       {/* Author Bio */}
-      <div className="space-y-4 text-gray-700 leading-relaxed">
+      <div className="space-y-4 text-brown-400 leading-relaxed">
         <p>
           I am a pet enthusiast and freelance writer who specializes in animal
           behavior and care. With a deep love for cats, I enjoy sharing insights
           on feline companionship and wellness.
-        </p>
-        <p>
-          When I'm not writing, I spend time volunteering at my local animal
-          shelter, helping cats find loving homes.
         </p>
       </div>
     </div>
@@ -335,7 +341,7 @@ function PostActionButton({ icon, text, onClick, className = "" }) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-gray-700 bg-white hover:bg-gray-50 transition-colors ${className}`}
+      className={`flex items-center justify-center gap-2 px-4 py-2 border border-brown-300 rounded-full text-brown-500 bg-white hover:bg-brown-100 transition-colors ${className}`}
     >
       {typeof icon === "string" ? (
         <span className="text-lg">{icon}</span>
@@ -356,9 +362,9 @@ function SocialButton({ platform, href, className = "" }) {
   };
 
   const socialColors = {
-    facebook: "bg-blue-600 hover:bg-blue-700",
-    linkedin: "bg-blue-500 hover:bg-blue-600",
-    twitter: "bg-blue-400 hover:bg-blue-500",
+    facebook: "bg-[#1877F2] hover:bg-[#1565C0]",
+    linkedin: "bg-[#0077B5] hover:bg-[#005684]",
+    twitter: "bg-[#55ACEE] hover:bg-[#3390C5]",
   };
 
   return (
@@ -376,17 +382,17 @@ function Comment({ setDialogState, comments, value, onChange, onSubmit, loading 
   return (
     <div className="my-12">
       <div className="space-y-4 mb-16">
-        <h3 className="text-lg font-semibold">Comment</h3>
+        <h3 className="text-lg font-semibold text-brown-400">Comment</h3>
         <div className="space-y-2">
           <textarea
             onFocus={() => setDialogState(true)}
             placeholder="What are your thoughts?"
-            className="w-full p-4 h-24 resize-none border border-gray-300 rounded-lg focus:outline-none focus:border-gray-500"
+            className="w-full p-4 h-24 resize-none border border-brown-300 rounded-lg text-brown-400 font-medium"
             value={value}
             onChange={(e) => onChange(e.target.value)}
           />
           <div className="flex justify-start md:justify-end">
-            <button onClick={onSubmit} disabled={loading} className="px-8 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition-colors disabled:opacity-60">
+            <button onClick={onSubmit} disabled={loading} className="px-8 py-2 bg-brown-600 text-white rounded-full hover:bg-brown-500 transition-colors disabled:opacity-60">
               Send
             </button>
           </div>
@@ -406,14 +412,14 @@ function Comment({ setDialogState, comments, value, onChange, onSubmit, loading 
               </div>
               <div className="flex-grow">
                 <div className="flex flex-col items-start justify-between">
-                  <h4 className="font-semibold">{comment.name}</h4>
-                  <span className="text-sm text-gray-500">{comment.date}</span>
+                  <h4 className="font-medium text-brown-500">{comment.name}</h4>
+                  <span className="text-sm font-medium text-brown-400">{comment.date}</span>
                 </div>
               </div>
             </div>
-            <p className="text-gray-600">{comment.comment}</p>
+            <p className="text-brown-400 font-medium">{comment.comment}</p>
             {index < comments.length - 1 && (
-              <hr className="border-gray-300 my-4" />
+              <hr className="border-brown-300 my-4" />
             )}
           </div>
         ))}
