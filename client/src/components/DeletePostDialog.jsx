@@ -17,8 +17,8 @@ export function DeletePostDialog({
 
         if (triggerStyle === "icon") {
             return (
-                <button className="p-2 hover:bg-brown-200 rounded transition-colors">
-                    <Trash2 className="h-4 w-4 text-brown-600" />
+                <button className="p-2 text-brown-400 hover:text-brown-500 rounded transition-colors">
+                    <Trash2 className="h-4 w-4" />
                 </button>
             );
         }
