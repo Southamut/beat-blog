@@ -1,3 +1,4 @@
+import React from "react";
 import { Linkedin, Github, Mail, Menu } from "lucide-react";
 import {
   DropdownMenu,
@@ -8,6 +9,8 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/authentication";
 import { ProfileDropdown } from "../components/ProfileDropdown";
+import axios from "axios";
+import API_URL from "@/config/api";
 
 export function NavBar() {
   const navigate = useNavigate();
@@ -99,11 +102,34 @@ export function NavBar() {
 }
 
 export function HeroSection() {
+  const [admin, setAdmin] = React.useState({ name: "", bio: "", profile_pic: "" });
+
+  // Derive admin info from posts endpoint, similar to ArticleSection
+  React.useEffect(() => {
+    async function fetchFromPosts() {
+      try {
+        const res = await axios.get(`${API_URL}/posts`, { params: { limit: 1 } });
+        const first = res.data?.posts?.[0];
+        if (first) {
+          setAdmin((prev) => ({
+            ...prev,
+            name: first.author || prev.name || "Admin",
+            profile_pic: first.authorImage || prev.profile_pic || "",
+            bio: first.authorBio || prev.bio || "",
+          }));
+        }
+      } catch (e) {
+        // ignore; keep defaults
+      }
+    }
+    fetchFromPosts();
+  }, []);
+
   return (
     <section className="w-full mx-auto px-4 md:px-16 py-12 bg-brown-100">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
         {/* Left Content - Main heading and subtitle */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 text-right">
           <h1 className="text-4xl lg:text-5xl font-bold text-brown-600 leading-tight mb-4">
             Stay
             <br />
@@ -120,7 +146,7 @@ export function HeroSection() {
         <div className="lg:col-span-1 flex justify-center">
           <div className="w-full max-w-md">
             <img
-              src="./src/assets/man_and_cat.jpg"
+              src={admin.profile_pic || "./src/assets/man_and_cat.jpg"}
               alt="Man with cat in autumn forest"
               className="w-full h-96 object-cover rounded-lg shadow-lg"
             />
@@ -128,18 +154,12 @@ export function HeroSection() {
         </div>
         {/* Right Content - Author bio */}
         <div className="lg:col-span-1">
-          <div className="text-sm text-brown-400 mb-2">-Author</div>
-          <h2 className="text-2xl font-bold text-brown-500 mb-4">Punyakit Noinon</h2>
-          <div className="space-y-4 text-brown-400 leading-relaxed">
-            <p>
-              I am a pet enthusiast and freelance writer who specializes in
-              animal behavior and care. With a deep love for cats, I enjoy
-              sharing insights on feline companionship and wellness.
-            </p>
-            <p>
-              When I'm not writing, I spend time volunteering at my local animal
-              shelter, helping cats find loving homes.
-            </p>
+          <div className="text-sm font-medium text-brown-400 mb-2">-Author</div>
+          <div className="flex items-center gap-3 mb-3">
+            <h2 className="text-2xl font-bold text-brown-500">{admin.name || "Admin"}</h2>
+          </div>
+          <div className="space-y-4 font-medium text-brown-400 leading-relaxed">
+            {admin.bio ? <p>{admin.bio}</p> : null}
           </div>
         </div>
       </div>

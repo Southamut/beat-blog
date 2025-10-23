@@ -5,6 +5,8 @@ import { Spinner } from '@/components/ui/spinner';
 // BlogCard Component
 export function BlogCard(props) {
     const hasImage = props.image && props.image.trim() !== '';
+    const hasAuthorImage = props.authorImage && props.authorImage.trim() !== '';
+    const authorInitial = props.author ? props.author.charAt(0).toUpperCase() : "?";
 
     return (
         <div className="flex flex-col gap-4">
@@ -34,7 +36,13 @@ export function BlogCard(props) {
                 <p className="text-brown-400 text-sm mb-4 flex-grow line-clamp-3">
                     {props.description}</p>
                 <div className="flex items-center text-sm">
-                    <img className="w-8 h-8 rounded-full mr-2" src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg" alt="Author" />
+                    {hasAuthorImage ? (
+                        <img className="w-8 h-8 rounded-full mr-2 object-cover" src={props.authorImage} alt="Author" />
+                    ) : (
+                        <div className="w-8 h-8 rounded-full mr-2 bg-brown-300 text-white flex items-center justify-center font-semibold">
+                            {authorInitial}
+                        </div>
+                    )}
                     <span className="font-medium text-brown-500">{props.author}</span>
                     <span className="mx-2 text-brown-400">|</span>
                     <span className="font-medium text-brown-400">{props.date}</span>

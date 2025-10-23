@@ -41,6 +41,13 @@ router.get("/", async (req, res) => {
 
     const { data: posts, error, count } = await query;
 
+    // Fetch the single admin user to use as author for posts
+    const { data: adminUser, error: adminError } = await supabase
+      .from("users")
+      .select("id, name, profile_pic, bio")
+      .eq("role", "admin")
+      .single();
+
     if (error) {
       console.error("Database error:", error);
       return res.status(500).json({
@@ -56,7 +63,9 @@ router.get("/", async (req, res) => {
       category_id: post.category_id, // Keep category_id for admin management
       title: post.title,
       description: post.description,
-      author: 'Admin', // TODO: Add author field to posts table or join with users
+      author: adminUser?.name || 'Admin',
+      authorImage: adminUser?.profile_pic || '',
+      authorBio: adminUser?.bio || '',
       date: post.date,
       content: post.content,
       status_id: post.status_id,
@@ -142,6 +151,13 @@ router.get("/:postId", async (req, res) => {
       });
     }
 
+    // Fetch the single admin user to use as author for posts
+    const { data: adminUser } = await supabase
+      .from("users")
+      .select("id, name, profile_pic, bio")
+      .eq("role", "admin")
+      .single();
+
     // Transform the data to match frontend expectations
     const transformedPost = {
       id: post.id,
@@ -150,7 +166,9 @@ router.get("/:postId", async (req, res) => {
       category_id: post.category_id, // Keep category_id for admin management
       title: post.title,
       description: post.description,
-      author: 'Admin', // TODO: Add author field to posts table or join with users
+      author: adminUser?.name || 'Admin',
+      authorImage: adminUser?.profile_pic || '',
+      authorBio: adminUser?.bio || '',
       date: post.date,
       content: post.content,
       status_id: post.status_id,
