@@ -200,39 +200,7 @@ export function ArticleSection() {
     });
   };
 
-  if (loading) {
-    return (
-      <section className="md:max-w-10/12 mx-auto w-full bg-white">
-        <div className="px-8">
-          <h2 className="text-lg font-bold text-gray-900 text-left">
-            Latest articles
-          </h2>
-        </div>
-        <div className="py-4 sm:py-8 px-8">
-          <div className="flex justify-center items-center h-64">
-            <LoadingSpinner message="Loading posts..." />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="md:max-w-10/12 mx-auto w-full bg-white">
-        <div className="px-8">
-          <h2 className="text-lg font-bold text-gray-900 text-left">
-            Latest articles
-          </h2>
-        </div>
-        <div className="py-4 sm:py-8 px-8">
-          <div className="flex justify-center items-center h-64">
-            <div className="text-red-600">Error: {error}</div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Remove early returns so the category/search bar always stays visible
 
   // Main return
   return (
@@ -379,19 +347,33 @@ export function ArticleSection() {
         <div>
           {/* Blog cards grid */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {posts.map((post) => (
-              <BlogCard
-                key={post.id}
-                id={post.id}
-                image={post.image}
-                category={post.category}
-                title={post.title}
-                description={post.description}
-                author={post.author || "Admin"}
-                authorImage={post.authorImage}
-                date={formatDate(post.date)}
-              />
-            ))}
+            {loading && page === 1 ? (
+              <div className="col-span-1 md:col-span-2 flex justify-center items-center h-64">
+                <LoadingSpinner message="Loading posts..." />
+              </div>
+            ) : error ? (
+              <div className="col-span-1 md:col-span-2 flex justify-center items-center h-64">
+                <div className="text-red-600">Error: {error}</div>
+              </div>
+            ) : posts.length === 0 ? (
+              <div className="col-span-1 md:col-span-2 flex justify-center items-center h-64">
+                <div className="text-brown-400 font-medium">No posts found</div>
+              </div>
+            ) : (
+              posts.map((post) => (
+                <BlogCard
+                  key={post.id}
+                  id={post.id}
+                  image={post.image}
+                  category={post.category}
+                  title={post.title}
+                  description={post.description}
+                  author={post.author || "Admin"}
+                  authorImage={post.authorImage}
+                  date={formatDate(post.date)}
+                />
+              ))
+            )}
           </div>
 
           {/* Load More Button */}
