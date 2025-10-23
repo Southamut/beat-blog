@@ -9,14 +9,19 @@ export function AlertDialog({
     title = "Confirm Action",
     message = "Are you sure you want to proceed?",
     confirmText = "Confirm",
-    cancelText = "Cancel"
+    cancelText = "Cancel",
+    open,
+    onOpenChange
 }) {
 
     return (
-        <AlertDialogPrimitive>
-            <AlertDialogTrigger asChild>
-                {children}
-            </AlertDialogTrigger>
+        <AlertDialogPrimitive open={open} onOpenChange={onOpenChange}>
+            {/* Trigger is optional when using controlled open */}
+            {children && (
+                <AlertDialogTrigger asChild>
+                    {children}
+                </AlertDialogTrigger>
+            )}
             <AlertDialogContent className="bg-brown-100 border-none rounded-2xl pt-16 pb-6 max-w-[22rem] sm:max-w-md flex flex-col items-center">
                 <AlertDialogTitle className="text-3xl text-brown-600 font-semibold pb-2 text-center">
                     {title}
