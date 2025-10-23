@@ -1,10 +1,11 @@
 import { NavBar } from "../../components/Homepage";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../contexts/authentication";
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // 🚨 ใช้ Hook useAuth
     const { login, state } = useAuth(); 
@@ -37,9 +38,14 @@ export function LoginPage() {
       <NavBar />
       <main className="flex justify-center items-center p-4 my-4 flex-grow">
         <div className="w-full max-w-2xl bg-brown-200 rounded-sm shadow-md px-3 sm:px-20 py-14">
-          <h2 className="text-4xl font-semibold text-center mb-6 text-foreground">
+          <h2 className="text-4xl font-semibold text-center mb-2 text-foreground">
             Log in
           </h2>
+          {location.state?.info && (
+            <p className="text-green-700 bg-green-50 border border-green-200 rounded-md py-2 px-3 text-center mb-4 text-sm">
+              {location.state.info}
+            </p>
+          )}
           {/* Attach handleSubmit to the form's onSubmit event */}
           <form className="space-y-8" onSubmit={handleSubmit}>
             <div className="relative space-y-1">

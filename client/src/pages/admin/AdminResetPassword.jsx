@@ -11,8 +11,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 import API_URL from "@/config/api";
+import { useAuth } from "@/contexts/authentication";
 
 export function AdminResetPassword() {
+  const { user, login } = useAuth();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -107,6 +109,18 @@ export function AdminResetPassword() {
           },
         }
       );
+
+      // Silently re-login with the new password to refresh the session
+      if (user?.email) {
+        try {
+          // Stay on the same page after login
+          localStorage.setItem("referrer_path", window.location.pathname);
+          await login({ email: user.email, password: formData.newPassword });
+        } catch (reloginError) {
+          // If re-login fails, show an error
+          setErrors({ general: reloginError?.response?.data?.error || "Re-login failed. Please sign in again." });
+        }
+      }
 
       setFormData({
         currentPassword: "",
