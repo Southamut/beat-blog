@@ -328,10 +328,10 @@ export default function AdminArticleEdit() {
             <AdminPanel />
             <SidebarInset>
 
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
+                <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
-                        <h1 className="text-xl font-semibold">Edit article</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold">Edit article</h1>
                     </div>
                     <div className="space-x-2">
                         <Button
@@ -355,12 +355,12 @@ export default function AdminArticleEdit() {
                 {isLoading ? (
                     <SkeletonLoading />
                 ) : (
-                    <main className="flex-1 p-8 bg-white overflow-auto">
+                    <main className="flex-1 p-8 bg-brown-100 overflow-auto">
                         <form className="space-y-7 max-w-4xl">
                             <div>
                                 <label
                                     htmlFor="thumbnail"
-                                    className="block text-gray-700 font-medium mb-2"
+                                    className="block text-brown-400 font-medium mb-2"
                                 >
                                     Thumbnail image
                                 </label>
@@ -389,7 +389,7 @@ export default function AdminArticleEdit() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="px-6 py-2 rounded-full bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200"
+                                        className="px-6 py-2 rounded-full bg-white border-brown-300 text-brown-600 hover:bg-brown-200"
                                         onClick={handleUploadClick}
                                     >
                                         Upload thumbnail image
@@ -405,7 +405,7 @@ export default function AdminArticleEdit() {
                             </div>
 
                             <div>
-                                <label htmlFor="category" className="block text-gray-700 font-medium mb-2">Category</label>
+                                <label htmlFor="category" className="block text-brown-400 font-medium mb-2">Category</label>
                                 <Select
                                     id="category"
                                     name="category"
@@ -414,10 +414,10 @@ export default function AdminArticleEdit() {
                                         handleCategoryChange(value);
                                     }}
                                 >
-                                    <SelectTrigger className="w-full max-w-lg mt-1 py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500">
+                                    <SelectTrigger className="w-full max-w-lg mt-1 py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500">
                                         <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
-                                    <SelectContent className={`bg-white border-none ${categories.length === 0 ? "hidden" : ""}`}>
+                                    <SelectContent className={`bg-white font-medium text-brown-500 border-none ${categories.length === 0 ? "hidden" : ""}`}>
                                         {categories.map((cat) => (
                                             <SelectItem key={cat.id} value={cat.name}>
                                                 {cat.name}
@@ -428,30 +428,30 @@ export default function AdminArticleEdit() {
                             </div>
 
                             <div>
-                                <label htmlFor="author" className="block text-gray-700 font-medium mb-2">Author name</label>
+                                <label htmlFor="author" className="block text-brown-400 font-medium mb-2">Author name</label>
                                 <Input
                                     id="author"
                                     name="author"
                                     value={state.user.name}
-                                    className="mt-1 max-w-lg py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
+                                    className="mt-1 max-w-lg py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500"
                                     disabled
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="title" className="block text-gray-700 font-medium mb-2">Title</label>
+                                <label htmlFor="title" className="block text-brown-400 font-medium mb-2">Title</label>
                                 <Input
                                     id="title"
                                     name="title"
                                     placeholder="Article title"
                                     value={post.title}
                                     onChange={handleInputChange}
-                                    className="mt-1 max-w-lg py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500"
+                                    className="mt-1 max-w-lg py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="introduction" className="block text-gray-700 font-medium mb-2">
+                                <label htmlFor="introduction" className="block text-brown-400 font-medium mb-2">
                                     Introduction (max 120 letters)
                                 </label>
                                 <Textarea
@@ -461,13 +461,13 @@ export default function AdminArticleEdit() {
                                     rows={3}
                                     value={post.description}
                                     onChange={handleInputChange}
-                                    className="mt-1 max-w-lg py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
+                                    className="mt-1 max-w-lg py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400"
                                     maxLength={120}
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="content" className="block text-gray-700 font-medium mb-2">Content</label>
+                                <label htmlFor="content" className="block text-brown-400 font-medium mb-2">Content</label>
                                 <Textarea
                                     id="content"
                                     name="content"
@@ -475,7 +475,7 @@ export default function AdminArticleEdit() {
                                     rows={15}
                                     value={post.content}
                                     onChange={handleInputChange}
-                                    className="mt-1 max-w-4xl py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 resize-none"
+                                    className="mt-1 max-w-4xl py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400"
                                 />
                             </div>
 
@@ -527,28 +527,28 @@ function SkeletonLoading() {
                 </div>
 
                 <div>
-                    <Skeleton className="h-4 w-24 mb-2 bg-gray-200" />
-                    <Skeleton className="h-10 w-full max-w-lg bg-gray-200" />
+                    <Skeleton className="h-4 w-24 mb-2 bg-brown-200" />
+                    <Skeleton className="h-10 w-full max-w-lg bg-brown-200" />
                 </div>
 
                 <div>
-                    <Skeleton className="h-4 w-32 mb-2 bg-gray-200" />
-                    <Skeleton className="h-10 w-full max-w-lg bg-gray-200" />
+                    <Skeleton className="h-4 w-32 mb-2 bg-brown-200" />
+                    <Skeleton className="h-10 w-full max-w-lg bg-brown-200" />
                 </div>
 
                 <div>
-                    <Skeleton className="h-4 w-16 mb-2 bg-gray-200" />
-                    <Skeleton className="h-10 w-full bg-gray-200" />
+                    <Skeleton className="h-4 w-16 mb-2 bg-brown-200" />
+                    <Skeleton className="h-10 w-full bg-brown-200" />
                 </div>
 
                 <div>
-                    <Skeleton className="h-4 w-64 mb-2 bg-gray-200" />
-                    <Skeleton className="h-24 w-full bg-gray-200" />
+                    <Skeleton className="h-4 w-64 mb-2 bg-brown-200" />
+                    <Skeleton className="h-24 w-full bg-brown-200" />
                 </div>
 
                 <div>
-                    <Skeleton className="h-4 w-24 mb-2 bg-gray-200" />
-                    <Skeleton className="h-80 w-full bg-gray-200" />
+                    <Skeleton className="h-4 w-24 mb-2 bg-brown-200" />
+                    <Skeleton className="h-80 w-full bg-brown-200" />
                 </div>
             </div>
         </main>

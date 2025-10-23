@@ -151,7 +151,7 @@ export function AdminArticleManagement() {
                 <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
-                        <h1 className="text-xl font-semibold">Article Management</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold">Article Management</h1>
                     </div>
                     <Button
                         className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"

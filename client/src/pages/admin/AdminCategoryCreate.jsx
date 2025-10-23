@@ -75,10 +75,10 @@ export default function AdminCategoryCreate() {
         <SidebarProvider>
             <AdminPanel />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
+                <header className="flex bg-brown-100 h-16 shrink-0 items-center gap-2 border-b border-brown-300 px-4 justify-between">
                     <div className="flex items-center gap-2">
                         <SidebarTrigger className="-ml-1" />
-                        <h1 className="text-xl font-semibold">Create Category</h1>
+                        <h1 className="text-xl text-brown-600 font-semibold">Create Category</h1>
                     </div>
                     <Button
                         className="px-8 py-2 rounded-full bg-brown-600 text-white hover:bg-brown-500"
@@ -95,7 +95,7 @@ export default function AdminCategoryCreate() {
                         <div className="relative space-y-1">
                             <label
                                 htmlFor="category-name"
-                                className="block text-gray-700 font-medium mb-2"
+                                className="block text-brown-400 font-medium mb-2"
                             >
                                 Category Name
                             </label>
@@ -105,11 +105,11 @@ export default function AdminCategoryCreate() {
                                 value={categoryName}
                                 onChange={(e) => setCategoryName(e.target.value)}
                                 placeholder="Category name"
-                                className={`mt-1 py-3 px-4 rounded-md bg-gray-50 border-gray-300 text-gray-700 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0 focus:border-gray-500 ${errorMessage ? "border-red-500" : ""
+                                className={`mt-1 py-3 px-4 rounded-md font-medium bg-white border-brown-300 text-brown-500 placeholder:text-brown-400 ${errorMessage ? "border-red" : ""
                                     }`}
                             />
                             {errorMessage && (
-                                <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+                                <p className="text-red text-sm mt-1">{errorMessage}</p>
                             )}
                         </div>
                     </div>
