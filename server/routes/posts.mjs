@@ -23,9 +23,27 @@ router.get("/", async (req, res) => {
         )
       `, { count: "exact" });
 
-    // Filter by category name if provided
-    if (category) {
-      query = query.eq("categories.name", category);
+    // Filter by category if provided (map category name -> category_id)
+    if (category && category !== "Highlight") {
+      const { data: foundCategory, error: categoryError } = await supabase
+        .from("categories")
+        .select("id, name")
+        .eq("name", category)
+        .single();
+
+      if (categoryError || !foundCategory) {
+        // If category not found, return empty result with proper meta
+        return res.status(200).json({
+          totalPosts: 0,
+          totalPages: 0,
+          currentPage: parseInt(page),
+          limit: parseInt(limit),
+          posts: [],
+          nextPage: null,
+        });
+      }
+
+      query = query.eq("category_id", foundCategory.id);
     }
 
     // Search by keyword if provided

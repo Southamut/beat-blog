@@ -11,7 +11,7 @@ import {
   Twitter,
   ImageOff,
 } from "lucide-react";
-import { Toaster, toast } from "sonner";
+import { AttentionAlert } from "@/components/AttentionAlert.jsx";
 import API_URL from "@/config/api";
 import { useAuth } from "@/contexts/authentication";
 
@@ -43,6 +43,7 @@ export function ViewPostComponent() {
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentText, setCommentText] = useState("");
+  const [alert, setAlert] = useState({ visible: false, type: "success", title: "", message: "" });
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -127,13 +128,7 @@ export function ViewPostComponent() {
   const handleLikeClick = async () => {
     const token = window.localStorage.getItem("access_token");
     if (!isAuthenticated || !token) {
-      toast.error("Please sign in to like this post", {
-        style: {
-          background: "#FEF2F2",
-          border: "1px solid #FECACA",
-          color: "#DC2626",
-        },
-      });
+      setAlert({ visible: true, type: "error", title: "Sign in required", message: "Please sign in to like this post" });
       return;
     }
 
@@ -146,20 +141,14 @@ export function ViewPostComponent() {
       const newCount = res.data?.likes_count;
       setPost((prev) => (prev ? { ...prev, likes_count: newCount, likes: newCount } : prev));
     } catch (err) {
-      toast.error("Failed to update like");
+      setAlert({ visible: true, type: "error", title: "Action failed", message: "Failed to update like" });
     }
   };
 
   const handleSubmitComment = async () => {
     const token = window.localStorage.getItem("access_token");
     if (!isAuthenticated || !token) {
-      toast.error("Please sign in to comment", {
-        style: {
-          background: "#FEF2F2",
-          border: "1px solid #FECACA",
-          color: "#DC2626",
-        },
-      });
+      setAlert({ visible: true, type: "error", title: "Sign in required", message: "Please sign in to comment" });
       return;
     }
     if (!commentText.trim()) return;
@@ -173,9 +162,9 @@ export function ViewPostComponent() {
       const created = res.data;
       setComments((prev) => [created, ...prev]);
       setCommentText("");
-      toast.success("Comment posted");
+      setAlert({ visible: true, type: "success", title: "Posted", message: "Comment posted" });
     } catch (err) {
-      toast.error("Failed to post comment");
+      setAlert({ visible: true, type: "error", title: "Post failed", message: "Failed to post comment" });
     }
   };
 
@@ -183,16 +172,9 @@ export function ViewPostComponent() {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast.success("Copied!", {
-        description: "This article has been copied to your clipboard.",
-        style: {
-          background: "#F0FDF4",
-          border: "1px solid #BBF7D0",
-          color: "#166534",
-        },
-      });
+      setAlert({ visible: true, type: "success", title: "Copied", message: "This article has been copied to your clipboard." });
     } catch (err) {
-      toast.error("Failed to copy link");
+      setAlert({ visible: true, type: "error", title: "Copy failed", message: "Failed to copy link" });
     }
   };
 
@@ -303,7 +285,13 @@ export function ViewPostComponent() {
         </div>
       </div>
 
-      <Toaster position="top-right" />
+      <AttentionAlert
+        type={alert.type}
+        title={alert.title || (alert.type === "success" ? "Success" : "Error")}
+        message={alert.message}
+        isVisible={alert.visible}
+        onClose={() => setAlert((prev) => ({ ...prev, visible: false }))}
+      />
     </>
   );
 }
