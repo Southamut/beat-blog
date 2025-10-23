@@ -29,6 +29,7 @@ export default function ResetPasswordPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +87,12 @@ export default function ResetPasswordPage() {
     // Don't submit directly, let the dialog handle it
   };
 
+  const handleOpenConfirm = () => {
+    if (validateForm()) {
+      setIsDialogOpen(true);
+    }
+  };
+
   const handleResetPassword = async () => {
     setIsLoading(true);
 
@@ -141,11 +148,13 @@ export default function ResetPasswordPage() {
   const handleCancel = () => {
     // Clear any existing errors when canceling
     setErrors({});
+    setIsDialogOpen(false);
   };
 
   const handleClose = () => {
     // Clear any existing errors when closing
     setErrors({});
+    setIsDialogOpen(false);
   };
 
   return (
@@ -316,23 +325,26 @@ export default function ResetPasswordPage() {
 
                     {/* Submit Button with Confirmation Dialog */}
                     <div className="pt-4">
+                      <Button
+                        type="button"
+                        onClick={handleOpenConfirm}
+                        disabled={isLoading}
+                        className="flex items-center rounded-full h-12 px-8 gap-2 bg-brown-600 hover:bg-brown-500 text-white"
+                      >
+                        {isLoading ? "Updating..." : "Update Password"}
+                      </Button>
+
+                      {/* Controlled confirm dialog */}
                       <AlertDialog
                         title="Reset password"
                         message="Do you want to reset your password?"
                         confirmText="Reset"
-                        onConfirm={handleResetPassword}
+                        onConfirm={async () => { await handleResetPassword(); setIsDialogOpen(false); }}
                         onCancel={handleCancel}
                         onClose={handleClose}
-                        triggerStyle="custom"
-                      >
-                        <Button
-                          type="button"
-                          disabled={isLoading}
-                          className="flex items-center rounded-full h-12 px-8 gap-2 bg-brown-600 hover:bg-brown-500 text-white"
-                        >
-                          {isLoading ? "Updating..." : "Update Password"}
-                        </Button>
-                      </AlertDialog>
+                        open={isDialogOpen}
+                        onOpenChange={setIsDialogOpen}
+                      />
                     </div>
                   </form>
                 </div>
