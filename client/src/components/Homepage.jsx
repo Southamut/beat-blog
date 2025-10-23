@@ -52,7 +52,7 @@ export function NavBar() {
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
-              <Menu className="w-6 h-6 text-gray-800" />
+              <Menu className="w-6 h-6 text-brown-400" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-screen py-6 space-y-2 bg-brown-100 border-none rounded-none">
               <DropdownMenuItem className="px-4">
@@ -83,13 +83,13 @@ export function NavBar() {
         ) : (
           <>
             <button
-              className="px-6 py-2 border border-brown-600 text-brown-600 bg-white rounded-full hover:bg-brown-100 transition-colors"
+              className="px-6 py-2 border border-brown-600 font-medium text-brown-600 bg-white rounded-full hover:bg-brown-100 transition-colors"
               onClick={() => handleAuthNavigation("/login")} // 🚨 แก้ไข
             >
               Log in
             </button>
             <button
-              className="px-6 py-2 bg-brown-600 text-white rounded-full hover:bg-brown-500 transition-colors relative"
+              className="px-6 py-2 bg-brown-600 font-medium text-white rounded-full hover:bg-brown-500 transition-colors relative"
               onClick={() => handleAuthNavigation("/sign-up")} // 🚨 แก้ไข
             >
               Sign up
@@ -127,23 +127,21 @@ export function HeroSection() {
 
   return (
     <section className="w-full mx-auto px-4 md:px-16 py-12 bg-brown-100">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-4 gap-8 items-center">
         {/* Left Content - Main heading and subtitle */}
-        <div className="lg:col-span-1 text-right">
-          <h1 className="text-4xl lg:text-5xl font-bold text-brown-600 leading-tight mb-4">
-            Stay
-            <br />
-            Informed,
+        <div className="lg:col-span-1 md:col-span-1 md:text-right text-center">
+          <h1 className="text-3xl lg:text-4xl font-bold text-brown-600 leading-tight mb-4">
+            Stay Informed,
             <br />
             Stay Inspired
           </h1>
-          <p className="text-lg text-brown-400 leading-relaxed">
+          <p className="lg:text-lg text-md font-medium text-brown-400 leading-relaxed">
             Discover a World of Knowledge at Your Fingertips. Your Daily Dose of
             Inspiration and Information.
           </p>
         </div>
         {/* Center - Main image */}
-        <div className="lg:col-span-1 flex justify-center">
+        <div className="lg:col-span-1 md:col-span-2 flex justify-center">
           <div className="w-full max-w-md">
             <img
               src={admin.profile_pic || "./src/assets/man_and_cat.jpg"}
@@ -153,7 +151,7 @@ export function HeroSection() {
           </div>
         </div>
         {/* Right Content - Author bio */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 md:col-span-1">
           <div className="text-sm font-medium text-brown-400 mb-2">-Author</div>
           <div className="flex items-center gap-3 mb-3">
             <h2 className="text-2xl font-bold text-brown-500">{admin.name || "Admin"}</h2>
