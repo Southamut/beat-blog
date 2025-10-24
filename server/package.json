@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node app.mjs",
     "dev": "nodemon app.mjs",
+    "build": "echo 'No build step required for Node.js'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
