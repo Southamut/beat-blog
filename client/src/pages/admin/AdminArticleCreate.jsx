@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AttentionAlert } from "@/components/AttentionAlert";
 import { DeletePostDialog } from "@/components/DeletePostDialog";
 import { useAuth } from "@/contexts/authentication";
-import axios from "axios";
+import api from "@/lib/api";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -49,9 +49,7 @@ export default function AdminArticleCreate() {
             try {
                 setIsLoading(true);
                 console.log("AdminArticleCreate - Fetching categories from:", `${API_URL}/categories`);
-                const responseCategories = await axios.get(
-                    `${API_URL}/categories`
-                );
+                const responseCategories = await api.get("/categories");
                 console.log("AdminArticleCreate - Categories response:", responseCategories.data);
                 setCategories(responseCategories.data);
                 } catch (error) {
@@ -144,8 +142,8 @@ export default function AdminArticleCreate() {
 
         // Check if title already exists
         try {
-            const titleCheckResponse = await axios.get(
-                `${API_URL}/posts/check-title/${encodeURIComponent(post.title.trim())}`
+            const titleCheckResponse = await api.get(
+                `/posts/check-title/${encodeURIComponent(post.title.trim())}`
             );
 
             if (titleCheckResponse.data.exists) {
@@ -209,13 +207,9 @@ export default function AdminArticleCreate() {
             console.log("AdminArticleCreate - Sending POST request to:", `${API_URL}/posts`);
             console.log("AdminArticleCreate - Article data:", articleData);
 
-            await axios.post(
-                `${API_URL}/posts`,
-                articleData,
-                {
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
+            await api.post("/posts", articleData, {
+                headers: { "Content-Type": "application/json" },
+            });
 
             console.log("AdminArticleCreate - Article created successfully, navigating to management");
 

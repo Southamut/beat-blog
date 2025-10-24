@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import api from '../lib/api';
 import ReactMarkdown from "react-markdown";
 import {
   ArrowLeft,
@@ -49,7 +49,7 @@ export function ViewPostComponent() {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_URL}/posts/${postId}`);
+        const response = await api.get(`/posts/${postId}`);
         setPost(response.data);
         setError(null);
       } catch (err) {

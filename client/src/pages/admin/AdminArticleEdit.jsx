@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AttentionAlert } from "@/components/AttentionAlert";
 import { DeletePostDialog } from "@/components/DeletePostDialog";
 import { useAuth } from "@/contexts/authentication";
-import axios from "axios";
+import api from "@/lib/api";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,15 +52,11 @@ export default function AdminArticleEdit() {
 
 
                 // Fetch categories
-                const responseCategories = await axios.get(
-                    `${API_URL}/categories`
-                );
+                const responseCategories = await api.get("/categories");
                 setCategories(responseCategories.data);
 
                 // Fetch article data
-                const responseArticle = await axios.get(
-                    `${API_URL}/posts/${articleId}`
-                );
+                const responseArticle = await api.get(`/posts/${articleId}`);
                 const articleData = responseArticle.data;
 
                 // Find category name
@@ -166,8 +162,8 @@ export default function AdminArticleEdit() {
 
         // Check if title already exists (excluding current article)
         try {
-            const titleCheckResponse = await axios.get(
-                `${API_URL}/posts/check-title/${encodeURIComponent(post.title.trim())}?excludeId=${articleId}`
+            const titleCheckResponse = await api.get(
+                `/posts/check-title/${encodeURIComponent(post.title.trim())}?excludeId=${articleId}`
             );
 
             if (titleCheckResponse.data.exists) {
@@ -217,13 +213,9 @@ export default function AdminArticleEdit() {
                 image: imageUrl
             };
 
-            await axios.put(
-                `${API_URL}/posts/${articleId}`,
-                articleData,
-                {
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
+            await api.put(`/posts/${articleId}`, articleData, {
+                headers: { "Content-Type": "application/json" },
+            });
 
             // Navigate immediately and pass alert data via state
             const alertData = {
@@ -266,7 +258,7 @@ export default function AdminArticleEdit() {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`${API_URL}/posts/${articleId}`);
+            await api.delete(`/posts/${articleId}`);
 
             const alertData = {
                 show: true,

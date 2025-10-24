@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from '../lib/api';
 import {
   Select,
   SelectTrigger,
@@ -83,7 +83,7 @@ export function ArticleSection() {
 
     try {
       setSearchLoading(true);
-      const response = await axios.get(`${API_URL}/posts`, {
+            const response = await api.get('/posts', {
         params: {
           keyword: keyword,
           limit: 6,
@@ -148,7 +148,7 @@ export function ArticleSection() {
       const categoryParam =
         selectedCategory === "Highlight" ? "" : selectedCategory;
 
-      const response = await axios.get(`${API_URL}/posts`, {
+            const response = await api.get('/posts', {
         params: {
           page: pageNum,
           limit: 6,
