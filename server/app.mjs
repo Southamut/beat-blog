@@ -32,5 +32,12 @@ app.use("/categories", categoriesRouter);
 app.use("/auth", authRouter);
 app.use("/upload", uploadRouter);
 
+// For localhost development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+}
+
 // Export app for Vercel Functions
 export default app;
