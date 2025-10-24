@@ -10,7 +10,25 @@ const app = express();
 const port = process.env.PORT || 4001;
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://beat-blog-client.vercel.app'],
+    origin: (origin, callback) => {
+        // Allow same-origin or non-browser requests
+        if (!origin) return callback(null, true);
+
+        const allowed = [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            // Production client
+            'https://beat-blog-client.vercel.app'
+        ];
+
+        // Allow Vercel preview deployments for the client app
+        const isVercelPreview = /https:\/\/beat-blog-client-.*\.vercel\.app$/i.test(origin);
+
+        if (allowed.includes(origin) || isVercelPreview) {
+            return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
     credentials: true
 }));
 
