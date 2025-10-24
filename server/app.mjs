@@ -9,8 +9,13 @@ import uploadRouter from "./routes/upload.mjs";
 const app = express();
 const port = process.env.PORT || 4001;
 
+// CORS configuration
+const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:3000').split(',').filter(Boolean);
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://beat-blog-client.vercel.app'],
+    origin(origin, cb) {
+        if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+        return cb(new Error('Not allowed by CORS'));
+    },
     credentials: true
 }));
 
@@ -27,6 +32,5 @@ app.use("/categories", categoriesRouter);
 app.use("/auth", authRouter);
 app.use("/upload", uploadRouter);
 
-app.listen(port, () => {
-    console.log(`Server is running at ${port}`);
-});
+// Export app for Vercel Functions
+export default app;

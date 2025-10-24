@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
 import API_URL from "@/config/api";
 
@@ -29,11 +29,7 @@ function AuthProvider(props) {
 
     try {
       setState((prevState) => ({ ...prevState, getUserLoading: true }));
-      const response = await axios.get(`${API_URL}/auth/get-user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await api.get("/auth/get-user");
       setState((prevState) => ({
         ...prevState,
         user: response.data,
@@ -59,10 +55,7 @@ function AuthProvider(props) {
   const login = async (data) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
-      const response = await axios.post(
-        `${API_URL}/auth/login`,
-        data
-      );
+      const response = await api.post("/auth/login", data);
       const token = response.data.access_token;
       localStorage.setItem("access_token", token);
 
@@ -98,7 +91,7 @@ function AuthProvider(props) {
   const register = async (data) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
-      await axios.post(`${API_URL}/auth/register`, data);
+      await api.post("/auth/register", data);
       setState((prevState) => ({ ...prevState, loading: false, error: null }));
       navigate("/sign-up/success");
     } catch (error) {
