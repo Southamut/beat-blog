@@ -87,6 +87,7 @@ export function ArticleSection() {
         params: {
           keyword: keyword,
           limit: 6,
+          published_only: true,
         },
         headers: { "X-Disable-Global-Loading": "1" },
       });
@@ -153,6 +154,7 @@ export function ArticleSection() {
           page: pageNum,
           limit: 6,
           category: categoryParam,
+          published_only: true, // Add flag to indicate we only want published posts
         },
         headers: { "X-Disable-Global-Loading": "1" },
       });
