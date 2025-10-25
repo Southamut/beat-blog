@@ -1,20 +1,14 @@
 import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useEmailConfirmationRedirect } from "@/hooks/useEmailConfirmationRedirect";
 import { CircleCheck } from "lucide-react";
 
 export function RegistSuccess() {
   const navigate = useNavigate();
 
-  // One-time hard refresh when landing from email confirm
-  useEffect(() => {
-    const flagKey = "reg_success_refreshed";
-    const alreadyRefreshed = sessionStorage.getItem(flagKey);
-    if (!alreadyRefreshed) {
-      sessionStorage.setItem(flagKey, "1");
-      window.location.reload();
-    }
-  }, []);
+  // Handle email confirmation hash and one-time reload via a small hook
+  useEmailConfirmationRedirect();
 
   const handleContinue = () => {
     navigate("/", { replace: true });
@@ -22,7 +16,6 @@ export function RegistSuccess() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <NavBar />
       <main className="flex justify-center items-center p-4 my-4 flex-grow">
         <div className="w-full max-w-2xl bg-brown-200 rounded-sm shadow-md px-3 sm:px-20 py-14">
           
