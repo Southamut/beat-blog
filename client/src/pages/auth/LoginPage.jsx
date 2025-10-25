@@ -2,6 +2,7 @@ import { NavBar } from "../../components/Homepage";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../contexts/authentication";
+import { AttentionAlert } from "@/components/AttentionAlert";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -86,14 +87,6 @@ export function LoginPage() {
                 className="w-full bg-white rounded-md border border-brown-300 px-3 py-2 text-sm shadow-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-muted-foreground"
               />
             </div>
-
-            {/* Display error message */}
-            {error && (
-              <p className="text-red-600 text-center text-sm font-medium">
-                {error}
-              </p>
-            )}
-
             <div className="flex justify-center">
               <button
                 type="submit"
@@ -105,6 +98,15 @@ export function LoginPage() {
               </button>
             </div>
           </form>
+          {/* Floating alert for errors */}
+          <AttentionAlert
+            type="error"
+            title={error || "Login failed"}
+            message={error ? "Please try another password or email." : ""}
+            isVisible={Boolean(error)}
+            autoHide={true}
+            duration={5000}
+          />
           <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-brown-400 text-center pt-2 text-muted-foreground font-medium">
             Don't have an account?
             <a
