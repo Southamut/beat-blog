@@ -104,25 +104,24 @@ export function NavBar() {
 export function HeroSection() {
   const [admin, setAdmin] = React.useState({ name: "", bio: "", profile_pic: "" });
 
-  // Derive admin info from posts endpoint, similar to ArticleSection
+  // Fetch the hero admin (division='main')
   React.useEffect(() => {
-    async function fetchFromPosts() {
+    async function fetchHeroAdmin() {
       try {
-        const res = await axios.get(`${API_URL}/posts`, { params: { limit: 1 } });
-        const first = res.data?.posts?.[0];
-        if (first) {
-          setAdmin((prev) => ({
-            ...prev,
-            name: first.author || prev.name || "Admin",
-            profile_pic: first.authorImage || prev.profile_pic || "",
-            bio: first.authorBio || prev.bio || "",
-          }));
+        const res = await axios.get(`${API_URL}/users/hero-admin`);
+        if (res?.data) {
+          setAdmin({
+            name: res.data.name || "Admin",
+            profile_pic: res.data.profile_pic || "",
+            bio: res.data.bio || "",
+          });
+          return;
         }
       } catch (e) {
         // ignore; keep defaults
       }
     }
-    fetchFromPosts();
+    fetchHeroAdmin();
   }, []);
 
   return (

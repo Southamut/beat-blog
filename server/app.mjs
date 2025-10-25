@@ -3,6 +3,7 @@ import express from "express";
 import postsRouter from "./routes/posts.mjs";
 import categoriesRouter from "./routes/categories.mjs";
 import authRouter from "./routes/auth.mjs"
+import usersRouter from "./routes/users.mjs";
 import cors from 'cors';
 import uploadRouter from "./routes/upload.mjs";
 
@@ -43,6 +44,7 @@ app.get("/test", (req, res) => {
 app.use("/posts", postsRouter);
 app.use("/categories", categoriesRouter);
 app.use("/auth", authRouter);
+app.use("/users", usersRouter);
 app.use("/upload", uploadRouter);
 
 app.listen(port, () => {
