@@ -9,10 +9,10 @@ const router = express.Router();
 // GET /posts - นักเขียนสามารถดูข้อมูลบทความทั้งหมดในระบบได้
 router.get("/", async (req, res) => {
   try {
-    const { page = 1, limit = 6, category, keyword } = req.query;
+    const { page = 1, limit = 6, category, keyword, published_only } = req.query;
     const offset = (page - 1) * limit;
 
-    // Join with categories table to get category name
+    // Join with categories and author (created_by) to get display info
     let query = supabase
       .from("posts")
       .select(`
@@ -20,8 +20,14 @@ router.get("/", async (req, res) => {
         categories (
           id,
           name
-        )
+        ),
+        author:users!posts_created_by_fkey ( id, name, profile_pic, bio )
       `, { count: "exact" });
+
+    // Filter to only show published posts if published_only flag is set
+    if (published_only === 'true') {
+      query = query.eq("status_id", 2);
+    }
 
     // Filter by category if provided (map category name -> category_id)
     if (category && category !== "Highlight") {
@@ -60,11 +66,12 @@ router.get("/", async (req, res) => {
 
     const { data: posts, error, count } = await query;
 
-    // Fetch the single admin user to use as author for posts
-    const { data: adminUser, error: adminError } = await supabase
+    // Fetch main admin for fallback
+    const { data: mainAdmin } = await supabase
       .from("users")
       .select("id, name, profile_pic, bio")
       .eq("role", "admin")
+      .eq("division", "main")
       .single();
 
     if (error) {
@@ -82,9 +89,9 @@ router.get("/", async (req, res) => {
       category_id: post.category_id, // Keep category_id for admin management
       title: post.title,
       description: post.description,
-      author: adminUser?.name || 'Admin',
-      authorImage: adminUser?.profile_pic || '',
-      authorBio: adminUser?.bio || '',
+      author: post.author?.name || mainAdmin?.name || 'Admin',
+      authorImage: post.author?.profile_pic || mainAdmin?.profile_pic || '',
+      authorBio: post.author?.bio || mainAdmin?.bio || '',
       date: post.date,
       content: post.content,
       status_id: post.status_id,
@@ -93,6 +100,8 @@ router.get("/", async (req, res) => {
 
     const totalPages = Math.ceil(count / limit);
     const nextPage = page < totalPages ? parseInt(page) + 1 : null;
+
+    console.log(`Posts query - Published only: ${published_only}, Total posts: ${count}, Posts returned: ${posts.length}, Page: ${page}`);
 
     return res.status(200).json({
       totalPosts: count,
@@ -107,6 +116,29 @@ router.get("/", async (req, res) => {
     return res.status(500).json({
       message: "Server could not read post because database connection",
     });
+  }
+});
+
+// GET /posts/debug - Debug endpoint to check all posts and their statuses
+router.get("/debug", async (req, res) => {
+  try {
+    const { data: posts, error } = await supabase
+      .from("posts")
+      .select("id, title, status_id")
+      .order("id");
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json({
+      message: "Debug info - all posts with status_id",
+      posts: posts,
+      totalPosts: posts.length
+    });
+  } catch (error) {
+    console.error("Debug error:", error);
+    return res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -159,7 +191,8 @@ router.get("/:postId", async (req, res) => {
         categories (
           id,
           name
-        )
+        ),
+        author:users!posts_created_by_fkey ( id, name, profile_pic, bio )
       `)
       .eq("id", postId)
       .single();
@@ -170,11 +203,12 @@ router.get("/:postId", async (req, res) => {
       });
     }
 
-    // Fetch the single admin user to use as author for posts
-    const { data: adminUser } = await supabase
+    // Fetch main admin for fallback
+    const { data: mainAdmin } = await supabase
       .from("users")
       .select("id, name, profile_pic, bio")
       .eq("role", "admin")
+      .eq("division", "main")
       .single();
 
     // Transform the data to match frontend expectations
@@ -185,9 +219,9 @@ router.get("/:postId", async (req, res) => {
       category_id: post.category_id, // Keep category_id for admin management
       title: post.title,
       description: post.description,
-      author: adminUser?.name || 'Admin',
-      authorImage: adminUser?.profile_pic || '',
-      authorBio: adminUser?.bio || '',
+      author: post.author?.name || mainAdmin?.name || 'Admin',
+      authorImage: post.author?.profile_pic || mainAdmin?.profile_pic || '',
+      authorBio: post.author?.bio || mainAdmin?.bio || '',
       date: post.date,
       content: post.content,
       status_id: post.status_id,
@@ -214,8 +248,9 @@ router.post("/", [validatePostDataSingle, protectAdmin], async (req, res) => {
       description,
       content,
       status_id,
-      user_id,
     } = req.body;
+
+    const authorId = req.user?.id;
 
     // Insert new post into database
     const { data, error } = await supabase
@@ -230,6 +265,7 @@ router.post("/", [validatePostDataSingle, protectAdmin], async (req, res) => {
           status_id: parseInt(status_id),
           date: new Date().toISOString(), // Add current timestamp
           likes_count: 0, // Default likes count to 0
+          created_by: authorId,
         },
       ])
       .select();
