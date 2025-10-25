@@ -39,6 +39,7 @@ function AuthProvider(props) {
         user: response.data,
         getUserLoading: false,
       }));
+      return response.data;
     } catch (error) {
       // 🚨 แนะนำให้เพิ่ม: ถ้าดึงข้อมูลล้มเหลว ให้ลบ access_token ทิ้ง
       localStorage.removeItem("access_token");
@@ -48,6 +49,7 @@ function AuthProvider(props) {
         user: null,
         getUserLoading: false,
       }));
+      return null;
     }
   };
 
@@ -56,7 +58,7 @@ function AuthProvider(props) {
   }, []);
 
   // ล็อกอินผู้ใช้
-  const login = async (data) => {
+  const login = async (data, options = {}) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true, error: null }));
       const response = await axios.post(
@@ -67,7 +69,18 @@ function AuthProvider(props) {
       localStorage.setItem("access_token", token);
 
       // 🚨 แก้ไข: ย้าย await fetchUser() ขึ้นมาอยู่ก่อน setState และ navigate
-      await fetchUser(); // 🚨 AWAIT: รอจนกว่า state.user จะถูกอัปเดตเรียบร้อย
+      const currentUser = await fetchUser(); // 🚨 AWAIT: รอจนกว่า state.user จะถูกอัปเดตเรียบร้อย
+
+      // Enforce role if required by caller (e.g., admin login page)
+      const requiredRole = options.requiredRole;
+      if (requiredRole && currentUser?.role !== requiredRole) {
+        // Revert login state and token, return generic auth error
+        localStorage.removeItem("access_token");
+        setState((prevState) => ({ ...prevState, user: null }));
+        const msg = "Your password is incorrect or this email doesn't exist";
+        setState((prevState) => ({ ...prevState, loading: false, error: msg }));
+        return { error: msg };
+      }
 
       // ดึงและตั้งค่าข้อมูลผู้ใช้
       setState((prevState) => ({ ...prevState, loading: false, error: null }));

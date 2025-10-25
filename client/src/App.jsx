@@ -20,6 +20,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AuthenticationRoute from "./components/auth/AuthenticationRoute";
 import ProfilePage from "./pages/user/ProfilePage";
 import ResetPasswordPage from "./pages/user/ResetPassword";
+import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 
 function App() {
   const { isAuthenticated, state } = useAuth();
@@ -42,6 +43,7 @@ function App() {
           </AuthenticationRoute>
         }
       />
+      
       <Route
         path="/sign-up"
         element={
@@ -96,6 +98,19 @@ function App() {
       />
 
       {/* admin */}
+      <Route
+        path="/admin/login"
+        element={
+          <AuthenticationRoute
+            isLoading={state.getUserLoading}
+            isAuthenticated={isAuthenticated}
+          >
+            <AdminLoginPage />
+          </AuthenticationRoute>
+        }
+      />
+
+
       <Route
         path="/admin/article-management"
         element={
