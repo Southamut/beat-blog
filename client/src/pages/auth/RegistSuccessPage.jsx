@@ -1,9 +1,20 @@
 import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { CircleCheck } from "lucide-react";
 
 export function RegistSuccess() {
   const navigate = useNavigate();
+
+  // One-time hard refresh when landing from email confirm
+  useEffect(() => {
+    const flagKey = "reg_success_refreshed";
+    const alreadyRefreshed = sessionStorage.getItem(flagKey);
+    if (!alreadyRefreshed) {
+      sessionStorage.setItem(flagKey, "1");
+      window.location.reload();
+    }
+  }, []);
 
   const handleContinue = () => {
     navigate("/", { replace: true });

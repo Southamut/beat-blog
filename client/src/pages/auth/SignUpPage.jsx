@@ -1,6 +1,7 @@
 import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/contexts/authentication";
 import axios from "axios";
 import {
   AlertDialog,
@@ -13,6 +14,7 @@ import API_URL from "@/config/api";
 
 export function SignupPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   //for collect&send data
   const [formData, setFormData] = useState({
@@ -91,10 +93,9 @@ export function SignupPage() {
 
   // Handler เมื่อกดปุ่ม "I already confirmed." ใน Dialog
   const handleDialogConfirm = async () => {
-    setIsLoading(true); // ตั้งค่า Loading ขณะพยายามล็อกอิน
+    setIsLoading(true);
     setError(null);
 
-    // ตรวจสอบว่ามีข้อมูลสำหรับล็อกอินหรือไม่
     if (!formData.email || !formData.password) {
       setError("ไม่สามารถดำเนินการต่อได้: ข้อมูลอีเมลหรือรหัสผ่านหายไป.");
       setIsLoading(false);
@@ -102,47 +103,17 @@ export function SignupPage() {
     }
 
     try {
-      // 1. 🚨 พยายามล็อกอินโดยตรงด้วย Email/Password (ใช้เป็นตัวตรวจสอบสถานะการยืนยัน)
-      const loginResponse = await axios.post(
-        `${API_URL}/auth/login`,
-        {
-          email: formData.email,
-          password: formData.password,
-        }
-      );
-
-      // 2. ถ้า LOGIN สำเร็จ (สถานะ 200 OK และมี Access Token กลับมา)
-      if (loginResponse.data.access_token) {
-        // 3. LOGIN SUCCESS: บันทึก Token และนำทาง
-        localStorage.setItem("access_token", loginResponse.data.access_token);
-        setIsDialogOpen(false);
-        // นำทางไปหน้าhome
-        navigate("/");
+      const result = await login({ email: formData.email, password: formData.password });
+      if (result?.error) {
+        setError(result.error);
       } else {
-        // กรณีที่ Login API ส่งสถานะ 200 กลับมาแต่ไม่มี token (ไม่น่าจะเกิดขึ้น)
-        setError("Plese check your email confirmation.");
+        setIsDialogOpen(false);
+        // login() already navigates appropriately and updates navbar via context
       }
     } catch (err) {
-      console.error("Login attempt error:", err);
-
-      // 4. ตรวจสอบ Error: หากล็อกอินล้มเหลว (สถานะ 4xx หรือ 5xx)
-      // สันนิษฐานว่าเกิดจากการที่อีเมลยังไม่ได้รับการยืนยัน หรือรหัสผ่านผิด
-
-      const backendError = err.response?.data?.error;
-
-      // เราใช้ข้อความ Error จาก Backend /auth/login เป็นหลัก
-      if (
-        (backendError && backendError.includes("incorrect")) ||
-        backendError.includes("doesn't exist")
-      ) {
-        // ถ้า Backend บอกว่ารหัสผ่านผิด/ผู้ใช้ไม่มี
-        setError("User or password incorrect please try agian.");
-      } else {
-        // กรณีอื่น ๆ (รวมถึงการยังไม่ยืนยันอีเมล ซึ่ง Supabase มักจะถือเป็น invalid credentials)
-        setError("❌ Check your email and try login again.");
-      }
+      setError("Login failed. Please try again.");
     } finally {
-      setIsLoading(false); // หยุด Loading
+      setIsLoading(false);
     }
   };
 
