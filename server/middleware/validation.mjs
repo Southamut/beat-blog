@@ -113,3 +113,27 @@ export const validatePostDataSingle = (req, res, next) => {
     // If all validations pass, continue
     next();
 };
+
+// Validate register body
+export const validateRegisterBody = (req, res, next) => {
+    const { name, username, email, password } = req.body || {};
+    const errors = {};
+
+    if (!name || typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 50) {
+        errors.name = "Name must be 2-50 characters.";
+    }
+    if (!username || !/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+        errors.username = "Username must be 3-20 chars, letters/numbers/underscore only.";
+    }
+    if (!email || !/^([^\s@]+)@([^\s@]+)\.([^\s@]{2,})$/.test(email)) {
+        errors.email = "Invalid email format.";
+    }
+    if (!password || typeof password !== 'string' || password.length < 8 || password.length > 64 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+        errors.password = "Password must be 8-64 chars, include letter and number.";
+    }
+
+    if (Object.keys(errors).length) {
+        return res.status(400).json({ error: errors });
+    }
+    next();
+};

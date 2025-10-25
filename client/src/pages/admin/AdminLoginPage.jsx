@@ -4,13 +4,13 @@ import { useState } from "react";
 import { useAuth } from "../../contexts/authentication";
 import { AttentionAlert } from "@/components/AttentionAlert";
 
-export function LoginPage() {
+export function AdminLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
   // 🚨 ใช้ Hook useAuth
-    const { login, state } = useAuth(); 
-    const { loading, error } = state;
+  const { login, state } = useAuth();
+  const { loading, error } = state;
 
   //for collect user, pass
   const [formData, setFormData] = useState({
@@ -28,17 +28,19 @@ export function LoginPage() {
 
   //for form submission
   const handleSubmit = async (e) => {
-        e.preventDefault();
-        // 🚨 เรียกใช้ login จาก useAuth
-        await login(formData, { requiredRole: 'user' }); 
-        // Logic Redirect ถูกจัดการใน AuthProvider แล้ว
-    };
+    e.preventDefault();
+    // 🚨 เรียกใช้ login จาก useAuth
+    await login(formData, { requiredRole: 'admin' });
+    // Logic Redirect ถูกจัดการใน AuthProvider แล้ว
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-brown-100">
-      <NavBar />
       <main className="flex justify-center items-center p-4 my-4 flex-grow">
         <div className="w-full max-w-2xl bg-brown-200 rounded-sm shadow-md px-3 sm:px-20 py-14">
+          <p className="text-sm text-orange text-center text-muted-foreground font-medium">
+            Admin Login
+          </p>
           <h2 className="text-4xl font-semibold text-center mb-2 text-foreground">
             Log in
           </h2>
@@ -107,15 +109,6 @@ export function LoginPage() {
             autoHide={true}
             duration={5000}
           />
-          <p className="flex flex-row justify-center gap-1 mt-4 text-sm text-brown-400 text-center pt-2 text-muted-foreground font-medium">
-            Don't have an account?
-            <a
-              onClick={() => navigate("/sign-up")}
-              className="text-brown-600 text-foreground hover:text-muted-foreground transition-colors underline font-semibold cursor-pointer"
-            >
-              Sign up
-            </a>
-          </p>
         </div>
       </main>
     </div>

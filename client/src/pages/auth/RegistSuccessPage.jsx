@@ -1,28 +1,21 @@
 import { NavBar } from "../../components/Homepage";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useEmailConfirmationRedirect } from "@/hooks/useEmailConfirmationRedirect";
 import { CircleCheck } from "lucide-react";
 
 export function RegistSuccess() {
   const navigate = useNavigate();
 
+  // Handle email confirmation hash and one-time reload via a small hook
+  useEmailConfirmationRedirect();
+
   const handleContinue = () => {
-    let referrerPath = localStorage.getItem("referrer_path");
-
-    // 🚨 Logic การตรวจสอบและล้างค่า ยังต้องอยู่ที่นี่ เพราะ AuthProvider ไม่ได้จัดการ
-    if (referrerPath === "/login" || referrerPath === "/sign-up") {
-      referrerPath = "/";
-    }
-
-    referrerPath = referrerPath || "/";
-
-    localStorage.removeItem("referrer_path");
-
-    navigate(referrerPath, { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (
     <div className="flex flex-col min-h-screen">
-      <NavBar />
       <main className="flex justify-center items-center p-4 my-4 flex-grow">
         <div className="w-full max-w-2xl bg-brown-200 rounded-sm shadow-md px-3 sm:px-20 py-14">
           

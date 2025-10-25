@@ -2,11 +2,12 @@ import { Router } from "express";
 import supabase from "../utils/supabase.mjs";
 import connectionPool from "../utils/db.mjs";
 import protectUser from "../middleware/protectUser.mjs";
+import { validateRegisterBody } from "../middleware/validation.mjs";
 
 const authRouter = Router();
 
 //for register
-authRouter.post("/register", async (req, res) => {
+authRouter.post("/register", validateRegisterBody, async (req, res) => {
   const { email, password, username, name } = req.body;
 
   try {
@@ -26,9 +27,11 @@ authRouter.post("/register", async (req, res) => {
     }
 
     // สร้างผู้ใช้ใหม่ผ่าน Supabase Auth
+    const emailRedirectTo = `${process.env.CLIENT_URL || 'https://beat-blog-client.vercel.app'}/registration-success`;
     const { data, error: supabaseError } = await supabase.auth.signUp({
       email,
       password,
+      options: { emailRedirectTo },
     });
 
     // ตรวจสอบ error จาก Supabase
