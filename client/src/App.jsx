@@ -54,21 +54,19 @@ function App() {
         }
       />
 
-      {/* user */}
       <Route
         path="/registration-success"
         element={
-          <ProtectedRoute
+          <AuthenticationRoute
             isLoading={state.getUserLoading}
             isAuthenticated={isAuthenticated}
-            userRole={state.user?.role}
-            requiredRole="user"
           >
             <RegistSuccess />
-          </ProtectedRoute>
+          </AuthenticationRoute>
         }
       />
 
+      {/* user */}
       <Route
         path="/user/profile"
         element={

@@ -6,18 +6,7 @@ export function RegistSuccess() {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    let referrerPath = localStorage.getItem("referrer_path");
-
-    // 🚨 Logic การตรวจสอบและล้างค่า ยังต้องอยู่ที่นี่ เพราะ AuthProvider ไม่ได้จัดการ
-    if (referrerPath === "/login" || referrerPath === "/sign-up") {
-      referrerPath = "/";
-    }
-
-    referrerPath = referrerPath || "/";
-
-    localStorage.removeItem("referrer_path");
-
-    navigate(referrerPath, { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (

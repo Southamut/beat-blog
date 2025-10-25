@@ -26,9 +26,11 @@ authRouter.post("/register", async (req, res) => {
     }
 
     // สร้างผู้ใช้ใหม่ผ่าน Supabase Auth
+    const emailRedirectTo = `${process.env.CLIENT_URL || 'https://beat-blog-client.vercel.app'}/registration-success`;
     const { data, error: supabaseError } = await supabase.auth.signUp({
       email,
       password,
+      options: { emailRedirectTo },
     });
 
     // ตรวจสอบ error จาก Supabase

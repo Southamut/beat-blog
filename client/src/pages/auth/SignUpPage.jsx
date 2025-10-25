@@ -116,8 +116,8 @@ export function SignupPage() {
         // 3. LOGIN SUCCESS: บันทึก Token และนำทาง
         localStorage.setItem("access_token", loginResponse.data.access_token);
         setIsDialogOpen(false);
-        // นำทางไปหน้าสำเร็จ
-        navigate("/registration-success");
+        // นำทางไปหน้าhome
+        navigate("/");
       } else {
         // กรณีที่ Login API ส่งสถานะ 200 กลับมาแต่ไม่มี token (ไม่น่าจะเกิดขึ้น)
         setError("Plese check your email confirmation.");
