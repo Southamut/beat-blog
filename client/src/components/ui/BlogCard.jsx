@@ -9,7 +9,7 @@ export function BlogCard(props) {
     const authorInitial = props.author ? props.author.charAt(0).toUpperCase() : "?";
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 h-full">
             <Link to={`/post/${props.id}`} className="relative">
                 {hasImage ? (
                     <img 
@@ -23,7 +23,7 @@ export function BlogCard(props) {
                     </div>
                 )}
             </Link>
-            <div className="flex flex-col">
+            <div className="flex flex-col h-full">
                 <div className="flex">
                     <span className="bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">{props.category}
                     </span>
@@ -35,7 +35,7 @@ export function BlogCard(props) {
                 </Link>
                 <p className="text-brown-400 text-sm mb-4 flex-grow line-clamp-3">
                     {props.description}</p>
-                <div className="flex items-center text-sm">
+                <div className="flex items-center text-sm mt-auto">
                     {hasAuthorImage ? (
                         <img className="w-8 h-8 rounded-full mr-2 object-cover" src={props.authorImage} alt="Author" />
                     ) : (

@@ -365,17 +365,18 @@ export function ArticleSection() {
               </div>
             ) : (
               posts.map((post) => (
-                <BlogCard
-                  key={post.id}
-                  id={post.id}
-                  image={post.image}
-                  category={post.category}
-                  title={post.title}
-                  description={post.description}
-                  author={post.author || "Admin"}
-                  authorImage={post.authorImage}
-                  date={formatDate(post.date)}
-                />
+                <div key={post.id} className="h-full">
+                  <BlogCard
+                    id={post.id}
+                    image={post.image}
+                    category={post.category}
+                    title={post.title}
+                    description={post.description}
+                    author={post.author || "Admin"}
+                    authorImage={post.authorImage}
+                    date={formatDate(post.date)}
+                  />
+                </div>
               ))
             )}
           </div>
