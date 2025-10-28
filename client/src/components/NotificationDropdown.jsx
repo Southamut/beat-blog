@@ -57,12 +57,12 @@ export function NotificationDropdown() {
     const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
     
     if (diffInHours < 1) {
-      return "เมื่อสักครู่นี้";
+      return "Just now";
     } else if (diffInHours < 24) {
-      return `${diffInHours} ชั่วโมงที่แล้ว`;
+      return `${diffInHours} hours ago`;
     } else {
       const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays} วันที่แล้ว`;
+      return `${diffInDays} days ago`;
     }
   };
 
@@ -83,9 +83,9 @@ export function NotificationDropdown() {
         className="w-screen md:w-96 border-none bg-brown-100 md:rounded-lg shadow-lg mt-4 md:mt-2 max-h-[500px] overflow-y-auto"
       >
         {loading ? (
-          <div className="p-4 text-center text-brown-600">กำลังโหลด...</div>
+          <div className="p-4 text-center text-brown-600">Loading...</div>
         ) : notifications.length === 0 ? (
-          <div className="p-4 text-center text-brown-600">ไม่มีการแจ้งเตือน</div>
+          <div className="p-4 text-center text-brown-600">No notifications</div>
         ) : (
           <>
             {notifications.map((notification) => (
@@ -111,7 +111,7 @@ export function NotificationDropdown() {
                   {/* เนื้อหาการแจ้งเตือน */}
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-brown-900">
-                      {notification.user?.name || "ผู้ใช้"}
+                      {notification.user?.name || "User"}
                     </div>
                     <div className="text-sm text-brown-700 mt-1">
                       {notification.message}

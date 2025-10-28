@@ -96,7 +96,8 @@ router.get("/", protectUser, async (req, res) => {
           type: "comment",
           user: userMap[comment.user_id] || { id: comment.user_id, name: "Unknown", profile_pic: null },
           post: postMap[comment.post_id] || { id: comment.post_id, title: "Unknown" },
-          message: `${userMap[comment.user_id]?.name || "ผู้ใช้"} แสดงความคิดเห็นในบทความของคุณ`,
+          message: `Commented on your article:`,
+          comment_text: comment.comment_text,
           created_at: comment.created_at,
         });
       });
@@ -116,7 +117,7 @@ router.get("/", protectUser, async (req, res) => {
           type: "like",
           user: userMap[like.user_id] || { id: like.user_id, name: "Unknown", profile_pic: null },
           post: postMap[like.post_id] || { id: like.post_id, title: "Unknown" },
-          message: `${userMap[like.user_id]?.name || "ผู้ใช้"} ถูกใจบทความของคุณ`,
+          message: `Liked your article:`,
           created_at: like.liked_at,
         });
       });
@@ -168,7 +169,7 @@ router.get("/", protectUser, async (req, res) => {
         user: creatorMap[post.created_by] || { id: post.created_by, name: "Admin", profile_pic: null },
         post: { id: post.id, title: post.title },
         category: categoryMap[post.category_id] || "General",
-        message: `Admin ได้โพสต์บทความใหม่: ${post.title}`,
+        message: `Admin posted a new article:`,
         created_at: post.date,
       }));
 
