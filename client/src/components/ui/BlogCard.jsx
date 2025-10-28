@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ImageOff } from 'lucide-react';
-import { Spinner } from '@/components/ui/spinner';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 // BlogCard Component
 export function BlogCard(props) {
@@ -64,17 +64,22 @@ export function ArticleButton(props) {
     )
 }
 
-// LoadingSpinner Component using shadcn/ui Spinner
+// LoadingSpinner Component using Lottie animation
 export function LoadingSpinner({ message = "Loading...", size = "large" }) {
     const sizeClasses = {
-        small: "size-4",
-        medium: "size-6", 
-        large: "size-8"
+        small: "w-12 h-12",
+        medium: "w-16 h-16", 
+        large: "w-24 h-24"
     }
 
     return (
         <div className="flex flex-col justify-center items-center gap-3">
-            <Spinner className={`${sizeClasses[size]} text-brown-600`} />
+            <DotLottieReact
+                src="https://lottie.host/8bc615ca-8b0f-469c-a967-505f6d5ee1ab/iyCZorYvtk.lottie"
+                loop
+                autoplay
+                className={sizeClasses[size]}
+            />
             <div className="text-brown-600">{message}</div>
         </div>
     )

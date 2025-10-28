@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export default function GlobalLoading() {
   const [pending, setPending] = useState(0);
@@ -15,10 +16,13 @@ export default function GlobalLoading() {
   if (pending <= 0) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/70 backdrop-blur-sm">
-      <div className="h-12 w-12 border-4 border-brown-200 border-t-brown-600 rounded-full animate-spin" />
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/60 backdrop-blur-sm">
+      <DotLottieReact
+        src="https://lottie.host/8bc615ca-8b0f-469c-a967-505f6d5ee1ab/iyCZorYvtk.lottie"
+        loop
+        autoplay
+        className="w-24 lg:w-32 h-24 lg:h-32"
+      />
     </div>
   );
 }
-
-
