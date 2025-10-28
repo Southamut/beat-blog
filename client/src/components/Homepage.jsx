@@ -9,6 +9,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/authentication";
 import { ProfileDropdown } from "../components/ProfileDropdown";
+import { NotificationDropdown } from "../components/NotificationDropdown";
 import axios from "axios";
 import API_URL from "@/config/api";
 
@@ -41,14 +42,17 @@ export function NavBar() {
     <nav className="border-b border-brown-300 w-full flex justify-between items-center px-4 md:px-16 py-4 bg-brown-100 shadow-sm">
       {/* Logo */}
       <button onClick={() => navigate("/")} className="font-bold">
-        <span className="text-brown-600 text-2xl">BEAT</span> 
+        <span className="text-brown-600 text-2xl">BEAT</span>
         <span className="text-md text-brown-400"> Personal Blog</span>
       </button>
 
       {/* Mobile navigation buttons */}
-      <div className="flex flex-col sm:hidden">
+      <div className="flex items-center gap-2 sm:hidden">
         {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
-          <ProfileDropdown user={user} handleLogout={logout} /> // 🚨 ใช้ logout จาก useAuth
+          <>
+            <NotificationDropdown />
+            <ProfileDropdown user={user} handleLogout={logout} />
+          </>
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger className="w-6 h-6 cursor-pointer">
@@ -79,7 +83,10 @@ export function NavBar() {
       {/* Desktop navigation buttons */}
       <div className="gap-3 relative hidden sm:flex">
         {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
-          <ProfileDropdown user={user} handleLogout={logout} /> // 🚨 ใช้ logout จาก useAuth
+          <>
+            <NotificationDropdown />
+            <ProfileDropdown user={user} handleLogout={logout} />
+          </>
         ) : (
           <>
             <button
@@ -102,7 +109,11 @@ export function NavBar() {
 }
 
 export function HeroSection() {
-  const [admin, setAdmin] = React.useState({ name: "", bio: "", profile_pic: "" });
+  const [admin, setAdmin] = React.useState({
+    name: "",
+    bio: "",
+    profile_pic: "",
+  });
 
   // Fetch the hero admin (division='main')
   React.useEffect(() => {
@@ -153,7 +164,9 @@ export function HeroSection() {
         <div className="lg:col-span-1 md:col-span-1">
           <div className="text-sm font-medium text-brown-400 mb-2">-Author</div>
           <div className="flex items-center gap-3 mb-3">
-            <h2 className="text-2xl font-bold text-brown-500">{admin.name || "Admin"}</h2>
+            <h2 className="text-2xl font-bold text-brown-500">
+              {admin.name || "Admin"}
+            </h2>
           </div>
           <div className="space-y-4 font-medium text-brown-400 leading-relaxed">
             {admin.bio ? <p>{admin.bio}</p> : null}
@@ -170,17 +183,33 @@ export function Footer() {
       {/* Left: Get in touch and icons */}
       <div className="flex items-center gap-4">
         <span className="font-medium text-brown-600">Get in touch</span>
-        <a href="https://www.linkedin.com/in/punyakit-n" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="LinkedIn">
+        <a
+          href="https://www.linkedin.com/in/punyakit-n"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:opacity-80"
+          aria-label="LinkedIn"
+        >
           <div className="w-6 h-6 bg-brown-600 rounded-full flex items-center justify-center">
             <Linkedin className="w-3 h-3 text-white" />
           </div>
         </a>
-        <a href="https://github.com/Southamut" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="GitHub">
+        <a
+          href="https://github.com/Southamut"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:opacity-80"
+          aria-label="GitHub"
+        >
           <div className="w-6 h-6 bg-brown-600 rounded-full flex items-center justify-center">
             <Github className="w-3 h-3 text-white" />
           </div>
         </a>
-        <a href="mailto:punyakit.noi@gmail.com" className="hover:opacity-80" aria-label="Email">
+        <a
+          href="mailto:punyakit.noi@gmail.com"
+          className="hover:opacity-80"
+          aria-label="Email"
+        >
           <div className="w-6 h-6 bg-brown-600 rounded-full flex items-center justify-center">
             <Mail className="w-3 h-3 text-white" />
           </div>

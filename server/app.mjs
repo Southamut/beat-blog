@@ -4,6 +4,7 @@ import postsRouter from "./routes/posts.mjs";
 import categoriesRouter from "./routes/categories.mjs";
 import authRouter from "./routes/auth.mjs"
 import usersRouter from "./routes/users.mjs";
+import notificationsRouter from "./routes/notifications.mjs";
 import cors from 'cors';
 import uploadRouter from "./routes/upload.mjs";
 
@@ -45,6 +46,7 @@ app.use("/posts", postsRouter);
 app.use("/categories", categoriesRouter);
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
+app.use("/notifications", notificationsRouter);
 app.use("/upload", uploadRouter);
 
 app.listen(port, () => {
