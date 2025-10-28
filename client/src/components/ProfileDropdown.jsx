@@ -17,7 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 // Component ProfileDropdown
-export function ProfileDropdown({ user, handleLogout }) {
+export function ProfileDropdown({ user, handleLogout, notificationBell }) {
   // เราใช้ useNavigate ที่นี่ เพราะ Dropdown เป็นตัวควบคุมการนำทาง
   const navigate = useNavigate();
   const isAdmin = user.role === "admin";
@@ -54,21 +54,34 @@ export function ProfileDropdown({ user, handleLogout }) {
       >
         {/* Mobile Profile Section */}
         <div className="md:hidden px-4 py-3">
-          <div className="flex items-center gap-3">
-            {user.profile_pic ? (
-              <img
-                src={user.profile_pic}
-                alt="User Profile"
-                className="w-12 h-12 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-brown-400 flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3 justify-between">
+            <div className="flex items-center gap-3">
+              {user.profile_pic ? (
+                <img
+                  src={user.profile_pic}
+                  alt="User Profile"
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-brown-400 flex items-center justify-center">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+              )}
+              <div>
+                <p className="font-medium text-brown-500">{user.name}</p>
+              </div>
+            </div>
+            {notificationBell && (
+              <div 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                {notificationBell}
               </div>
             )}
-            <div>
-              <p className="font-medium text-brown-500">{user.name}</p>
-            </div>
           </div>
         </div>
 
