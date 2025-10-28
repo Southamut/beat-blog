@@ -22,7 +22,8 @@ export function NotificationDropdown() {
     try {
       const { data } = await axios.get(`${API_URL}/notifications`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          "X-Disable-Global-Loading": "true"
         }
       });
       setNotifications(data || []);
@@ -36,6 +37,12 @@ export function NotificationDropdown() {
   useEffect(() => {
     fetchNotifications();
   }, []);
+
+  const handleOpenChange = (open) => {
+    if (open && notifications.length === 0 && !loading) {
+      fetchNotifications();
+    }
+  };
 
   // เมื่อคลิกที่การแจ้งเตือน ให้ไปยังบทความที่เกี่ยวข้อง
   const handleNotificationClick = (notification) => {
@@ -60,15 +67,20 @@ export function NotificationDropdown() {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger>
-        <div className="hidden md:flex items-center gap-2 cursor-pointer focus:outline-none">
+        {/* Desktop bell */}
+        <div className="border border-brown-200 hidden md:flex items-center bg-white rounded-full w-8 h-8 justify-center cursor-pointer focus:outline-none">
+          <Bell className="w-5 h-5 text-brown-400" />
+        </div>
+        {/* Mobile bell */}
+        <div className="flex md:hidden items-center justify-center">
           <Bell className="w-5 h-5 text-brown-400" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-screen md:w-96 border-none bg-brown-100 md:rounded-lg shadow-lg mt-2 max-h-[500px] overflow-y-auto"
+        className="w-screen md:w-96 border-none bg-brown-100 md:rounded-lg shadow-lg mt-4 md:mt-2 max-h-[500px] overflow-y-auto"
       >
         {loading ? (
           <div className="p-4 text-center text-brown-600">กำลังโหลด...</div>

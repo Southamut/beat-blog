@@ -50,8 +50,11 @@ export function NavBar() {
       <div className="flex items-center gap-2 sm:hidden">
         {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
           <>
-            <NotificationDropdown />
-            <ProfileDropdown user={user} handleLogout={logout} />
+            <ProfileDropdown 
+              user={user} 
+              handleLogout={logout} 
+              notificationBell={<NotificationDropdown />}
+            />
           </>
         ) : (
           <DropdownMenu>
