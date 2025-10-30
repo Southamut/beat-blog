@@ -50,9 +50,9 @@ export function NavBar() {
       <div className="flex items-center gap-2 sm:hidden">
         {isAuthenticated ? ( // 🚨 ใช้ isAuthenticated
           <>
-            <ProfileDropdown 
-              user={user} 
-              handleLogout={logout} 
+            <ProfileDropdown
+              user={user}
+              handleLogout={logout}
               notificationBell={<NotificationDropdown />}
             />
           </>
@@ -144,13 +144,13 @@ export function HeroSection() {
         {/* Left Content - Main heading and subtitle */}
         <div className="lg:col-span-1 md:col-span-1 md:text-right text-center">
           <h1 className="text-3xl lg:text-4xl font-bold text-brown-600 leading-tight mb-4">
-            Stay Informed,
+            Create with Intention,
             <br />
-            Stay Inspired
+            Live with Meaning
           </h1>
           <p className="lg:text-lg text-md font-medium text-brown-400 leading-relaxed">
-            Discover a World of Knowledge at Your Fingertips. Your Daily Dose of
-            Inspiration and Information.
+            Discover art, mindfulness, and inspiration in everyday life — a
+            space to slow down, reflect, and grow.
           </p>
         </div>
         {/* Center - Main image */}

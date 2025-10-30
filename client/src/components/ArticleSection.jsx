@@ -1,5 +1,5 @@
-import { Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Select,
@@ -36,6 +36,25 @@ export function ArticleSection() {
   //post per page
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+
+  // Simple horizontal scroller with arrows
+  const tabsRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = () => {
+    const el = tabsRef.current;
+    if (!el) return;
+    const { scrollLeft, clientWidth, scrollWidth } = el;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1);
+  };
+
+  const scrollByAmount = (dx) => {
+    const el = tabsRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dx, behavior: "smooth" });
+  };
 
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1);
@@ -194,6 +213,20 @@ export function ArticleSection() {
     fetchPosts(1, true);
   }, [selectedCategory]);
 
+  // keep arrow visibility synced
+  useEffect(() => {
+    updateScrollState();
+    const el = tabsRef.current;
+    if (!el) return;
+    const onScroll = () => updateScrollState();
+    el.addEventListener("scroll", onScroll);
+    window.addEventListener("resize", updateScrollState);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [categories]);
+
   // Format date function
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -289,18 +322,43 @@ export function ArticleSection() {
 
         {/* Desktop layout - horizontal */}
         <div className="hidden h-20 md:flex items-center justify-between bg-brown-200 rounded-2xl px-4 gap-4">
-          {/* Category tabs */}
-          <div className="hidden md:flex space-x-2 h-12">
-            {categories.map((category) => (
-              <ArticleButton
-                key={category}
-                text={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`hover:bg-brown-300 ${
-                  selectedCategory === category ? "bg-brown-300" : ""
-                }`}
-              />
-            ))}
+          {/* Category tabs with simple arrows */}
+          <div className="relative flex-1 min-w-0">
+            <div
+              ref={tabsRef}
+              className="hidden md:flex md:flex-nowrap space-x-2 h-12 overflow-x-auto no-scrollbar whitespace-nowrap pr-8"
+            >
+              {categories.map((category) => (
+                <ArticleButton
+                  key={category}
+                  text={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`shrink-0 hover:bg-brown-300 ${
+                    selectedCategory === category ? "bg-brown-300" : ""
+                  }`}
+                />
+              ))}
+            </div>
+            {canScrollLeft && (
+              <button
+                type="button"
+                onClick={() => scrollByAmount(-240)}
+                className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/80 hover:bg-white shadow flex items-center justify-center"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-4 h-4 text-brown-500" />
+              </button>
+            )}
+            {canScrollRight && (
+              <button
+                type="button"
+                onClick={() => scrollByAmount(240)}
+                className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white/80 hover:bg-white shadow flex items-center justify-center"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-4 h-4 text-brown-500" />
+              </button>
+            )}
           </div>
           {/* Search bar */}
           <div className="relative w-80 search-container">

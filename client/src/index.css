@@ -141,6 +141,15 @@ button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm.f
 .hover\:bg-brown-100:hover {
   background-color: #f9f8f6 !important;
 }
+
+/* Hide horizontal scrollbar utility for cleaner tag scroller */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
 .hover\:bg-brown-200:hover {
   background-color: #efeeeb !important;
 }

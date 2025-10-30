@@ -283,7 +283,7 @@ export function ViewPostComponent() {
           </div>
 
           {/* Right content only on desktop */}
-          <div className="w-full md:w-4/12 hidden md:block">
+          <div className="w-full md:w-4/12 hidden md:block md:sticky md:top-6 md:self-start">
             <AuthorBio post={post} />
           </div>
         </div>
