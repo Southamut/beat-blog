@@ -130,12 +130,19 @@ router.get("/", protectUser, async (req, res) => {
 
     // For regular users: show new posts (status = published)
     else {
+      // ดึงเวลา last_seen_at ของผู้ใช้ (ไม่มีให้เป็น epoch)
+      const { rows: seenRows } = await connectionPool.query(
+        `SELECT COALESCE(last_seen_at, 'epoch'::timestamp) AS last_seen_at
+         FROM public.user_feed_reads WHERE user_id = $1`,
+        [supabaseUserId]
+      );
+      const lastSeenAt = seenRows?.[0]?.last_seen_at || new Date(0);
+
       const { data: newPosts, error: postsError } = await supabase
         .from("posts")
-        .select("id, title, date, category_id, created_by")
-        .eq("status_id", 2) // Published posts only
+        .select("id, title, date, category_id, created_by, status_id")
         .order("date", { ascending: false })
-        .limit(10);
+        .limit(20);
 
       if (postsError) {
         return res.status(500).json({ message: "Could not fetch new posts" });
@@ -163,20 +170,77 @@ router.get("/", protectUser, async (req, res) => {
         creatorMap[u.id] = { id: u.id, name: u.name, profile_pic: u.profile_pic };
       });
 
-      const notifications = (newPosts || []).map((post) => ({
-        id: `post-${post.id}`,
-        type: "new_post",
-        user: creatorMap[post.created_by] || { id: post.created_by, name: "Admin", profile_pic: null },
-        post: { id: post.id, title: post.title },
-        category: categoryMap[post.category_id] || "General",
-        message: `Admin posted a new article:`,
-        created_at: post.date,
-      }));
+      const publishedStatusId = 2; // ใช้ 2 เป็น published ตามระบบเดิมของคุณ
+      const notifications = (newPosts || [])
+        .filter((post) => post.status_id === publishedStatusId)
+        .map((post) => ({
+          id: `post-${post.id}`,
+          type: "new_post",
+          user: creatorMap[post.created_by] || { id: post.created_by, name: "Admin", profile_pic: null },
+          post: { id: post.id, title: post.title },
+          category: categoryMap[post.category_id] || "General",
+          message: `Admin posted a new article:`,
+          created_at: post.date,
+          is_new: new Date(post.date) > new Date(lastSeenAt),
+        }));
 
       return res.status(200).json(notifications);
     }
   } catch (error) {
     console.error("Notifications error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// GET /notifications/count - จำนวนโพสต์ใหม่กว่าที่ผู้ใช้เคยเห็น
+router.get("/count", protectUser, async (req, res) => {
+  try {
+    const supabaseUserId = req.user?.id;
+    if (!supabaseUserId) return res.status(401).json({ message: "Unauthorized" });
+
+    const { rows: seenRows } = await connectionPool.query(
+      `SELECT COALESCE(last_seen_at, 'epoch'::timestamp) AS last_seen_at
+       FROM public.user_feed_reads WHERE user_id = $1`,
+      [supabaseUserId]
+    );
+    const lastSeenAt = seenRows?.[0]?.last_seen_at || new Date(0);
+
+    const { data: posts, error } = await supabase
+      .from("posts")
+      .select("id, date, status_id")
+      .order("date", { ascending: false })
+      .limit(200);
+
+    if (error) return res.status(500).json({ message: "Could not fetch posts" });
+
+    const publishedStatusId = 2;
+    const unread = (posts || []).filter(
+      (p) => p.status_id === publishedStatusId && new Date(p.date) > new Date(lastSeenAt)
+    ).length;
+
+    return res.json({ unread });
+  } catch (e) {
+    console.error("Notifications count error:", e);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST /notifications/read-all - มาร์คว่าผู้ใช้เห็นโพสต์ล่าสุดแล้ว
+router.post("/read-all", protectUser, async (req, res) => {
+  try {
+    const supabaseUserId = req.user?.id;
+    if (!supabaseUserId) return res.status(401).json({ message: "Unauthorized" });
+
+    await connectionPool.query(
+      `INSERT INTO public.user_feed_reads (user_id, last_seen_at)
+       VALUES ($1, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET last_seen_at = EXCLUDED.last_seen_at`,
+      [supabaseUserId]
+    );
+
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error("Notifications read-all error:", e);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
