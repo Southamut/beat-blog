@@ -8,6 +8,7 @@ import axios from "axios";
 export function NotificationDropdown() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [unread, setUnread] = useState(0);
   const navigate = useNavigate();
 
   // ฟังก์ชันดึงข้อมูลแจ้งเตือน
@@ -36,11 +37,33 @@ export function NotificationDropdown() {
 
   useEffect(() => {
     fetchNotifications();
+    // ดึงจำนวนยังไม่อ่านสำหรับ badge
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      axios
+        .get(`${API_URL}/notifications/count`, {
+          headers: { Authorization: `Bearer ${token}`, "X-Disable-Global-Loading": "true" },
+        })
+        .then((res) => setUnread(res.data?.unread || 0))
+        .catch(() => {});
+    }
   }, []);
 
   const handleOpenChange = (open) => {
-    if (open && notifications.length === 0 && !loading) {
-      fetchNotifications();
+    if (open) {
+      // มาร์คว่าอ่านแล้วทั้งหมด และรีเฟรช
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        axios
+          .post(
+            `${API_URL}/notifications/read-all`,
+            {},
+            { headers: { Authorization: `Bearer ${token}`, "X-Disable-Global-Loading": "true" } }
+          )
+          .then(() => setUnread(0))
+          .catch(() => {});
+      }
+      if (notifications.length === 0 && !loading) fetchNotifications();
     }
   };
 
@@ -70,12 +93,18 @@ export function NotificationDropdown() {
     <DropdownMenu onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger>
         {/* Desktop bell */}
-        <div className="border border-brown-200 hidden md:flex items-center bg-white rounded-full w-8 h-8 justify-center cursor-pointer focus:outline-none">
+        <div className="relative border border-brown-200 hidden md:flex items-center bg-white rounded-full w-8 h-8 justify-center cursor-pointer focus:outline-none">
           <Bell className="w-5 h-5 text-brown-400" />
+          {unread > 0 && (
+            <span className="absolute -top-1 -right-1 inline-block w-2.5 h-2.5 rounded-full bg-red-500" />
+          )}
         </div>
         {/* Mobile bell */}
-        <div className="flex md:hidden items-center justify-center">
+        <div className="relative flex md:hidden items-center justify-center">
           <Bell className="w-5 h-5 text-brown-400" />
+          {unread > 0 && (
+            <span className="absolute -top-1 -right-1 inline-block w-2.5 h-2.5 rounded-full bg-red-500" />
+          )}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
