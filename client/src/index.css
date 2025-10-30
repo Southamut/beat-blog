@@ -1,0 +1,205 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@import "tailwindcss";
+
+/* Force override with highest specificity */
+:root {
+  /* Base Colors */
+  --brown-600: #26231e !important;
+  --brown-500: #43403b !important;
+  --brown-400: #75716b !important;
+  --brown-300: #dad6d1 !important;
+  --brown-200: #efeeeb !important;
+  --brown-100: #f9f8f6 !important;
+  --white: #ffffff !important;
+
+  /* Brand Colors */
+  --orange: #f2b68c !important;
+  --green: #12b279 !important;
+  --green-light: #d7f2e9 !important;
+  --red: #eb5164 !important;
+
+  /* Override shadcn/ui primary colors with highest priority */
+  --primary: #26231e !important;
+  --primary-foreground: #ffffff !important;
+}
+
+/* Maximum specificity override for all buttons */
+button,
+button[data-slot="button"],
+button.inline-flex,
+button.inline-flex.items-center,
+button.inline-flex.items-center.justify-center,
+button.inline-flex.items-center.justify-center.gap-2,
+button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap,
+button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm,
+button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm.font-medium {
+  --primary: #26231e !important;
+  --primary-foreground: #ffffff !important;
+}
+
+/* Force ALL Tailwind brown colors to work globally */
+.bg-brown-100 {
+  background-color: #f9f8f6 !important;
+}
+.bg-brown-200 {
+  background-color: #efeeeb !important;
+}
+.bg-brown-300 {
+  background-color: #dad6d1 !important;
+}
+.bg-brown-400 {
+  background-color: #75716b !important;
+}
+.bg-brown-500 {
+  background-color: #43403b !important;
+}
+.bg-brown-600 {
+  background-color: #26231e !important;
+}
+
+.text-brown-100 {
+  color: #f9f8f6 !important;
+}
+.text-brown-200 {
+  color: #efeeeb !important;
+}
+.text-brown-300 {
+  color: #dad6d1 !important;
+}
+.text-brown-400 {
+  color: #75716b !important;
+}
+.text-brown-500 {
+  color: #43403b !important;
+}
+.text-brown-600 {
+  color: #26231e !important;
+}
+
+.border-brown-100 {
+  border-color: #f9f8f6 !important;
+}
+.border-brown-200 {
+  border-color: #efeeeb !important;
+}
+.border-brown-300 {
+  border-color: #dad6d1 !important;
+}
+.border-brown-400 {
+  border-color: #75716b !important;
+}
+.border-brown-500 {
+  border-color: #43403b !important;
+}
+.border-brown-600 {
+  border-color: #26231e !important;
+}
+
+/* Brand colors */
+.bg-orange {
+  background-color: #f2b68c !important;
+}
+.text-orange {
+  color: #f2b68c !important;
+}
+.border-orange {
+  border-color: #f2b68c !important;
+}
+
+.bg-green {
+  background-color: #12b279 !important;
+}
+.text-green {
+  color: #12b279 !important;
+}
+.border-green {
+  border-color: #12b279 !important;
+}
+
+.bg-green-light {
+  background-color: #d7f2e9 !important;
+}
+.text-green-light {
+  color: #d7f2e9 !important;
+}
+.border-green-light {
+  border-color: #d7f2e9 !important;
+}
+
+.bg-red {
+  background-color: #eb5164 !important;
+}
+.text-red {
+  color: #eb5164 !important;
+}
+.border-red {
+  border-color: #eb5164 !important;
+}
+
+/* Hover states */
+.hover\:bg-brown-100:hover {
+  background-color: #f9f8f6 !important;
+}
+
+/* Hide horizontal scrollbar utility for cleaner tag scroller */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.hover\:bg-brown-200:hover {
+  background-color: #efeeeb !important;
+}
+.hover\:bg-brown-300:hover {
+  background-color: #dad6d1 !important;
+}
+.hover\:bg-brown-400:hover {
+  background-color: #75716b !important;
+}
+.hover\:bg-brown-500:hover {
+  background-color: #43403b !important;
+}
+.hover\:bg-brown-600:hover {
+  background-color: #26231e !important;
+}
+
+.hover\:text-brown-100:hover {
+  color: #f9f8f6 !important;
+}
+.hover\:text-brown-200:hover {
+  color: #efeeeb !important;
+}
+.hover\:text-brown-300:hover {
+  color: #dad6d1 !important;
+}
+.hover\:text-brown-400:hover {
+  color: #75716b !important;
+}
+.hover\:text-brown-500:hover {
+  color: #43403b !important;
+}
+.hover\:text-brown-600:hover {
+  color: #26231e !important;
+}
+
+.hover\:border-brown-100:hover {
+  border-color: #f9f8f6 !important;
+}
+.hover\:border-brown-200:hover {
+  border-color: #efeeeb !important;
+}
+.hover\:border-brown-300:hover {
+  border-color: #dad6d1 !important;
+}
+.hover\:border-brown-400:hover {
+  border-color: #75716b !important;
+}
+.hover\:border-brown-500:hover {
+  border-color: #43403b !important;
+}
+.hover\:border-brown-600:hover {
+  border-color: #26231e !important;
+}

@@ -1,0 +1,139 @@
+// Validation middleware for blog posts
+export const validatePostData = (req, res, next) => {
+    const { title, image, category_id, description, content, status_id } = req.body;
+    const errors = [];
+
+    // Check if title exists and is string
+    if (!title) {
+        errors.push("Title is required");
+    } else if (typeof title !== 'string') {
+        errors.push("Title must be a string");
+    }
+
+    // Check if image exists and is string
+    if (!image) {
+        errors.push("Image is required");
+    } else if (typeof image !== 'string') {
+        errors.push("Image must be a string");
+    }
+
+    // Check if category_id exists and is number
+    if (category_id === undefined || category_id === null) {
+        errors.push("Category_id is required");
+    } else if (typeof category_id !== 'number') {
+        errors.push("Category_id must be a number");
+    }
+
+    // Check if description exists and is string
+    if (!description) {
+        errors.push("Description is required");
+    } else if (typeof description !== 'string') {
+        errors.push("Description must be a string");
+    }
+
+    // Check if content exists and is string
+    if (!content) {
+        errors.push("Content is required");
+    } else if (typeof content !== 'string') {
+        errors.push("Content must be a string");
+    }
+
+    // Check if status_id exists and is number
+    if (status_id === undefined || status_id === null) {
+        errors.push("Status_id is required");
+    } else if (typeof status_id !== 'number') {
+        errors.push("Status_id must be a number");
+    }
+
+    // If there are validation errors, return 400 with error messages
+    if (errors.length > 0) {
+        return res.status(400).json({
+            message: "Validation failed",
+            errors: errors
+        });
+    }
+
+    // If validation passes, continue to next middleware/route handler
+    next();
+};
+
+// Alternative validation that returns single error message (more user-friendly)
+export const validatePostDataSingle = (req, res, next) => {
+    const { title, image, category_id, description, content, status_id } = req.body;
+
+    // Check title
+    if (!title) {
+        return res.status(400).json({ message: "Title is required" });
+    }
+    if (typeof title !== 'string') {
+        return res.status(400).json({ message: "Title must be a string" });
+    }
+
+    // Check image (allow empty string for now)
+    if (image !== undefined && typeof image !== 'string') {
+        return res.status(400).json({ message: "Image must be a string" });
+    }
+
+    // Check category_id
+    if (category_id === undefined || category_id === null) {
+        return res.status(400).json({ message: "Category_id is required" });
+    }
+    // Convert string to number if needed
+    const categoryIdNum = parseInt(category_id);
+    if (isNaN(categoryIdNum)) {
+        return res.status(400).json({ message: "Category_id must be a valid number" });
+    }
+
+    // Check description
+    if (!description) {
+        return res.status(400).json({ message: "Description is required" });
+    }
+    if (typeof description !== 'string') {
+        return res.status(400).json({ message: "Description must be a string" });
+    }
+
+    // Check content
+    if (!content) {
+        return res.status(400).json({ message: "Content is required" });
+    }
+    if (typeof content !== 'string') {
+        return res.status(400).json({ message: "Content must be a string" });
+    }
+
+    // Check status_id
+    if (status_id === undefined || status_id === null) {
+        return res.status(400).json({ message: "Status_id is required" });
+    }
+    // Convert string to number if needed
+    const statusIdNum = parseInt(status_id);
+    if (isNaN(statusIdNum)) {
+        return res.status(400).json({ message: "Status_id must be a valid number" });
+    }
+
+    // If all validations pass, continue
+    next();
+};
+
+// Validate register body
+export const validateRegisterBody = (req, res, next) => {
+    const { name, username, email, password } = req.body || {};
+    const errors = {};
+
+    if (!name || typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 50) {
+        errors.name = "Name must be 2-50 characters.";
+    }
+    if (!username || !/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+        errors.username = "Username must be 3-20 chars, letters/numbers/underscore only.";
+    }
+    if (!email || !/^([^\s@]+)@([^\s@]+)\.([^\s@]{2,})$/.test(email)) {
+        errors.email = "Invalid email format.";
+    }
+    if (!password || typeof password !== 'string' || password.length < 8 || password.length > 64 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+        errors.password = "Password must be 8-64 chars, include letter and number.";
+    }
+
+    if (Object.keys(errors).length) {
+        return res.status(400).json({ error: errors });
+    }
+    next();
+};
