@@ -5,6 +5,7 @@ A modern, full‑featured blogging platform with React and Express, designed for
 ## Deployed Website
 
 - You can check the project at :: https://beat-blog-client.vercel.app
+- Video demo showing feature of this project :: https://youtu.be/DlnaDWBZUgA
 
 ## 🌟 Features
 
